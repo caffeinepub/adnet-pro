@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
+  "projectStateVersion": 7,
   "summary": "Professional networking platform for advertising industry connecting production houses with professionals, equipment vendors, and shoot locations with availability checking for specific shoot dates",
   "architectural_notes": [
     "Multi-user type system: professionals, equipment vendors, shoot locations, production houses",
@@ -9,7 +9,6 @@
   ],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Bold abstract tribal/geometric pattern hero background with warm amber, charcoal, and gold tones evoking a premium advertising community (ad-tribe-hero-bg.dim_1920x1080.png)",
   "existing_features": [
     {
       "id": "feature-create-user-profile-system-supporting-four-distinct-account-types-advertising-professionals-equipment-vendors-shoot-locations-and-production-houses-each-profile-type-must-store-role-specific-information-e-g-professionals-store-specialties-and-portfolio-vendors-store-equipment-inventory-locations-store-venue-details-and-capacity-production-houses-store-company-information",
@@ -66,6 +65,14 @@
         "REQ-7"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-opening-landing-page-landingpage-tsx-to-display-the-full-ad-tribe-intro-paragraph-ad-tribe-is-a-smart-networking-and-project-coordination-app-built-exclusively-for-advertising-professionals-designed-for-the-fast-paced-world-of-advertising-ad-tribe-transforms-scattered-coordination-into-a-unified-efficient-workflow-helping-creative-teams-move-faster-stay-aligned-and-deliver-outstanding-campaigns-this-text-should-appear-prominently-beneath-the-ad-tribe-logo-headline-in-the-hero-section-replacing-or-supplementing-any-existing-subheadline-copy",
+      "title": "Update the opening landing page (LandingPage.tsx) to display the full AD TRIBE intro paragraph: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.' This text should appear prominently beneath the AD TRIBE logo/headline in the hero section, replacing or supplementing any existing subheadline copy.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -90,6 +97,12 @@
     {
       "id": "AR-4",
       "summary": "Networking and connection features between production houses and vendors/professionals",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Update opening page intro text to: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.'",
       "reqIds": [],
       "status": "pending"
     }

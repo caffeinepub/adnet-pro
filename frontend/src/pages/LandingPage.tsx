@@ -91,13 +91,17 @@ export default function LandingPage() {
           </div>
 
           {/* Main headline */}
-          <div className="space-y-2">
+          <div className="space-y-6">
             <h1 className="font-display text-[clamp(4rem,14vw,9rem)] leading-none tracking-widest text-white drop-shadow-lg">
               AD TRIBE
             </h1>
-            <p className="text-xl md:text-2xl font-light text-white/80 max-w-2xl mx-auto leading-relaxed">
-              Where advertising professionals, vendors, and production houses
-              unite to create extraordinary campaigns.
+            <p className="text-lg md:text-xl font-light text-white/85 max-w-3xl mx-auto leading-relaxed">
+              AD Tribe is a smart networking and project coordination app built
+              exclusively for advertising professionals. Designed for the
+              fast-paced world of advertising, AD Tribe transforms scattered
+              coordination into a unified, efficient workflow&mdash;helping
+              creative teams move faster, stay aligned, and deliver outstanding
+              campaigns.
             </p>
           </div>
 

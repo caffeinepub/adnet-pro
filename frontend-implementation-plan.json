@@ -1,55 +1,22 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Rename app to AD TRIBE and redesign opening/landing page",
+  "title": "Update landing page intro text for AD TRIBE",
   "requirements": [
     {
-      "id": "REQ-6",
-      "summary": "Rename application from 'AdNet Pro' to 'AD TRIBE' across all user-facing text",
+      "id": "REQ-8",
+      "summary": "Update the LandingPage.tsx hero section to display the full AD TRIBE intro paragraph beneath the logo/headline, replacing or supplementing existing subheadline copy while preserving the amber/charcoal design theme",
       "acceptanceCriteria": [
-        "The browser tab title reads 'AD TRIBE'",
-        "The header/navigation logo or wordmark displays 'AD TRIBE'",
-        "No visible references to 'AdNet Pro' remain in the UI"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Update the HTML title tag from 'AdNet Pro' to 'AD TRIBE' to change the browser tab title"
-        },
-        {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "modify",
-          "description": "Update the header navigation to display 'AD TRIBE' instead of any existing app name or logo text"
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Redesign the landing page with AD TRIBE brand identity, hero section with bold headline and CTA, and updated feature highlights reflecting community/tribe concept",
-      "acceptanceCriteria": [
-        "Landing page hero prominently displays 'AD TRIBE' as the app name",
-        "Hero section has a visually impactful background treatment (gradient, texture, or image)",
-        "A clear call-to-action button is present and functional for authentication",
-        "Feature cards/highlights are updated with copy and icons reflecting community/tribe messaging",
-        "Page is fully responsive on mobile and desktop",
-        "Color palette avoids blue and purple and feels cohesive with the brand"
+        "The landing page hero section displays the full intro paragraph verbatim as provided by the user.",
+        "The intro text is legible and styled consistently with the existing AD TRIBE amber/charcoal design theme.",
+        "The AD TRIBE logo/headline remains visible above the intro text.",
+        "No other landing page content or layout is broken by this change."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/LandingPage.tsx",
           "operation": "modify",
-          "description": "Redesign the landing page hero section to prominently feature 'AD TRIBE' as the headline with a compelling subheadline about the platform's value for advertising professionals. Integrate the generated hero background image from frontend/public/assets/generated/ad-tribe-hero-bg.dim_1920x1080.png as a full-width background treatment. Update the call-to-action button styling to be bold and energetic. Revise feature card copy and iconography to emphasize the 'tribe' community concept (e.g., 'Join the Tribe', 'Connect Your Tribe', 'Tribe Marketplace', 'Collaborate as a Tribe'). Ensure the color palette uses warm, rich tones (deep amber, charcoal, off-white, gold) and avoids blue and purple. Maintain responsive design for mobile and desktop viewports."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update the global CSS color tokens to reflect the AD TRIBE brand palette using warm, rich tones (deep amber, charcoal, off-white, gold) while avoiding blue and purple. Adjust primary, secondary, accent, and foreground colors to create an energetic yet professional aesthetic consistent with the tribe/community brand identity. Ensure both light and dark mode variants are cohesive."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Update Tailwind configuration to include custom color utilities for the AD TRIBE brand palette (amber, charcoal, gold tones) that avoid blue and purple. Add any custom spacing, typography, or shadow utilities needed to support the new landing page design aesthetic."
+          "description": "Update the hero section to display the full AD TRIBE intro paragraph: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.' Position this text prominently beneath the AD TRIBE logo/headline, replacing or supplementing any existing subheadline copy. Ensure the text is legible and styled consistently with the existing amber/charcoal/gold color palette and typography (using Inter for body text as configured in index.html). Preserve the existing hero layout structure, logo visibility, and all other page content."
         }
       ]
     }

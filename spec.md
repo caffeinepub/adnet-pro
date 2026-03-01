@@ -1,13 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Rename the app from "AdNet Pro" to "AD TRIBE" and redesign the landing page with a new brand identity using warm, rich tones.
+**Goal:** Update the AD TRIBE landing page hero section with the full intro paragraph text.
 
 **Planned changes:**
-- Rename all user-facing references from "AdNet Pro" to "AD TRIBE" (browser tab title, header/navigation, hero section, and any other visible text)
-- Redesign the landing page hero section with a bold full-width "AD TRIBE" headline, a compelling subheadline, and a strong call-to-action button
-- Apply a new hero background using the ad-tribe-hero-bg image with warm amber, charcoal, and off-white tones (no blue or purple)
-- Update feature highlights/cards with copy and iconography reinforcing a community/tribe concept
-- Ensure the landing page is fully responsive on mobile and desktop
+- Replace or supplement the existing subheadline copy in the hero section of `LandingPage.tsx` with the full intro paragraph: "AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns."
+- Ensure the intro text is styled consistently with the existing amber/charcoal design theme and remains legible.
 
-**User-visible outcome:** Users see a rebranded "AD TRIBE" app with an energetic yet professional landing page featuring warm amber and charcoal tones, tribal/community-focused messaging, and a clear call-to-action.
+**User-visible outcome:** Visitors to the landing page will see the full AD TRIBE intro paragraph displayed prominently beneath the logo/headline in the hero section.
