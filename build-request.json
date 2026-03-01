@@ -1,0 +1,63 @@
+{
+  "kind": "build_request",
+  "title": "Rename app to AD TRIBE and redesign opening/landing page",
+  "projectName": "AD TRIBE",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-6",
+      "text": "Rename the application from 'AdNet Pro' to 'AD TRIBE' across all user-facing text, including the HTML title in index.html, the app name in the header/navigation, the landing page hero section, and any other visible references to the old name.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Name the app \" AD TRIBE\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "The browser tab title reads 'AD TRIBE'",
+        "The header/navigation logo or wordmark displays 'AD TRIBE'",
+        "No visible references to 'AdNet Pro' remain in the UI"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Redesign the opening (landing) page to reflect the 'AD TRIBE' brand identity. The hero section should feature a bold, full-width headline incorporating 'AD TRIBE', a compelling subheadline communicating the platform's value proposition for advertising industry professionals, and a strong call-to-action button. The overall aesthetic should feel energetic yet professional — using warm, rich tones (e.g., deep amber, charcoal, off-white) consistent with the existing sophisticated color palette (avoiding blue and purple). Include a visually striking hero background treatment and reorganize the feature highlights section with updated iconography and copy that reinforces the 'tribe' community concept.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "The opening page"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Landing page hero prominently displays 'AD TRIBE' as the app name",
+        "Hero section has a visually impactful background treatment (gradient, texture, or image)",
+        "A clear call-to-action button is present and functional for authentication",
+        "Feature cards/highlights are updated with copy and icons reflecting community/tribe messaging",
+        "Page is fully responsive on mobile and desktop",
+        "Color palette avoids blue and purple and feels cohesive with the brand"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not change backend logic or data models",
+    "Do not modify files listed in frontend.immutablePaths",
+    "Color palette must avoid blue and purple tones"
+  ],
+  "nonGoals": [
+    "Adding new features or pages beyond the landing page redesign",
+    "Changing authentication flow or routing logic",
+    "Modifying profile forms or dashboard functionality"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Bold abstract tribal/geometric pattern hero background with warm amber, charcoal, and gold tones evoking a premium advertising community (ad-tribe-hero-bg.dim_1920x1080.png)"
+    ],
+    "edits": []
+  }
+}

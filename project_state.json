@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Professional networking platform for advertising industry connecting production houses with professionals, equipment vendors, and shoot locations with availability checking for specific shoot dates",
+  "architectural_notes": [
+    "Multi-user type system: professionals, equipment vendors, shoot locations, production houses",
+    "Calendar/availability management core feature",
+    "Search and filtering system for finding service providers"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Bold abstract tribal/geometric pattern hero background with warm amber, charcoal, and gold tones evoking a premium advertising community (ad-tribe-hero-bg.dim_1920x1080.png)",
+  "existing_features": [
+    {
+      "id": "feature-create-user-profile-system-supporting-four-distinct-account-types-advertising-professionals-equipment-vendors-shoot-locations-and-production-houses-each-profile-type-must-store-role-specific-information-e-g-professionals-store-specialties-and-portfolio-vendors-store-equipment-inventory-locations-store-venue-details-and-capacity-production-houses-store-company-information",
+      "title": "Create user profile system supporting four distinct account types: advertising professionals, equipment vendors, shoot locations, and production houses. Each profile type must store role-specific information (e.g., professionals store specialties and portfolio, vendors store equipment inventory, locations store venue details and capacity, production houses store company information).",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-availability-calendar-system-where-professionals-vendors-and-locations-can-mark-their-availability-status-for-specific-dates-production-houses-must-be-able-to-query-availability-across-multiple-service-providers-for-given-date-ranges",
+      "title": "Implement availability calendar system where professionals, vendors, and locations can mark their availability status for specific dates. Production houses must be able to query availability across multiple service providers for given date ranges.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-production-house-dashboard-with-search-and-discovery-features-to-find-advertising-professionals-equipment-vendors-and-shoot-locations-search-must-support-filtering-by-category-specialization-location-and-availability-dates",
+      "title": "Build production house dashboard with search and discovery features to find advertising professionals, equipment vendors, and shoot locations. Search must support filtering by category, specialization, location, and availability dates.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-connection-and-networking-system-allowing-production-houses-to-send-connection-requests-to-professionals-vendors-and-locations-service-providers-must-be-able-to-accept-or-decline-requests-creating-a-network-of-verified-connections",
+      "title": "Create connection and networking system allowing production houses to send connection requests to professionals, vendors, and locations. Service providers must be able to accept or decline requests, creating a network of verified connections.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-a-professional-industry-appropriate-visual-theme-with-a-sophisticated-color-palette-avoid-blue-and-purple-clean-typography-suitable-for-business-users-and-a-modern-layout-that-emphasizes-clarity-and-efficient-navigation-the-design-should-feel-trustworthy-and-premium-appropriate-for-professional-networking-in-the-advertising-industry",
+      "title": "Design a professional, industry-appropriate visual theme with a sophisticated color palette (avoid blue and purple), clean typography suitable for business users, and a modern layout that emphasizes clarity and efficient navigation. The design should feel trustworthy and premium, appropriate for professional networking in the advertising industry.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rename-the-application-from-adnet-pro-to-ad-tribe-across-all-user-facing-text-including-the-html-title-in-index-html-the-app-name-in-the-header-navigation-the-landing-page-hero-section-and-any-other-visible-references-to-the-old-name",
+      "title": "Rename the application from 'AdNet Pro' to 'AD TRIBE' across all user-facing text, including the HTML title in index.html, the app name in the header/navigation, the landing page hero section, and any other visible references to the old name.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-the-opening-landing-page-to-reflect-the-ad-tribe-brand-identity-the-hero-section-should-feature-a-bold-full-width-headline-incorporating-ad-tribe-a-compelling-subheadline-communicating-the-platform-s-value-proposition-for-advertising-industry-professionals-and-a-strong-call-to-action-button-the-overall-aesthetic-should-feel-energetic-yet-professional-using-warm-rich-tones-e-g-deep-amber-charcoal-off-white-consistent-with-the-existing-sophisticated-color-palette-avoiding-blue-and-purple-include-a-visually-striking-hero-background-treatment-and-reorganize-the-feature-highlights-section-with-updated-iconography-and-copy-that-reinforces-the-tribe-community-concept",
+      "title": "Redesign the opening (landing) page to reflect the 'AD TRIBE' brand identity. The hero section should feature a bold, full-width headline incorporating 'AD TRIBE', a compelling subheadline communicating the platform's value proposition for advertising industry professionals, and a strong call-to-action button. The overall aesthetic should feel energetic yet professional — using warm, rich tones (e.g., deep amber, charcoal, off-white) consistent with the existing sophisticated color palette (avoiding blue and purple). Include a visually striking hero background treatment and reorganize the feature highlights section with updated iconography and copy that reinforces the 'tribe' community concept.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "User profiles for advertising professionals, equipment vendors, and shoot locations",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Production house dashboard to search and connect with service providers",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Availability calendar system for checking and booking specific shoot dates",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Networking and connection features between production houses and vendors/professionals",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "AD TRIBE",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

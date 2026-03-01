@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.375rem;
+
+        /* AD TRIBE Light Mode — warm charcoal, amber, gold */
+        --background: 0.97 0.008 75;
+        --foreground: 0.18 0.015 60;
+
+        --card: 1 0 0;
+        --card-foreground: 0.18 0.015 60;
+
+        --popover: 1 0 0;
+        --popover-foreground: 0.18 0.015 60;
+
+        /* Primary: deep amber */
+        --primary: 0.58 0.18 55;
+        --primary-foreground: 1 0 0;
+
+        /* Secondary: warm sand */
+        --secondary: 0.92 0.025 75;
+        --secondary-foreground: 0.18 0.015 60;
+
+        /* Muted: light warm gray */
+        --muted: 0.93 0.012 75;
+        --muted-foreground: 0.52 0.02 65;
+
+        /* Accent: gold */
+        --accent: 0.78 0.16 80;
+        --accent-foreground: 0.18 0.015 60;
+
+        --destructive: 0.55 0.22 25;
+        --destructive-foreground: 1 0 0;
+
+        --border: 0.88 0.018 70;
+        --input: 0.88 0.018 70;
+        --ring: 0.58 0.18 55;
+
+        --chart-1: 0.58 0.18 55;
+        --chart-2: 0.72 0.16 80;
+        --chart-3: 0.45 0.14 35;
+        --chart-4: 0.65 0.12 95;
+        --chart-5: 0.80 0.10 65;
+    }
+
+    .dark {
+        /* AD TRIBE Dark Mode — deep charcoal, warm amber, gold */
+        --background: 0.14 0.012 55;
+        --foreground: 0.95 0.01 75;
+
+        --card: 0.18 0.015 55;
+        --card-foreground: 0.95 0.01 75;
+
+        --popover: 0.16 0.012 55;
+        --popover-foreground: 0.95 0.01 75;
+
+        /* Primary: bright amber */
+        --primary: 0.72 0.20 58;
+        --primary-foreground: 0.14 0.012 55;
+
+        /* Secondary: dark warm gray */
+        --secondary: 0.24 0.018 55;
+        --secondary-foreground: 0.95 0.01 75;
+
+        --muted: 0.26 0.015 55;
+        --muted-foreground: 0.62 0.02 65;
+
+        /* Accent: gold */
+        --accent: 0.68 0.18 78;
+        --accent-foreground: 0.14 0.012 55;
+
+        --destructive: 0.60 0.25 25;
+        --destructive-foreground: 0.95 0.01 75;
+
+        --border: 0.28 0.018 55;
+        --input: 0.28 0.018 55;
+        --ring: 0.72 0.20 58;
+
+        --chart-1: 0.72 0.20 58;
+        --chart-2: 0.78 0.18 80;
+        --chart-3: 0.55 0.16 35;
+        --chart-4: 0.68 0.14 95;
+        --chart-5: 0.82 0.12 65;
+    }
+
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-semibold;
+    }
+
+    h1 {
+        @apply text-4xl;
+    }
+
+    h2 {
+        @apply text-3xl;
+    }
+
+    h3 {
+        @apply text-2xl;
+    }
+}
