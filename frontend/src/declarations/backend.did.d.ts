@@ -10,105 +10,63 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface AdvertisingProfessional {
-  'id' : Principal,
-  'portfolio' : Array<string>,
+export interface AdvertisingRegistration {
+  'yearsOfExperience' : bigint,
+  'principal' : Principal,
+  'areaOfExpertise' : AreaOfExpertise,
+  'professionalDesignation' : ProfessionalDesignation,
+  'workReelURL' : string,
   'name' : string,
-  'availability' : Array<CalendarAvailability>,
-  'specialties' : Array<string>,
+  'currentCity' : string,
+  'availability' : Array<Time>,
+  'industryReferences' : [] | [string],
 }
-export interface CalendarAvailability {
-  'status' : { 'booked' : null } |
-    { 'available' : null } |
-    { 'unavailable' : null },
-  'date' : Time,
-}
-export interface EquipmentVendor {
-  'id' : Principal,
-  'inventory' : Array<string>,
-  'name' : string,
-  'availability' : Array<CalendarAvailability>,
-}
-export interface ProductionHouse {
-  'id' : Principal,
-  'name' : string,
-  'verifiedConnections' : Array<Principal>,
-  'companyInfo' : string,
-}
-export interface ShootLocation {
-  'id' : Principal,
-  'name' : string,
-  'description' : string,
-  'pricing' : bigint,
-  'availability' : Array<CalendarAvailability>,
-  'capacity' : bigint,
-}
+export type AreaOfExpertise = { 'pr' : null } |
+  { 'media' : null } |
+  { 'creative' : null } |
+  { 'production' : null } |
+  { 'other' : null } |
+  { 'research' : null } |
+  { 'strategy' : null } |
+  { 'postProduction' : null } |
+  { 'digital' : null } |
+  { 'accountManagement' : null };
+export type ProfessionalDesignation = { 'other' : null } |
+  { 'editor' : null } |
+  { 'artDirector' : null } |
+  { 'director' : null } |
+  { 'designer' : null } |
+  { 'mediaPlanner' : null } |
+  { 'accountExecutive' : null } |
+  { 'producer' : null } |
+  { 'cinematographer' : null } |
+  { 'strategist' : null } |
+  { 'copywriter' : null };
 export type Time = bigint;
 export interface UserProfile {
+  'areaOfExpertise' : [] | [AreaOfExpertise],
+  'professionalDesignation' : [] | [ProfessionalDesignation],
   'name' : string,
-  'profileType' : { 'professional' : null } |
-    { 'vendor' : null } |
-    { 'productionHouse' : null } |
-    { 'location' : null },
+  'currentCity' : string,
 }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'acceptRecommendation' : ActorMethod<[Principal], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'declineRecommendation' : ActorMethod<[Principal], undefined>,
-  'getAdvertisingProfessional' : ActorMethod<
-    [Principal],
-    AdvertisingProfessional
-  >,
-  'getAllAdvertisingProfessionals' : ActorMethod<
-    [],
-    Array<AdvertisingProfessional>
-  >,
-  'getAllCategories' : ActorMethod<[], Array<string>>,
-  'getAllEquipmentVendors' : ActorMethod<[], Array<EquipmentVendor>>,
-  'getAllProductionHouses' : ActorMethod<[], Array<ProductionHouse>>,
-  'getAllProfessions' : ActorMethod<[], Array<string>>,
-  'getAllShootLocations' : ActorMethod<[], Array<ShootLocation>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getEquipmentVendor' : ActorMethod<[Principal], EquipmentVendor>,
-  'getShootLocation' : ActorMethod<[Principal], ShootLocation>,
-  'getTimeSlotEntries' : ActorMethod<
-    [Time],
-    {
-      'professionals' : Array<AdvertisingProfessional>,
-      'vendors' : Array<EquipmentVendor>,
-      'locations' : Array<ShootLocation>,
-    }
+  'getProfessionalRegistration' : ActorMethod<
+    [Principal],
+    [] | [AdvertisingRegistration]
   >,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getVerifiedMembers' : ActorMethod<[], Array<Principal>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'searchAdvertisingProfessionalsBySpecialty' : ActorMethod<
-    [string],
-    Array<AdvertisingProfessional>
-  >,
-  'searchEquipmentVendorsByInventory' : ActorMethod<
-    [string],
-    Array<EquipmentVendor>
-  >,
-  'searchShootLocationsByCapacity' : ActorMethod<
-    [bigint],
-    Array<ShootLocation>
-  >,
-  'sendRecommendation' : ActorMethod<[Principal, string], undefined>,
-  'setAdvertisingProfessional' : ActorMethod<
-    [AdvertisingProfessional],
-    undefined
-  >,
-  'setEquipmentVendor' : ActorMethod<[EquipmentVendor], undefined>,
-  'setProductionHouse' : ActorMethod<[ProductionHouse], undefined>,
-  'setShootLocation' : ActorMethod<[ShootLocation], undefined>,
-  'updateAvailability' : ActorMethod<
-    [Principal, Array<CalendarAvailability>],
+  'submitProfessionalRegistration' : ActorMethod<
+    [AdvertisingRegistration],
     undefined
   >,
 }

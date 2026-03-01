@@ -13,97 +13,58 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const Time = IDL.Int;
-export const CalendarAvailability = IDL.Record({
-  'status' : IDL.Variant({
-    'booked' : IDL.Null,
-    'available' : IDL.Null,
-    'unavailable' : IDL.Null,
-  }),
-  'date' : Time,
+export const AreaOfExpertise = IDL.Variant({
+  'pr' : IDL.Null,
+  'media' : IDL.Null,
+  'creative' : IDL.Null,
+  'production' : IDL.Null,
+  'other' : IDL.Null,
+  'research' : IDL.Null,
+  'strategy' : IDL.Null,
+  'postProduction' : IDL.Null,
+  'digital' : IDL.Null,
+  'accountManagement' : IDL.Null,
 });
-export const AdvertisingProfessional = IDL.Record({
-  'id' : IDL.Principal,
-  'portfolio' : IDL.Vec(IDL.Text),
-  'name' : IDL.Text,
-  'availability' : IDL.Vec(CalendarAvailability),
-  'specialties' : IDL.Vec(IDL.Text),
-});
-export const EquipmentVendor = IDL.Record({
-  'id' : IDL.Principal,
-  'inventory' : IDL.Vec(IDL.Text),
-  'name' : IDL.Text,
-  'availability' : IDL.Vec(CalendarAvailability),
-});
-export const ProductionHouse = IDL.Record({
-  'id' : IDL.Principal,
-  'name' : IDL.Text,
-  'verifiedConnections' : IDL.Vec(IDL.Principal),
-  'companyInfo' : IDL.Text,
-});
-export const ShootLocation = IDL.Record({
-  'id' : IDL.Principal,
-  'name' : IDL.Text,
-  'description' : IDL.Text,
-  'pricing' : IDL.Nat,
-  'availability' : IDL.Vec(CalendarAvailability),
-  'capacity' : IDL.Nat,
+export const ProfessionalDesignation = IDL.Variant({
+  'other' : IDL.Null,
+  'editor' : IDL.Null,
+  'artDirector' : IDL.Null,
+  'director' : IDL.Null,
+  'designer' : IDL.Null,
+  'mediaPlanner' : IDL.Null,
+  'accountExecutive' : IDL.Null,
+  'producer' : IDL.Null,
+  'cinematographer' : IDL.Null,
+  'strategist' : IDL.Null,
+  'copywriter' : IDL.Null,
 });
 export const UserProfile = IDL.Record({
+  'areaOfExpertise' : IDL.Opt(AreaOfExpertise),
+  'professionalDesignation' : IDL.Opt(ProfessionalDesignation),
   'name' : IDL.Text,
-  'profileType' : IDL.Variant({
-    'professional' : IDL.Null,
-    'vendor' : IDL.Null,
-    'productionHouse' : IDL.Null,
-    'location' : IDL.Null,
-  }),
+  'currentCity' : IDL.Text,
+});
+export const Time = IDL.Int;
+export const AdvertisingRegistration = IDL.Record({
+  'yearsOfExperience' : IDL.Nat,
+  'principal' : IDL.Principal,
+  'areaOfExpertise' : AreaOfExpertise,
+  'professionalDesignation' : ProfessionalDesignation,
+  'workReelURL' : IDL.Text,
+  'name' : IDL.Text,
+  'currentCity' : IDL.Text,
+  'availability' : IDL.Vec(Time),
+  'industryReferences' : IDL.Opt(IDL.Text),
 });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'acceptRecommendation' : IDL.Func([IDL.Principal], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'declineRecommendation' : IDL.Func([IDL.Principal], [], []),
-  'getAdvertisingProfessional' : IDL.Func(
-      [IDL.Principal],
-      [AdvertisingProfessional],
-      ['query'],
-    ),
-  'getAllAdvertisingProfessionals' : IDL.Func(
-      [],
-      [IDL.Vec(AdvertisingProfessional)],
-      ['query'],
-    ),
-  'getAllCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-  'getAllEquipmentVendors' : IDL.Func(
-      [],
-      [IDL.Vec(EquipmentVendor)],
-      ['query'],
-    ),
-  'getAllProductionHouses' : IDL.Func(
-      [],
-      [IDL.Vec(ProductionHouse)],
-      ['query'],
-    ),
-  'getAllProfessions' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-  'getAllShootLocations' : IDL.Func([], [IDL.Vec(ShootLocation)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getEquipmentVendor' : IDL.Func(
+  'getProfessionalRegistration' : IDL.Func(
       [IDL.Principal],
-      [EquipmentVendor],
-      ['query'],
-    ),
-  'getShootLocation' : IDL.Func([IDL.Principal], [ShootLocation], ['query']),
-  'getTimeSlotEntries' : IDL.Func(
-      [Time],
-      [
-        IDL.Record({
-          'professionals' : IDL.Vec(AdvertisingProfessional),
-          'vendors' : IDL.Vec(EquipmentVendor),
-          'locations' : IDL.Vec(ShootLocation),
-        }),
-      ],
+      [IDL.Opt(AdvertisingRegistration)],
       ['query'],
     ),
   'getUserProfile' : IDL.Func(
@@ -111,30 +72,11 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getVerifiedMembers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'searchAdvertisingProfessionalsBySpecialty' : IDL.Func(
-      [IDL.Text],
-      [IDL.Vec(AdvertisingProfessional)],
-      ['query'],
-    ),
-  'searchEquipmentVendorsByInventory' : IDL.Func(
-      [IDL.Text],
-      [IDL.Vec(EquipmentVendor)],
-      ['query'],
-    ),
-  'searchShootLocationsByCapacity' : IDL.Func(
-      [IDL.Nat],
-      [IDL.Vec(ShootLocation)],
-      ['query'],
-    ),
-  'sendRecommendation' : IDL.Func([IDL.Principal, IDL.Text], [], []),
-  'setAdvertisingProfessional' : IDL.Func([AdvertisingProfessional], [], []),
-  'setEquipmentVendor' : IDL.Func([EquipmentVendor], [], []),
-  'setProductionHouse' : IDL.Func([ProductionHouse], [], []),
-  'setShootLocation' : IDL.Func([ShootLocation], [], []),
-  'updateAvailability' : IDL.Func(
-      [IDL.Principal, IDL.Vec(CalendarAvailability)],
+  'submitProfessionalRegistration' : IDL.Func(
+      [AdvertisingRegistration],
       [],
       [],
     ),
@@ -148,97 +90,58 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const Time = IDL.Int;
-  const CalendarAvailability = IDL.Record({
-    'status' : IDL.Variant({
-      'booked' : IDL.Null,
-      'available' : IDL.Null,
-      'unavailable' : IDL.Null,
-    }),
-    'date' : Time,
+  const AreaOfExpertise = IDL.Variant({
+    'pr' : IDL.Null,
+    'media' : IDL.Null,
+    'creative' : IDL.Null,
+    'production' : IDL.Null,
+    'other' : IDL.Null,
+    'research' : IDL.Null,
+    'strategy' : IDL.Null,
+    'postProduction' : IDL.Null,
+    'digital' : IDL.Null,
+    'accountManagement' : IDL.Null,
   });
-  const AdvertisingProfessional = IDL.Record({
-    'id' : IDL.Principal,
-    'portfolio' : IDL.Vec(IDL.Text),
-    'name' : IDL.Text,
-    'availability' : IDL.Vec(CalendarAvailability),
-    'specialties' : IDL.Vec(IDL.Text),
-  });
-  const EquipmentVendor = IDL.Record({
-    'id' : IDL.Principal,
-    'inventory' : IDL.Vec(IDL.Text),
-    'name' : IDL.Text,
-    'availability' : IDL.Vec(CalendarAvailability),
-  });
-  const ProductionHouse = IDL.Record({
-    'id' : IDL.Principal,
-    'name' : IDL.Text,
-    'verifiedConnections' : IDL.Vec(IDL.Principal),
-    'companyInfo' : IDL.Text,
-  });
-  const ShootLocation = IDL.Record({
-    'id' : IDL.Principal,
-    'name' : IDL.Text,
-    'description' : IDL.Text,
-    'pricing' : IDL.Nat,
-    'availability' : IDL.Vec(CalendarAvailability),
-    'capacity' : IDL.Nat,
+  const ProfessionalDesignation = IDL.Variant({
+    'other' : IDL.Null,
+    'editor' : IDL.Null,
+    'artDirector' : IDL.Null,
+    'director' : IDL.Null,
+    'designer' : IDL.Null,
+    'mediaPlanner' : IDL.Null,
+    'accountExecutive' : IDL.Null,
+    'producer' : IDL.Null,
+    'cinematographer' : IDL.Null,
+    'strategist' : IDL.Null,
+    'copywriter' : IDL.Null,
   });
   const UserProfile = IDL.Record({
+    'areaOfExpertise' : IDL.Opt(AreaOfExpertise),
+    'professionalDesignation' : IDL.Opt(ProfessionalDesignation),
     'name' : IDL.Text,
-    'profileType' : IDL.Variant({
-      'professional' : IDL.Null,
-      'vendor' : IDL.Null,
-      'productionHouse' : IDL.Null,
-      'location' : IDL.Null,
-    }),
+    'currentCity' : IDL.Text,
+  });
+  const Time = IDL.Int;
+  const AdvertisingRegistration = IDL.Record({
+    'yearsOfExperience' : IDL.Nat,
+    'principal' : IDL.Principal,
+    'areaOfExpertise' : AreaOfExpertise,
+    'professionalDesignation' : ProfessionalDesignation,
+    'workReelURL' : IDL.Text,
+    'name' : IDL.Text,
+    'currentCity' : IDL.Text,
+    'availability' : IDL.Vec(Time),
+    'industryReferences' : IDL.Opt(IDL.Text),
   });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'acceptRecommendation' : IDL.Func([IDL.Principal], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'declineRecommendation' : IDL.Func([IDL.Principal], [], []),
-    'getAdvertisingProfessional' : IDL.Func(
-        [IDL.Principal],
-        [AdvertisingProfessional],
-        ['query'],
-      ),
-    'getAllAdvertisingProfessionals' : IDL.Func(
-        [],
-        [IDL.Vec(AdvertisingProfessional)],
-        ['query'],
-      ),
-    'getAllCategories' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-    'getAllEquipmentVendors' : IDL.Func(
-        [],
-        [IDL.Vec(EquipmentVendor)],
-        ['query'],
-      ),
-    'getAllProductionHouses' : IDL.Func(
-        [],
-        [IDL.Vec(ProductionHouse)],
-        ['query'],
-      ),
-    'getAllProfessions' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-    'getAllShootLocations' : IDL.Func([], [IDL.Vec(ShootLocation)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getEquipmentVendor' : IDL.Func(
+    'getProfessionalRegistration' : IDL.Func(
         [IDL.Principal],
-        [EquipmentVendor],
-        ['query'],
-      ),
-    'getShootLocation' : IDL.Func([IDL.Principal], [ShootLocation], ['query']),
-    'getTimeSlotEntries' : IDL.Func(
-        [Time],
-        [
-          IDL.Record({
-            'professionals' : IDL.Vec(AdvertisingProfessional),
-            'vendors' : IDL.Vec(EquipmentVendor),
-            'locations' : IDL.Vec(ShootLocation),
-          }),
-        ],
+        [IDL.Opt(AdvertisingRegistration)],
         ['query'],
       ),
     'getUserProfile' : IDL.Func(
@@ -246,30 +149,11 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getVerifiedMembers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'searchAdvertisingProfessionalsBySpecialty' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(AdvertisingProfessional)],
-        ['query'],
-      ),
-    'searchEquipmentVendorsByInventory' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(EquipmentVendor)],
-        ['query'],
-      ),
-    'searchShootLocationsByCapacity' : IDL.Func(
-        [IDL.Nat],
-        [IDL.Vec(ShootLocation)],
-        ['query'],
-      ),
-    'sendRecommendation' : IDL.Func([IDL.Principal, IDL.Text], [], []),
-    'setAdvertisingProfessional' : IDL.Func([AdvertisingProfessional], [], []),
-    'setEquipmentVendor' : IDL.Func([EquipmentVendor], [], []),
-    'setProductionHouse' : IDL.Func([ProductionHouse], [], []),
-    'setShootLocation' : IDL.Func([ShootLocation], [], []),
-    'updateAvailability' : IDL.Func(
-        [IDL.Principal, IDL.Vec(CalendarAvailability)],
+    'submitProfessionalRegistration' : IDL.Func(
+        [AdvertisingRegistration],
         [],
         [],
       ),

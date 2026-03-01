@@ -1,24 +1,66 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T05:01:08.617Z",
+  "generatedAt": "2026-03-01T07:00:02.740Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-8",
-        "summary": "Update the opening landing page (LandingPage.tsx) to display the full AD TRIBE intro paragraph: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.' This text should appear prominently beneath the AD TRIBE logo/headline in the hero section, replacing or supplementing any existing subheadline copy.",
+        "id": "REQ-11",
+        "summary": "Save the uploaded tribal film camera artwork (unnamed.jpg) as a static asset at frontend/public/assets/generated/hero-bg.jpg and use it as the full-screen background image for the hero section in LandingPage.tsx. The image must cover the entire hero section (object-fit: cover, full width and height). Apply a dark semi-transparent overlay (e.g. rgba(0,0,0,0.45)–0.55) on top of the image so that all hero text and the 'Join the Tribe' CTA button remain clearly legible. The existing hero content structure (headline, intro paragraph, CTA button) must be preserved and rendered on top of the background.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/public/assets/generated/hero-bg.dim_1920x1080.jpg",
           "frontend/src/pages/LandingPage.tsx"
         ],
         "matchedFiles": [
           "frontend/src/pages/LandingPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-12",
+        "summary": "Retheme the entire application (all pages and components) with a color palette derived from the tribal film camera image: deep forest green (primary, e.g. ~#1a4a1a or #14421e), warm saffron/golden-amber (accent, e.g. ~#c8820a or #d4900a), and rich bronze/dark-gold for highlights. Replace the current amber/charcoal theme tokens in frontend/src/index.css, frontend/index.css, and frontend/tailwind.config.js with this new green-and-saffron palette. Update all components and pages that use the old theme tokens so buttons, headers, navigation, cards, badges, and interactive elements consistently use the new green and saffron palette. Text on dark backgrounds should use off-white or light cream; text on light backgrounds should use deep charcoal.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/pages/ConnectionsPage.tsx",
+          "frontend/src/pages/RegistrationPage.tsx",
+          "frontend/src/pages/RegistrationSuccessPage.tsx",
+          "frontend/src/components/registration/InlineRegistrationForm.tsx",
+          "frontend/src/components/profiles/ProfessionalProfileForm.tsx",
+          "frontend/src/components/profiles/LocationProfileForm.tsx",
+          "frontend/src/components/profiles/ProductionHouseProfileForm.tsx",
+          "frontend/src/components/profiles/VendorProfileForm.tsx",
+          "frontend/src/components/ProfileSetup.tsx",
+          "frontend/src/components/calendar/AvailabilityCalendar.tsx",
+          "frontend/src/components/calendar/AvailabilityLegend.tsx",
+          "frontend/src/components/search/SearchBar.tsx",
+          "frontend/src/components/search/SearchFilters.tsx",
+          "frontend/src/components/search/ProviderCard.tsx",
+          "frontend/src/components/search/SearchResults.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/pages/ProfilePage.tsx",
+          "frontend/src/pages/ConnectionsPage.tsx",
+          "frontend/src/pages/RegistrationPage.tsx",
+          "frontend/src/pages/RegistrationSuccessPage.tsx",
+          "frontend/src/components/registration/InlineRegistrationForm.tsx",
+          "frontend/src/components/ProfileSetup.tsx"
         ]
       }
     ]
@@ -28,7 +70,18 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/hero-bg.dim_1080x1920.jpg",
+    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/registration/InlineRegistrationForm.tsx",
+    "frontend/src/index.css",
+    "frontend/src/pages/ConnectionsPage.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
     "frontend/src/pages/LandingPage.tsx",
+    "frontend/src/pages/ProfilePage.tsx",
+    "frontend/src/pages/RegistrationPage.tsx",
+    "frontend/src/pages/RegistrationSuccessPage.tsx",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

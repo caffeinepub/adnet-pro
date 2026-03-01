@@ -6,84 +6,84 @@
     :root {
         --radius: 0.375rem;
 
-        /* AD TRIBE Light Mode — warm charcoal, amber, gold */
-        --background: 0.97 0.008 75;
-        --foreground: 0.18 0.015 60;
+        /* AD TRIBE Light Mode — forest green, saffron, cream */
+        --background: 0.97 0.008 100;
+        --foreground: 0.15 0.025 145;
 
         --card: 1 0 0;
-        --card-foreground: 0.18 0.015 60;
+        --card-foreground: 0.15 0.025 145;
 
         --popover: 1 0 0;
-        --popover-foreground: 0.18 0.015 60;
+        --popover-foreground: 0.15 0.025 145;
 
-        /* Primary: deep amber */
-        --primary: 0.58 0.18 55;
-        --primary-foreground: 1 0 0;
+        /* Primary: deep forest green */
+        --primary: 0.38 0.12 145;
+        --primary-foreground: 0.97 0.008 100;
 
-        /* Secondary: warm sand */
-        --secondary: 0.92 0.025 75;
-        --secondary-foreground: 0.18 0.015 60;
+        /* Secondary: warm sage */
+        --secondary: 0.90 0.025 130;
+        --secondary-foreground: 0.15 0.025 145;
 
-        /* Muted: light warm gray */
-        --muted: 0.93 0.012 75;
-        --muted-foreground: 0.52 0.02 65;
+        /* Muted: light warm gray-green */
+        --muted: 0.93 0.015 130;
+        --muted-foreground: 0.50 0.025 130;
 
-        /* Accent: gold */
-        --accent: 0.78 0.16 80;
-        --accent-foreground: 0.18 0.015 60;
+        /* Accent: warm saffron/golden-amber */
+        --accent: 0.72 0.18 65;
+        --accent-foreground: 0.12 0.02 145;
 
         --destructive: 0.55 0.22 25;
         --destructive-foreground: 1 0 0;
 
-        --border: 0.88 0.018 70;
-        --input: 0.88 0.018 70;
-        --ring: 0.58 0.18 55;
+        --border: 0.87 0.020 130;
+        --input: 0.87 0.020 130;
+        --ring: 0.38 0.12 145;
 
-        --chart-1: 0.58 0.18 55;
-        --chart-2: 0.72 0.16 80;
-        --chart-3: 0.45 0.14 35;
-        --chart-4: 0.65 0.12 95;
-        --chart-5: 0.80 0.10 65;
+        --chart-1: 0.38 0.12 145;
+        --chart-2: 0.72 0.18 65;
+        --chart-3: 0.55 0.14 155;
+        --chart-4: 0.65 0.16 80;
+        --chart-5: 0.48 0.10 140;
     }
 
     .dark {
-        /* AD TRIBE Dark Mode — deep charcoal, warm amber, gold */
-        --background: 0.14 0.012 55;
-        --foreground: 0.95 0.01 75;
+        /* AD TRIBE Dark Mode — deep forest, warm saffron, dark earth */
+        --background: 0.12 0.018 145;
+        --foreground: 0.94 0.012 90;
 
-        --card: 0.18 0.015 55;
-        --card-foreground: 0.95 0.01 75;
+        --card: 0.16 0.022 145;
+        --card-foreground: 0.94 0.012 90;
 
-        --popover: 0.16 0.012 55;
-        --popover-foreground: 0.95 0.01 75;
+        --popover: 0.14 0.018 145;
+        --popover-foreground: 0.94 0.012 90;
 
-        /* Primary: bright amber */
-        --primary: 0.72 0.20 58;
-        --primary-foreground: 0.14 0.012 55;
+        /* Primary: bright forest green */
+        --primary: 0.58 0.18 145;
+        --primary-foreground: 0.10 0.015 145;
 
-        /* Secondary: dark warm gray */
-        --secondary: 0.24 0.018 55;
-        --secondary-foreground: 0.95 0.01 75;
+        /* Secondary: dark sage */
+        --secondary: 0.22 0.025 145;
+        --secondary-foreground: 0.94 0.012 90;
 
-        --muted: 0.26 0.015 55;
-        --muted-foreground: 0.62 0.02 65;
+        --muted: 0.24 0.020 145;
+        --muted-foreground: 0.60 0.025 130;
 
-        /* Accent: gold */
-        --accent: 0.68 0.18 78;
-        --accent-foreground: 0.14 0.012 55;
+        /* Accent: warm saffron/golden-amber */
+        --accent: 0.72 0.20 65;
+        --accent-foreground: 0.10 0.015 145;
 
         --destructive: 0.60 0.25 25;
-        --destructive-foreground: 0.95 0.01 75;
+        --destructive-foreground: 0.94 0.012 90;
 
-        --border: 0.28 0.018 55;
-        --input: 0.28 0.018 55;
-        --ring: 0.72 0.20 58;
+        --border: 0.26 0.022 145;
+        --input: 0.26 0.022 145;
+        --ring: 0.58 0.18 145;
 
-        --chart-1: 0.72 0.20 58;
-        --chart-2: 0.78 0.18 80;
-        --chart-3: 0.55 0.16 35;
-        --chart-4: 0.68 0.14 95;
-        --chart-5: 0.82 0.12 65;
+        --chart-1: 0.58 0.18 145;
+        --chart-2: 0.72 0.20 65;
+        --chart-3: 0.48 0.14 155;
+        --chart-4: 0.65 0.18 80;
+        --chart-5: 0.42 0.12 140;
     }
 
     * {

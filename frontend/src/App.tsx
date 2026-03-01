@@ -7,6 +7,8 @@ import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
 import ConnectionsPage from './pages/ConnectionsPage';
 import LandingPage from './pages/LandingPage';
+import RegistrationPage from './pages/RegistrationPage';
+import RegistrationSuccessPage from './pages/RegistrationSuccessPage';
 
 function RootComponent() {
   const { identity, loginStatus } = useInternetIdentity();
@@ -69,7 +71,26 @@ const connectionsRoute = createRoute({
   },
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, profileRoute, dashboardRoute, connectionsRoute]);
+const registrationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/registration',
+  component: RegistrationPage,
+});
+
+const registrationSuccessRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/registration/success',
+  component: RegistrationSuccessPage,
+});
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  profileRoute,
+  dashboardRoute,
+  connectionsRoute,
+  registrationRoute,
+  registrationSuccessRoute,
+]);
 
 const router = createRouter({ 
   routeTree,

@@ -1,22 +1,146 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update landing page intro text for AD TRIBE",
+  "title": "Use tribal film camera image as full-screen hero background and apply green & saffron palette app-wide",
   "requirements": [
     {
-      "id": "REQ-8",
-      "summary": "Update the LandingPage.tsx hero section to display the full AD TRIBE intro paragraph beneath the logo/headline, replacing or supplementing existing subheadline copy while preserving the amber/charcoal design theme",
+      "id": "REQ-11",
+      "summary": "Use the tribal film camera artwork (unnamed.jpg) as a full-screen hero background with overlay in LandingPage.tsx",
       "acceptanceCriteria": [
-        "The landing page hero section displays the full intro paragraph verbatim as provided by the user.",
-        "The intro text is legible and styled consistently with the existing AD TRIBE amber/charcoal design theme.",
-        "The AD TRIBE logo/headline remains visible above the intro text.",
-        "No other landing page content or layout is broken by this change."
+        "The tribal film camera image (unnamed.jpg) fills the full width and height of the hero section with no white/solid-color gaps.",
+        "All existing hero text (AD TRIBE headline, intro paragraph, CTA) is visible and readable over the image.",
+        "A dark semi-transparent overlay is present between the image and the text to ensure readability.",
+        "The image does not appear outside the hero section (other sections are unaffected)."
       ],
       "file_operations": [
         {
+          "path": "frontend/public/assets/generated/hero-bg.dim_1920x1080.jpg",
+          "operation": "create",
+          "description": "Save the resized and optimized tribal film camera artwork (from unnamed.jpg) as hero-bg.dim_1920x1080.jpg to be used as the hero section background image."
+        },
+        {
           "path": "frontend/src/pages/LandingPage.tsx",
           "operation": "modify",
-          "description": "Update the hero section to display the full AD TRIBE intro paragraph: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.' Position this text prominently beneath the AD TRIBE logo/headline, replacing or supplementing any existing subheadline copy. Ensure the text is legible and styled consistently with the existing amber/charcoal/gold color palette and typography (using Inter for body text as configured in index.html). Preserve the existing hero layout structure, logo visibility, and all other page content."
+          "description": "Update the hero section to use frontend/public/assets/generated/hero-bg.dim_1920x1080.jpg as a full-screen background image with object-fit: cover. Add a dark semi-transparent overlay (rgba(0,0,0,0.45) to rgba(0,0,0,0.55)) between the background image and the hero content to ensure text readability. Preserve the existing hero content structure (headline, intro paragraph, CTA button) and render it on top of the background. The background image must fill the entire hero section width and height with no gaps."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Retheme the entire application with a green and saffron color palette inspired by the tribal film camera image",
+      "acceptanceCriteria": [
+        "Primary brand color is a deep forest green visually consistent with the image background.",
+        "Accent/CTA color is warm saffron or golden-amber consistent with the glowing film strip in the image.",
+        "No blue or purple appears anywhere in the UI.",
+        "All pages (Landing, Dashboard, Profile, Connections, Registration, Success) use the new palette consistently.",
+        "Buttons, navigation items, and interactive highlights use the saffron/gold accent color.",
+        "CSS custom properties and Tailwind config tokens are updated; no hardcoded old amber/charcoal hex values remain for brand colors."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Replace the current amber/charcoal theme tokens with the new green and saffron palette. Update CSS custom properties for both light and dark modes: set primary to deep forest green (~#1a4a1a or #14421e in OKLCH equivalent), accent to warm saffron/golden-amber (~#c8820a or #d4900a in OKLCH equivalent), and highlights to rich bronze/dark-gold. Update text colors so text on dark backgrounds uses off-white or light cream, and text on light backgrounds uses deep charcoal. Remove any references to the old amber/charcoal color values."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Update the Tailwind color tokens to match the new green and saffron palette. Replace the current amber, charcoal, and gold OKLCH color definitions with deep forest green (primary), warm saffron/golden-amber (accent), and rich bronze/dark-gold (highlights). Ensure all color variants (50-950) are updated to reflect the new palette. Remove any old amber/charcoal hex values."
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Update all color references to use the new green and saffron theme tokens from Tailwind config. Ensure buttons, headers, feature cards, and stats use the new palette. The 'Join the Tribe' CTA button should use the saffron/gold accent color. Replace any hardcoded color classes or inline styles with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Update the header navigation, login/logout buttons, and footer to use the new green and saffron theme tokens. Ensure the navigation items use the saffron/gold accent color for interactive states. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Update the navigation cards to use the new green and saffron theme tokens. Ensure card backgrounds, borders, and interactive elements reflect the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "modify",
+          "description": "Update all color references to use the new green and saffron theme tokens. Ensure profile cards, buttons, and any interactive elements use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/pages/ConnectionsPage.tsx",
+          "operation": "modify",
+          "description": "Update the verified members list and cards to use the new green and saffron theme tokens. Ensure loading skeletons and empty state messages use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/pages/RegistrationPage.tsx",
+          "operation": "modify",
+          "description": "Update the registration page wrapper to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/pages/RegistrationSuccessPage.tsx",
+          "operation": "modify",
+          "description": "Update the success page to use the new green and saffron theme tokens. Ensure the confirmation message and navigation buttons use the saffron/gold accent color. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/registration/InlineRegistrationForm.tsx",
+          "operation": "modify",
+          "description": "Update the multi-step registration form to use the new green and saffron theme tokens. Ensure form inputs, buttons, step indicators, and the availability calendar use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/profiles/ProfessionalProfileForm.tsx",
+          "operation": "modify",
+          "description": "Update the professional profile card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/profiles/LocationProfileForm.tsx",
+          "operation": "modify",
+          "description": "Update the location profile placeholder card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/profiles/ProductionHouseProfileForm.tsx",
+          "operation": "modify",
+          "description": "Update the production house profile placeholder card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/profiles/VendorProfileForm.tsx",
+          "operation": "modify",
+          "description": "Update the vendor profile placeholder card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetup.tsx",
+          "operation": "modify",
+          "description": "Update the profile setup modal to use the new green and saffron theme tokens. Ensure dialog background, input fields, and buttons use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/calendar/AvailabilityCalendar.tsx",
+          "operation": "modify",
+          "description": "Update the calendar component to use the new green and saffron theme tokens. Ensure date cells, selected states, and interactive elements use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/calendar/AvailabilityLegend.tsx",
+          "operation": "modify",
+          "description": "Update the legend color indicators to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/search/SearchBar.tsx",
+          "operation": "modify",
+          "description": "Update the search input to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/search/SearchFilters.tsx",
+          "operation": "modify",
+          "description": "Update the filter dropdown to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/search/ProviderCard.tsx",
+          "operation": "modify",
+          "description": "Update the provider cards to use the new green and saffron theme tokens. Ensure card backgrounds, borders, tags, and badges use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+        },
+        {
+          "path": "frontend/src/components/search/SearchResults.tsx",
+          "operation": "modify",
+          "description": "Update the search results container to use the new green and saffron theme tokens. Ensure loading skeletons and empty state messages use the new palette. Replace any hardcoded color classes with the updated theme tokens."
         }
       ]
     }

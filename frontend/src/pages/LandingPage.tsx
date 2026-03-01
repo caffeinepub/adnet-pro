@@ -1,35 +1,42 @@
+import { useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
-import { Users, Calendar, Search, Zap, ArrowRight, Star } from 'lucide-react';
-import { Variant_professional_vendor_productionHouse_location } from '../backend';
-import { useEffect } from 'react';
+import { Users, Calendar, Search, Zap, ArrowRight, Star, X } from 'lucide-react';
+import InlineRegistrationForm from '../components/registration/InlineRegistrationForm';
 
 const features = [
   {
+    id: 'join',
     icon: Users,
     title: 'Join the Tribe',
     description:
       'Become part of an exclusive community of advertising professionals, vendors, and production houses.',
+    cta: true,
   },
   {
+    id: 'availability',
     icon: Calendar,
     title: 'Tribe Availability',
     description:
       "Sync your calendar with the tribe. Know who's free, when they're free, and book with confidence.",
+    cta: false,
   },
   {
+    id: 'marketplace',
     icon: Search,
     title: 'Tribe Marketplace',
     description:
-      'Discover top-tier talent, premium equipment, and stunning shoot locations \u2014 all within your tribe.',
+      'Discover top-tier talent, premium equipment, and stunning shoot locations — all within your tribe.',
+    cta: false,
   },
   {
+    id: 'collaborate',
     icon: Zap,
     title: 'Collaborate as a Tribe',
     description:
       'Send connection requests, build verified partnerships, and create campaigns that move the industry.',
+    cta: false,
   },
 ];
 
@@ -42,50 +49,69 @@ const stats = [
 
 export default function LandingPage() {
   const { identity, login, loginStatus } = useInternetIdentity();
-  const { data: userProfile } = useGetCallerUserProfile();
   const navigate = useNavigate();
+  const formSectionRef = useRef<HTMLDivElement>(null);
+
+  const [showInlineForm, setShowInlineForm] = useState(false);
 
   const isAuthenticated = !!identity;
 
-  useEffect(() => {
-    if (isAuthenticated && userProfile) {
-      if (
-        userProfile.profileType ===
-        Variant_professional_vendor_productionHouse_location.productionHouse
-      ) {
-        navigate({ to: '/dashboard' });
-      } else {
-        navigate({ to: '/profile' });
+  const handleJoinTribeCard = async () => {
+    if (!isAuthenticated) {
+      try {
+        await login();
+      } catch {
+        return;
       }
     }
-  }, [isAuthenticated, userProfile, navigate]);
+    setShowInlineForm(true);
+    setTimeout(() => {
+      formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  };
 
-  const handleGetStarted = () => {
+  const handleFormSuccess = () => {
+    navigate({ to: '/registration/success' });
+  };
+
+  const handleHeroJoin = async () => {
     if (!isAuthenticated) {
-      login();
+      try {
+        await login();
+      } catch {
+        return;
+      }
     }
+    setShowInlineForm(true);
+    setTimeout(() => {
+      formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
   };
 
   return (
     <div className="space-y-0 -mt-8">
       {/* ── HERO ── */}
       <section className="relative min-h-[88vh] flex items-center justify-center overflow-hidden rounded-b-3xl">
-        {/* Background image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              'url(/assets/generated/ad-tribe-hero-bg.dim_1920x1080.png)',
-          }}
+        {/* Full-screen tribal film camera background image */}
+        <img
+          src="/assets/unnamed.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        {/* Dark overlay with warm tint */}
-        <div className="absolute inset-0 bg-gradient-to-br from-charcoal-deep/90 via-charcoal/80 to-amber-dark/70" />
-        {/* Subtle gold shimmer at bottom */}
+
+        {/* Dark green-tinted overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-forest-deep/80 via-forest-deep/65 to-forest-deep/85" />
+
+        {/* Subtle saffron glow at center */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_55%,oklch(0.72_0.20_65_/_0.12),transparent)]" />
+
+        {/* Fade to background at bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center px-6 space-y-8">
           {/* Eyebrow */}
-          <div className="inline-flex items-center gap-2 bg-primary/20 border border-primary/40 rounded-full px-4 py-1.5 text-sm font-medium text-amber-light backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 bg-saffron/20 border border-saffron/50 rounded-full px-4 py-1.5 text-sm font-medium text-saffron-light backdrop-blur-sm">
             <Star className="w-3.5 h-3.5 fill-current" />
             The Advertising Industry&apos;s Network
           </div>
@@ -106,28 +132,26 @@ export default function LandingPage() {
           </div>
 
           {/* CTA */}
-          {!isAuthenticated && (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-              <Button
-                size="lg"
-                onClick={handleGetStarted}
-                disabled={loginStatus === 'logging-in'}
-                className="text-base px-8 py-6 rounded-full shadow-amber font-semibold tracking-wide"
-              >
-                {loginStatus === 'logging-in' ? (
-                  'Logging in...'
-                ) : (
-                  <>
-                    Join the Tribe
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </>
-                )}
-              </Button>
-              <span className="text-white/50 text-sm">
-                Free to join &middot; No credit card required
-              </span>
-            </div>
-          )}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+            <Button
+              size="lg"
+              onClick={handleHeroJoin}
+              disabled={loginStatus === 'logging-in'}
+              className="text-base px-8 py-6 rounded-full shadow-saffron font-semibold tracking-wide bg-saffron hover:bg-saffron-dark text-forest-deep border-0"
+            >
+              {loginStatus === 'logging-in' ? (
+                'Logging in...'
+              ) : (
+                <>
+                  Join the Tribe
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </>
+              )}
+            </Button>
+            <span className="text-white/50 text-sm">
+              Free to join &middot; No credit card required
+            </span>
+          </div>
         </div>
       </section>
 
@@ -165,13 +189,43 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature) => {
               const Icon = feature.icon;
+              const isJoinCard = feature.id === 'join';
+              const isActive = isJoinCard && showInlineForm;
+
               return (
                 <div
                   key={feature.title}
-                  className="group bg-card border border-border rounded-2xl p-6 space-y-4 hover:border-primary/50 hover:shadow-amber transition-all duration-300"
+                  className={`group bg-card border rounded-2xl p-6 space-y-4 transition-all duration-300
+                    ${isJoinCard
+                      ? 'cursor-pointer hover:border-primary/70 hover:shadow-forest border-primary/30'
+                      : 'border-border hover:border-primary/50 hover:shadow-forest'
+                    }
+                    ${isActive ? 'border-primary shadow-forest ring-1 ring-primary/30' : ''}
+                  `}
+                  onClick={isJoinCard ? handleJoinTribeCard : undefined}
+                  role={isJoinCard ? 'button' : undefined}
+                  tabIndex={isJoinCard ? 0 : undefined}
+                  onKeyDown={
+                    isJoinCard
+                      ? (e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleJoinTribeCard();
+                          }
+                        }
+                      : undefined
+                  }
+                  aria-expanded={isJoinCard ? showInlineForm : undefined}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Icon className="w-6 h-6 text-primary" />
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors
+                      ${isJoinCard
+                        ? 'bg-saffron/15 group-hover:bg-saffron/25'
+                        : 'bg-primary/10 group-hover:bg-primary/20'
+                      }
+                    `}
+                  >
+                    <Icon className={`w-6 h-6 ${isJoinCard ? 'text-saffron' : 'text-primary'}`} />
                   </div>
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold text-foreground">
@@ -181,19 +235,74 @@ export default function LandingPage() {
                       {feature.description}
                     </p>
                   </div>
+                  {isJoinCard && (
+                    <div className="pt-1">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-sm font-semibold transition-colors
+                          ${isActive ? 'text-saffron' : 'text-saffron/70 group-hover:text-saffron'}
+                        `}
+                      >
+                        {isActive ? (
+                          <>
+                            <X className="w-3.5 h-3.5" />
+                            Close form
+                          </>
+                        ) : (
+                          <>
+                            Register now
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </>
+                        )}
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
+
+          {/* ── INLINE REGISTRATION FORM ── */}
+          {showInlineForm && (
+            <div
+              ref={formSectionRef}
+              className="mt-10 max-w-2xl mx-auto"
+            >
+              <div className="bg-card border border-primary/30 rounded-2xl p-8 shadow-forest space-y-6">
+                {/* Form header */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <h3 className="font-display text-3xl tracking-widest text-foreground">
+                      JOIN THE TRIBE
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      Tell us about yourself and become part of the AD TRIBE community.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowInlineForm(false)}
+                    className="mt-1 p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex-shrink-0"
+                    aria-label="Close registration form"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="border-t border-border" />
+
+                <InlineRegistrationForm onSuccess={handleFormSuccess} />
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* ── BOTTOM CTA ── */}
       <section className="py-24 px-4">
         <div className="container mx-auto">
-          <div className="relative bg-charcoal rounded-3xl overflow-hidden px-8 py-16 text-center space-y-6">
+          <div className="relative bg-forest rounded-3xl overflow-hidden px-8 py-16 text-center space-y-6">
             {/* Decorative gradient */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-gold/10 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-saffron/15 pointer-events-none" />
             <div className="relative z-10 space-y-6">
               <h2 className="font-display text-5xl md:text-6xl tracking-widest text-white">
                 READY TO CREATE?
@@ -202,23 +311,21 @@ export default function LandingPage() {
                 Join AD TRIBE today and connect with the best talent, equipment,
                 and locations in the advertising industry.
               </p>
-              {!isAuthenticated && (
-                <Button
-                  size="lg"
-                  onClick={handleGetStarted}
-                  disabled={loginStatus === 'logging-in'}
-                  className="text-base px-10 py-6 rounded-full shadow-amber font-semibold tracking-wide mt-2"
-                >
-                  {loginStatus === 'logging-in' ? (
-                    'Logging in...'
-                  ) : (
-                    <>
-                      Get Started Free
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button
+                size="lg"
+                onClick={handleHeroJoin}
+                disabled={loginStatus === 'logging-in'}
+                className="text-base px-10 py-6 rounded-full shadow-saffron font-semibold tracking-wide mt-2 bg-saffron hover:bg-saffron-dark text-forest-deep border-0"
+              >
+                {loginStatus === 'logging-in' ? (
+                  'Logging in...'
+                ) : (
+                  <>
+                    Get Started Free
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>

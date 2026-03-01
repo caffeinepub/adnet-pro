@@ -7,88 +7,62 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface EquipmentVendor {
-    id: Principal;
-    inventory: Array<string>;
+export interface AdvertisingRegistration {
+    yearsOfExperience: bigint;
+    principal: Principal;
+    areaOfExpertise: AreaOfExpertise;
+    professionalDesignation: ProfessionalDesignation;
+    workReelURL: string;
     name: string;
-    availability: Array<CalendarAvailability>;
-}
-export interface CalendarAvailability {
-    status: Variant_booked_available_unavailable;
-    date: Time;
+    currentCity: string;
+    availability: Array<Time>;
+    industryReferences?: string;
 }
 export type Time = bigint;
-export interface ShootLocation {
-    id: Principal;
-    name: string;
-    description: string;
-    pricing: bigint;
-    availability: Array<CalendarAvailability>;
-    capacity: bigint;
-}
-export interface ProductionHouse {
-    id: Principal;
-    name: string;
-    verifiedConnections: Array<Principal>;
-    companyInfo: string;
-}
 export interface UserProfile {
+    areaOfExpertise?: AreaOfExpertise;
+    professionalDesignation?: ProfessionalDesignation;
     name: string;
-    profileType: Variant_professional_vendor_productionHouse_location;
+    currentCity: string;
 }
-export interface AdvertisingProfessional {
-    id: Principal;
-    portfolio: Array<string>;
-    name: string;
-    availability: Array<CalendarAvailability>;
-    specialties: Array<string>;
+export enum AreaOfExpertise {
+    pr = "pr",
+    media = "media",
+    creative = "creative",
+    production = "production",
+    other = "other",
+    research = "research",
+    strategy = "strategy",
+    postProduction = "postProduction",
+    digital = "digital",
+    accountManagement = "accountManagement"
+}
+export enum ProfessionalDesignation {
+    other = "other",
+    editor = "editor",
+    artDirector = "artDirector",
+    director = "director",
+    designer = "designer",
+    mediaPlanner = "mediaPlanner",
+    accountExecutive = "accountExecutive",
+    producer = "producer",
+    cinematographer = "cinematographer",
+    strategist = "strategist",
+    copywriter = "copywriter"
 }
 export enum UserRole {
     admin = "admin",
     user = "user",
     guest = "guest"
 }
-export enum Variant_booked_available_unavailable {
-    booked = "booked",
-    available = "available",
-    unavailable = "unavailable"
-}
-export enum Variant_professional_vendor_productionHouse_location {
-    professional = "professional",
-    vendor = "vendor",
-    productionHouse = "productionHouse",
-    location = "location"
-}
 export interface backendInterface {
-    acceptRecommendation(recommendationFrom: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    declineRecommendation(recommendationFrom: Principal): Promise<void>;
-    getAdvertisingProfessional(id: Principal): Promise<AdvertisingProfessional>;
-    getAllAdvertisingProfessionals(): Promise<Array<AdvertisingProfessional>>;
-    getAllCategories(): Promise<Array<string>>;
-    getAllEquipmentVendors(): Promise<Array<EquipmentVendor>>;
-    getAllProductionHouses(): Promise<Array<ProductionHouse>>;
-    getAllProfessions(): Promise<Array<string>>;
-    getAllShootLocations(): Promise<Array<ShootLocation>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getEquipmentVendor(id: Principal): Promise<EquipmentVendor>;
-    getShootLocation(id: Principal): Promise<ShootLocation>;
-    getTimeSlotEntries(date: Time): Promise<{
-        professionals: Array<AdvertisingProfessional>;
-        vendors: Array<EquipmentVendor>;
-        locations: Array<ShootLocation>;
-    }>;
+    getProfessionalRegistration(user: Principal): Promise<AdvertisingRegistration | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    searchAdvertisingProfessionalsBySpecialty(specialty: string): Promise<Array<AdvertisingProfessional>>;
-    searchEquipmentVendorsByInventory(item: string): Promise<Array<EquipmentVendor>>;
-    searchShootLocationsByCapacity(requiredCapacity: bigint): Promise<Array<ShootLocation>>;
-    sendRecommendation(toUser: Principal, message: string): Promise<void>;
-    setAdvertisingProfessional(professional: AdvertisingProfessional): Promise<void>;
-    setEquipmentVendor(vendor: EquipmentVendor): Promise<void>;
-    setProductionHouse(house: ProductionHouse): Promise<void>;
-    setShootLocation(location: ShootLocation): Promise<void>;
-    updateAvailability(id: Principal, availability: Array<CalendarAvailability>): Promise<void>;
+    submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
 }

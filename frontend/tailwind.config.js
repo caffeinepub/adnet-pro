@@ -56,60 +56,58 @@ export default {
                     4: 'oklch(var(--chart-4))',
                     5: 'oklch(var(--chart-5))'
                 },
-                /* AD TRIBE brand utilities */
-                amber: {
-                    tribe: 'oklch(0.58 0.18 55)',
-                    light: 'oklch(0.78 0.16 58)',
-                    dark: 'oklch(0.42 0.14 52)',
+                /* AD TRIBE brand utilities — forest green + saffron */
+                saffron: {
+                    DEFAULT: 'oklch(0.72 0.20 65)',
+                    light: 'oklch(0.82 0.16 70)',
+                    dark: 'oklch(0.55 0.18 60)',
                 },
-                charcoal: {
-                    DEFAULT: 'oklch(0.18 0.015 60)',
-                    light: 'oklch(0.28 0.018 58)',
-                    deep: 'oklch(0.12 0.010 55)',
+                forest: {
+                    DEFAULT: 'oklch(0.28 0.10 145)',
+                    light: 'oklch(0.42 0.14 145)',
+                    deep: 'oklch(0.14 0.018 145)',
                 },
                 gold: {
-                    DEFAULT: 'oklch(0.78 0.16 80)',
-                    light: 'oklch(0.88 0.12 82)',
-                    dark: 'oklch(0.62 0.18 76)',
+                    DEFAULT: 'oklch(0.72 0.18 75)',
+                    light: 'oklch(0.82 0.14 78)',
+                    dark: 'oklch(0.55 0.16 70)',
                 },
+            },
+            fontFamily: {
+                display: ['"Bebas Neue"', 'Impact', 'Arial Narrow', 'sans-serif'],
+                body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
             },
             borderRadius: {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)',
-                '2xl': '1rem',
-                '3xl': '1.5rem',
-            },
-            fontFamily: {
-                sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                display: ['Bebas Neue', 'Impact', 'Arial Black', 'sans-serif'],
             },
             boxShadow: {
-                xs: '0 1px 2px 0 rgba(0,0,0,0.05)',
-                soft: '0 2px 8px -2px rgba(0,0,0,0.1)',
-                amber: '0 4px 24px -4px oklch(0.58 0.18 55 / 0.35)',
-                gold: '0 4px 24px -4px oklch(0.78 0.16 80 / 0.30)',
+                'saffron': '0 4px 24px -4px oklch(0.72 0.20 65 / 0.45)',
+                'forest': '0 4px 24px -4px oklch(0.38 0.12 145 / 0.40)',
+                /* keep amber alias for backward compat with existing shadow-amber classes */
+                'amber': '0 4px 24px -4px oklch(0.72 0.20 65 / 0.45)',
             },
             keyframes: {
+                'fade-up': {
+                    '0%': { opacity: '0', transform: 'translateY(16px)' },
+                    '100%': { opacity: '1', transform: 'translateY(0)' },
+                },
                 'accordion-down': {
                     from: { height: '0' },
-                    to: { height: 'var(--radix-accordion-content-height)' }
+                    to: { height: 'var(--radix-accordion-content-height)' },
                 },
                 'accordion-up': {
                     from: { height: 'var(--radix-accordion-content-height)' },
-                    to: { height: '0' }
-                },
-                'fade-up': {
-                    from: { opacity: '0', transform: 'translateY(20px)' },
-                    to: { opacity: '1', transform: 'translateY(0)' }
+                    to: { height: '0' },
                 },
             },
             animation: {
+                'fade-up': 'fade-up 0.5s ease-out forwards',
                 'accordion-down': 'accordion-down 0.2s ease-out',
                 'accordion-up': 'accordion-up 0.2s ease-out',
-                'fade-up': 'fade-up 0.6s ease-out forwards',
-            }
+            },
         }
     },
-    plugins: [typography, containerQueries, animate]
+    plugins: [typography, containerQueries, animate],
 };

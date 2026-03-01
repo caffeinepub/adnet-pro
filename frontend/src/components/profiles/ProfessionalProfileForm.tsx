@@ -1,170 +1,140 @@
-import { useState, useEffect } from 'react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useGetAdvertisingProfessional, useSetAdvertisingProfessional } from '../../hooks/useQueries';
+import { useGetProfessionalRegistration } from '../../hooks/useQueries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
-import AvailabilityCalendar from '../calendar/AvailabilityCalendar';
-import { toast } from 'sonner';
-import type { AdvertisingProfessional, CalendarAvailability } from '../../backend';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from '@tanstack/react-router';
+import { AreaOfExpertise, ProfessionalDesignation } from '../../backend';
+import { timeToDate, formatDate } from '../../utils/dateHelpers';
+
+const DEPARTMENT_LABELS: Record<AreaOfExpertise, string> = {
+  [AreaOfExpertise.creative]: 'Creative',
+  [AreaOfExpertise.production]: 'Production',
+  [AreaOfExpertise.accountManagement]: 'Account Management',
+  [AreaOfExpertise.strategy]: 'Strategy',
+  [AreaOfExpertise.media]: 'Media',
+  [AreaOfExpertise.postProduction]: 'Post-Production',
+  [AreaOfExpertise.digital]: 'Digital',
+  [AreaOfExpertise.pr]: 'PR & Communications',
+  [AreaOfExpertise.research]: 'Research & Planning',
+  [AreaOfExpertise.other]: 'Other',
+};
+
+const DESIGNATION_LABELS: Record<ProfessionalDesignation, string> = {
+  [ProfessionalDesignation.director]: 'Director',
+  [ProfessionalDesignation.producer]: 'Producer',
+  [ProfessionalDesignation.artDirector]: 'Art Director',
+  [ProfessionalDesignation.copywriter]: 'Copywriter',
+  [ProfessionalDesignation.strategist]: 'Strategist',
+  [ProfessionalDesignation.accountExecutive]: 'Account Executive',
+  [ProfessionalDesignation.mediaPlanner]: 'Media Planner',
+  [ProfessionalDesignation.editor]: 'Editor',
+  [ProfessionalDesignation.cinematographer]: 'Cinematographer',
+  [ProfessionalDesignation.designer]: 'Designer',
+  [ProfessionalDesignation.other]: 'Other',
+};
 
 export default function ProfessionalProfileForm() {
   const { identity } = useInternetIdentity();
-  const { data: existingProfile } = useGetAdvertisingProfessional(identity?.getPrincipal() || null);
-  const setProfile = useSetAdvertisingProfessional();
+  const { data: registration, isLoading } = useGetProfessionalRegistration(
+    identity?.getPrincipal() ?? null
+  );
+  const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [specialties, setSpecialties] = useState<string[]>([]);
-  const [specialtyInput, setSpecialtyInput] = useState('');
-  const [portfolio, setPortfolio] = useState<string[]>([]);
-  const [portfolioInput, setPortfolioInput] = useState('');
-  const [availability, setAvailability] = useState<CalendarAvailability[]>([]);
+  if (isLoading) {
+    return <p className="text-muted-foreground text-sm">Loading registration...</p>;
+  }
 
-  useEffect(() => {
-    if (existingProfile) {
-      setName(existingProfile.name);
-      setSpecialties(existingProfile.specialties);
-      setPortfolio(existingProfile.portfolio);
-      setAvailability(existingProfile.availability);
-    }
-  }, [existingProfile]);
-
-  const addSpecialty = () => {
-    if (specialtyInput.trim() && !specialties.includes(specialtyInput.trim())) {
-      setSpecialties([...specialties, specialtyInput.trim()]);
-      setSpecialtyInput('');
-    }
-  };
-
-  const removeSpecialty = (specialty: string) => {
-    setSpecialties(specialties.filter((s) => s !== specialty));
-  };
-
-  const addPortfolioItem = () => {
-    if (portfolioInput.trim() && !portfolio.includes(portfolioInput.trim())) {
-      setPortfolio([...portfolio, portfolioInput.trim()]);
-      setPortfolioInput('');
-    }
-  };
-
-  const removePortfolioItem = (item: string) => {
-    setPortfolio(portfolio.filter((p) => p !== item));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!identity) return;
-
-    const profile: AdvertisingProfessional = {
-      id: identity.getPrincipal(),
-      name,
-      specialties,
-      portfolio,
-      availability,
-    };
-
-    try {
-      await setProfile.mutateAsync(profile);
-      toast.success('Profile saved successfully');
-    } catch (error) {
-      toast.error('Failed to save profile');
-      console.error(error);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+  if (!registration) {
+    return (
       <Card>
         <CardHeader>
-          <CardTitle>Professional Information</CardTitle>
-          <CardDescription>Your details as an advertising professional</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="specialty">Specialties</Label>
-            <div className="flex gap-2">
-              <Input
-                id="specialty"
-                value={specialtyInput}
-                onChange={(e) => setSpecialtyInput(e.target.value)}
-                placeholder="e.g., Director, Cinematographer"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addSpecialty();
-                  }
-                }}
-              />
-              <Button type="button" onClick={addSpecialty} variant="secondary">
-                Add
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {specialties.map((specialty) => (
-                <Badge key={specialty} variant="secondary">
-                  {specialty}
-                  <button type="button" onClick={() => removeSpecialty(specialty)} className="ml-2">
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="portfolio">Portfolio Links</Label>
-            <div className="flex gap-2">
-              <Input
-                id="portfolio"
-                value={portfolioInput}
-                onChange={(e) => setPortfolioInput(e.target.value)}
-                placeholder="e.g., https://portfolio.com"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addPortfolioItem();
-                  }
-                }}
-              />
-              <Button type="button" onClick={addPortfolioItem} variant="secondary">
-                Add
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {portfolio.map((item) => (
-                <Badge key={item} variant="secondary">
-                  {item}
-                  <button type="button" onClick={() => removePortfolioItem(item)} className="ml-2">
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Availability Calendar</CardTitle>
-          <CardDescription>Set your availability for upcoming shoots</CardDescription>
+          <CardTitle>No Registration Found</CardTitle>
+          <CardDescription>Complete your professional registration to get started.</CardDescription>
         </CardHeader>
         <CardContent>
-          <AvailabilityCalendar availability={availability} onAvailabilityChange={setAvailability} />
+          <Button className="shadow-amber rounded-full" onClick={() => navigate({ to: '/registration' })}>
+            Register Now
+          </Button>
         </CardContent>
       </Card>
+    );
+  }
 
-      <Button type="submit" disabled={setProfile.isPending} className="w-full">
-        {setProfile.isPending ? 'Saving...' : 'Save Profile'}
-      </Button>
-    </form>
+  return (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Professional Details</CardTitle>
+          <CardDescription>Your submitted advertising registration</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="font-medium text-foreground">Full Name</p>
+              <p className="text-muted-foreground">{registration.name}</p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground">City</p>
+              <p className="text-muted-foreground">{registration.currentCity}</p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Department</p>
+              <p className="text-muted-foreground">
+                {DEPARTMENT_LABELS[registration.areaOfExpertise] ?? registration.areaOfExpertise}
+              </p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Designation</p>
+              <p className="text-muted-foreground">
+                {DESIGNATION_LABELS[registration.professionalDesignation] ?? registration.professionalDesignation}
+              </p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Years of Experience</p>
+              <p className="text-muted-foreground">{registration.yearsOfExperience.toString()}</p>
+            </div>
+            <div>
+              <p className="font-medium text-foreground">Work Reel</p>
+              <a
+                href={registration.workReelURL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline truncate block"
+              >
+                {registration.workReelURL}
+              </a>
+            </div>
+          </div>
+
+          {registration.industryReferences && (
+            <div className="text-sm">
+              <p className="font-medium text-foreground">Industry References</p>
+              <p className="text-muted-foreground mt-1">{registration.industryReferences}</p>
+            </div>
+          )}
+
+          {registration.availability.length > 0 && (
+            <div className="text-sm">
+              <p className="font-medium text-foreground mb-2">
+                Available Dates ({registration.availability.length})
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {registration.availability.slice(0, 8).map((t, i) => (
+                  <Badge key={i} variant="secondary" className="text-xs">
+                    {formatDate(timeToDate(t))}
+                  </Badge>
+                ))}
+                {registration.availability.length > 8 && (
+                  <Badge variant="outline" className="text-xs">
+                    +{registration.availability.length - 8} more
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

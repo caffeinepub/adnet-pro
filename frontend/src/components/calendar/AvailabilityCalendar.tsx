@@ -1,21 +1,19 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { dateToTime, timeToDate, isSameDay } from '../../utils/dateHelpers';
-import type { CalendarAvailability } from '../../backend';
-import { Variant_booked_available_unavailable } from '../../backend';
-import AvailabilityLegend from './AvailabilityLegend';
+import { isSameDay } from '../../utils/dateHelpers';
 import React from 'react';
 
 interface AvailabilityCalendarProps {
-  availability: CalendarAvailability[];
-  onAvailabilityChange: (availability: CalendarAvailability[]) => void;
+  /** Dates marked as available */
+  selectedDates: Date[];
+  onDatesChange: (dates: Date[]) => void;
   readOnly?: boolean;
 }
 
 export default function AvailabilityCalendar({
-  availability,
-  onAvailabilityChange,
+  selectedDates,
+  onDatesChange,
   readOnly = false,
 }: AvailabilityCalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -36,42 +34,17 @@ export default function AvailabilityCalendar({
     setCurrentDate(new Date(year, month + 1, 1));
   };
 
-  const getStatusForDate = (date: Date): Variant_booked_available_unavailable | null => {
-    const entry = availability.find((a) => isSameDay(timeToDate(a.date), date));
-    return entry ? entry.status : null;
+  const isSelected = (date: Date): boolean => {
+    return selectedDates.some((d) => isSameDay(d, date));
   };
 
-  const toggleDateStatus = (date: Date) => {
+  const toggleDate = (date: Date) => {
     if (readOnly) return;
-
-    const currentStatus = getStatusForDate(date);
-    let newStatus: Variant_booked_available_unavailable;
-
-    if (currentStatus === null) {
-      newStatus = Variant_booked_available_unavailable.available;
-    } else if (currentStatus === Variant_booked_available_unavailable.available) {
-      newStatus = Variant_booked_available_unavailable.booked;
-    } else if (currentStatus === Variant_booked_available_unavailable.booked) {
-      newStatus = Variant_booked_available_unavailable.unavailable;
+    if (isSelected(date)) {
+      onDatesChange(selectedDates.filter((d) => !isSameDay(d, date)));
     } else {
-      const updatedAvailability = availability.filter((a) => !isSameDay(timeToDate(a.date), date));
-      onAvailabilityChange(updatedAvailability);
-      return;
+      onDatesChange([...selectedDates, date]);
     }
-
-    const updatedAvailability = availability.filter((a) => !isSameDay(timeToDate(a.date), date));
-    updatedAvailability.push({
-      date: dateToTime(date),
-      status: newStatus,
-    });
-    onAvailabilityChange(updatedAvailability);
-  };
-
-  const getStatusColor = (status: Variant_booked_available_unavailable | null) => {
-    if (status === null) return 'bg-background hover:bg-accent';
-    if (status === Variant_booked_available_unavailable.available) return 'bg-green-500/20 hover:bg-green-500/30';
-    if (status === Variant_booked_available_unavailable.booked) return 'bg-amber-500/20 hover:bg-amber-500/30';
-    return 'bg-red-500/20 hover:bg-red-500/30';
   };
 
   const days: React.ReactElement[] = [];
@@ -81,20 +54,22 @@ export default function AvailabilityCalendar({
 
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day);
-    const status = getStatusForDate(date);
+    const selected = isSelected(date);
     const isToday = isSameDay(date, new Date());
 
     days.push(
       <button
         key={day}
         type="button"
-        onClick={() => toggleDateStatus(date)}
+        onClick={() => toggleDate(date)}
         disabled={readOnly}
-        className={`aspect-square rounded-lg border transition-colors ${getStatusColor(status)} ${
-          isToday ? 'border-primary border-2' : 'border-border'
-        } ${readOnly ? 'cursor-default' : 'cursor-pointer'}`}
+        className={`aspect-square rounded-lg border transition-colors text-sm font-medium
+          ${selected ? 'bg-primary/20 border-primary text-primary' : 'bg-background hover:bg-accent border-border'}
+          ${isToday ? 'border-primary border-2' : ''}
+          ${readOnly ? 'cursor-default' : 'cursor-pointer'}
+        `}
       >
-        <span className="text-sm font-medium">{day}</span>
+        {day}
       </button>
     );
   }
@@ -125,7 +100,11 @@ export default function AvailabilityCalendar({
 
       <div className="grid grid-cols-7 gap-2">{days}</div>
 
-      {!readOnly && <AvailabilityLegend />}
+      {!readOnly && (
+        <p className="text-xs text-muted-foreground">
+          Click dates to toggle availability. {selectedDates.length} date{selectedDates.length !== 1 ? 's' : ''} selected.
+        </p>
+      )}
     </div>
   );
 }

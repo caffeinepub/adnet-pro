@@ -2,9 +2,8 @@ import { Link, useRouterState } from '@tanstack/react-router';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { User, Users, LayoutDashboard, Heart } from 'lucide-react';
+import { User, Heart } from 'lucide-react';
 import { useGetCallerUserProfile } from '../../hooks/useQueries';
-import { Variant_professional_vendor_productionHouse_location } from '../../backend';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { login, clear, loginStatus, identity } = useInternetIdentity();
@@ -33,9 +32,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const isProductionHouse =
-    userProfile?.profileType === Variant_professional_vendor_productionHouse_location.productionHouse;
-
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
@@ -52,43 +48,25 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <nav className="flex items-center gap-6">
               {isAuthenticated && userProfile && (
-                <>
-                  {isProductionHouse && (
-                    <Link
-                      to="/dashboard"
-                      className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                        currentPath === '/dashboard' ? 'text-primary' : 'text-muted-foreground'
-                      }`}
-                    >
-                      <LayoutDashboard className="w-4 h-4" />
-                      Dashboard
-                    </Link>
-                  )}
-                  <Link
-                    to="/profile"
-                    className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                      currentPath === '/profile' ? 'text-primary' : 'text-muted-foreground'
-                    }`}
-                  >
-                    <User className="w-4 h-4" />
-                    Profile
-                  </Link>
-                  <Link
-                    to="/connections"
-                    className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
-                      currentPath === '/connections' ? 'text-primary' : 'text-muted-foreground'
-                    }`}
-                  >
-                    <Users className="w-4 h-4" />
-                    Connections
-                  </Link>
-                </>
+                <Link
+                  to="/profile"
+                  className={`flex items-center gap-2 text-sm font-medium transition-colors hover:text-primary ${
+                    currentPath === '/profile' ? 'text-primary' : 'text-muted-foreground'
+                  }`}
+                >
+                  <User className="w-4 h-4" />
+                  Profile
+                </Link>
               )}
               <Button
                 onClick={handleAuth}
                 disabled={disabled}
                 variant={isAuthenticated ? 'outline' : 'default'}
-                className={!isAuthenticated ? 'shadow-amber' : ''}
+                className={
+                  !isAuthenticated
+                    ? 'bg-saffron hover:bg-saffron-dark text-forest-deep border-0 shadow-saffron'
+                    : ''
+                }
               >
                 {loginStatus === 'logging-in' ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
               </Button>
@@ -103,7 +81,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           <p className="flex items-center justify-center gap-1 flex-wrap">
             © {new Date().getFullYear()} AD TRIBE. Built with{' '}
-            <Heart className="w-3.5 h-3.5 text-primary fill-primary inline" />{' '}
+            <Heart className="w-3.5 h-3.5 text-saffron fill-saffron inline" />{' '}
             using{' '}
             <a
               href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(

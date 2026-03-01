@@ -1,56 +1,64 @@
-import { useGetCallerUserProfile } from '../hooks/useQueries';
-import { Variant_professional_vendor_productionHouse_location } from '../backend';
+import { useGetCallerUserProfile, useGetVerifiedMembers } from '../hooks/useQueries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Users } from 'lucide-react';
 
 export default function ConnectionsPage() {
   const { data: userProfile } = useGetCallerUserProfile();
-
-  const isProductionHouse = userProfile?.profileType === Variant_professional_vendor_productionHouse_location.productionHouse;
+  const { data: verifiedMembers = [], isLoading } = useGetVerifiedMembers();
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Connections</h1>
-        <p className="text-muted-foreground mt-2">Manage your professional network</p>
+        <h1 className="font-display text-4xl tracking-widest text-foreground">CONNECTIONS</h1>
+        <p className="text-muted-foreground mt-2">
+          Welcome{userProfile?.name ? `, ${userProfile.name}` : ''}. Explore your professional network.
+        </p>
       </div>
 
-      <Tabs defaultValue={isProductionHouse ? 'sent' : 'received'}>
-        <TabsList className="grid w-full grid-cols-2">
-          {!isProductionHouse && <TabsTrigger value="received">Requests Received</TabsTrigger>}
-          <TabsTrigger value="sent">{isProductionHouse ? 'Sent Requests' : 'My Connections'}</TabsTrigger>
-        </TabsList>
-
-        {!isProductionHouse && (
-          <TabsContent value="received">
-            <Card>
-              <CardHeader>
-                <CardTitle>Connection Requests</CardTitle>
-                <CardDescription>Production houses that want to connect with you</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">No pending connection requests</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        )}
-
-        <TabsContent value="sent">
-          <Card>
-            <CardHeader>
-              <CardTitle>{isProductionHouse ? 'Your Connections' : 'Connected Production Houses'}</CardTitle>
-              <CardDescription>
-                {isProductionHouse
-                  ? 'Service providers you are connected with'
-                  : 'Production houses you are connected with'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">No connections yet</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Users className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle>Verified Members</CardTitle>
+              <CardDescription>Advertising professionals verified in the AD TRIBE community</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-2">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
+          ) : verifiedMembers.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground text-sm">No verified members yet. Be the first to join!</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {verifiedMembers.map((principal) => (
+                <div
+                  key={principal.toString()}
+                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-background"
+                >
+                  <span className="text-sm font-mono text-muted-foreground truncate max-w-xs">
+                    {principal.toString()}
+                  </span>
+                  <Badge className="shrink-0 ml-2 bg-saffron text-forest-deep hover:bg-saffron-dark border-0">
+                    Verified
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

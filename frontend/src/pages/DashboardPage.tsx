@@ -1,54 +1,61 @@
 import { useGetCallerUserProfile } from '../hooks/useQueries';
-import { Variant_professional_vendor_productionHouse_location } from '../backend';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import SearchBar from '../components/search/SearchBar';
-import SearchFilters from '../components/search/SearchFilters';
-import SearchResults from '../components/search/SearchResults';
-import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from '@tanstack/react-router';
+import { Users, UserCheck } from 'lucide-react';
 
 export default function DashboardPage() {
   const { data: userProfile } = useGetCallerUserProfile();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<'all' | 'professional' | 'vendor' | 'location'>('all');
-  const [dateRange, setDateRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
-
-  if (userProfile?.profileType !== Variant_professional_vendor_productionHouse_location.productionHouse) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Access Denied</CardTitle>
-            <CardDescription>This dashboard is only available to production houses</CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  const navigate = useNavigate();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto">
       <div>
-        <h1 className="text-3xl font-bold">Production Dashboard</h1>
-        <p className="text-muted-foreground mt-2">Search and connect with professionals, vendors, and locations</p>
+        <h1 className="font-display text-4xl tracking-widest text-foreground">DASHBOARD</h1>
+        <p className="text-muted-foreground mt-2">
+          Welcome back{userProfile?.name ? `, ${userProfile.name}` : ''}!
+        </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Search Service Providers</CardTitle>
-          <CardDescription>Find the perfect match for your production needs</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-          <SearchFilters
-            filterType={filterType}
-            setFilterType={setFilterType}
-            dateRange={dateRange}
-            setDateRange={setDateRange}
-          />
-        </CardContent>
-      </Card>
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="hover:border-primary/50 hover:shadow-forest transition-all duration-300">
+          <CardHeader>
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-2">
+              <UserCheck className="w-5 h-5 text-primary" />
+            </div>
+            <CardTitle>My Profile</CardTitle>
+            <CardDescription>View and manage your professional registration</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full rounded-full hover:border-primary hover:text-primary"
+              onClick={() => navigate({ to: '/profile' })}
+            >
+              View Profile
+            </Button>
+          </CardContent>
+        </Card>
 
-      <SearchResults searchQuery={searchQuery} filterType={filterType} dateRange={dateRange} />
+        <Card className="hover:border-primary/50 hover:shadow-forest transition-all duration-300">
+          <CardHeader>
+            <div className="w-10 h-10 rounded-xl bg-saffron/10 flex items-center justify-center mb-2">
+              <Users className="w-5 h-5 text-saffron" />
+            </div>
+            <CardTitle>The Tribe</CardTitle>
+            <CardDescription>Explore verified members of the AD TRIBE community</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              className="w-full rounded-full hover:border-saffron hover:text-saffron"
+              onClick={() => navigate({ to: '/connections' })}
+            >
+              View Connections
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

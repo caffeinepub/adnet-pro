@@ -89,93 +89,67 @@ export class ExternalBlob {
         return this;
     }
 }
-export interface EquipmentVendor {
-    id: Principal;
-    inventory: Array<string>;
+export interface AdvertisingRegistration {
+    yearsOfExperience: bigint;
+    principal: Principal;
+    areaOfExpertise: AreaOfExpertise;
+    professionalDesignation: ProfessionalDesignation;
+    workReelURL: string;
     name: string;
-    availability: Array<CalendarAvailability>;
-}
-export interface CalendarAvailability {
-    status: Variant_booked_available_unavailable;
-    date: Time;
+    currentCity: string;
+    availability: Array<Time>;
+    industryReferences?: string;
 }
 export type Time = bigint;
-export interface ShootLocation {
-    id: Principal;
-    name: string;
-    description: string;
-    pricing: bigint;
-    availability: Array<CalendarAvailability>;
-    capacity: bigint;
-}
-export interface ProductionHouse {
-    id: Principal;
-    name: string;
-    verifiedConnections: Array<Principal>;
-    companyInfo: string;
-}
 export interface UserProfile {
+    areaOfExpertise?: AreaOfExpertise;
+    professionalDesignation?: ProfessionalDesignation;
     name: string;
-    profileType: Variant_professional_vendor_productionHouse_location;
+    currentCity: string;
 }
-export interface AdvertisingProfessional {
-    id: Principal;
-    portfolio: Array<string>;
-    name: string;
-    availability: Array<CalendarAvailability>;
-    specialties: Array<string>;
+export enum AreaOfExpertise {
+    pr = "pr",
+    media = "media",
+    creative = "creative",
+    production = "production",
+    other = "other",
+    research = "research",
+    strategy = "strategy",
+    postProduction = "postProduction",
+    digital = "digital",
+    accountManagement = "accountManagement"
+}
+export enum ProfessionalDesignation {
+    other = "other",
+    editor = "editor",
+    artDirector = "artDirector",
+    director = "director",
+    designer = "designer",
+    mediaPlanner = "mediaPlanner",
+    accountExecutive = "accountExecutive",
+    producer = "producer",
+    cinematographer = "cinematographer",
+    strategist = "strategist",
+    copywriter = "copywriter"
 }
 export enum UserRole {
     admin = "admin",
     user = "user",
     guest = "guest"
 }
-export enum Variant_booked_available_unavailable {
-    booked = "booked",
-    available = "available",
-    unavailable = "unavailable"
-}
-export enum Variant_professional_vendor_productionHouse_location {
-    professional = "professional",
-    vendor = "vendor",
-    productionHouse = "productionHouse",
-    location = "location"
-}
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    acceptRecommendation(recommendationFrom: Principal): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    declineRecommendation(recommendationFrom: Principal): Promise<void>;
-    getAdvertisingProfessional(id: Principal): Promise<AdvertisingProfessional>;
-    getAllAdvertisingProfessionals(): Promise<Array<AdvertisingProfessional>>;
-    getAllCategories(): Promise<Array<string>>;
-    getAllEquipmentVendors(): Promise<Array<EquipmentVendor>>;
-    getAllProductionHouses(): Promise<Array<ProductionHouse>>;
-    getAllProfessions(): Promise<Array<string>>;
-    getAllShootLocations(): Promise<Array<ShootLocation>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
-    getEquipmentVendor(id: Principal): Promise<EquipmentVendor>;
-    getShootLocation(id: Principal): Promise<ShootLocation>;
-    getTimeSlotEntries(date: Time): Promise<{
-        professionals: Array<AdvertisingProfessional>;
-        vendors: Array<EquipmentVendor>;
-        locations: Array<ShootLocation>;
-    }>;
+    getProfessionalRegistration(user: Principal): Promise<AdvertisingRegistration | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    searchAdvertisingProfessionalsBySpecialty(specialty: string): Promise<Array<AdvertisingProfessional>>;
-    searchEquipmentVendorsByInventory(item: string): Promise<Array<EquipmentVendor>>;
-    searchShootLocationsByCapacity(requiredCapacity: bigint): Promise<Array<ShootLocation>>;
-    sendRecommendation(toUser: Principal, message: string): Promise<void>;
-    setAdvertisingProfessional(professional: AdvertisingProfessional): Promise<void>;
-    setEquipmentVendor(vendor: EquipmentVendor): Promise<void>;
-    setProductionHouse(house: ProductionHouse): Promise<void>;
-    setShootLocation(location: ShootLocation): Promise<void>;
-    updateAvailability(id: Principal, availability: Array<CalendarAvailability>): Promise<void>;
+    submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
 }
-import type { AdvertisingProfessional as _AdvertisingProfessional, CalendarAvailability as _CalendarAvailability, EquipmentVendor as _EquipmentVendor, ShootLocation as _ShootLocation, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AdvertisingRegistration as _AdvertisingRegistration, AreaOfExpertise as _AreaOfExpertise, ProfessionalDesignation as _ProfessionalDesignation, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -189,20 +163,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor._initializeAccessControlWithSecret(arg0);
-            return result;
-        }
-    }
-    async acceptRecommendation(arg0: Principal): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.acceptRecommendation(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.acceptRecommendation(arg0);
             return result;
         }
     }
@@ -220,204 +180,74 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async declineRecommendation(arg0: Principal): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.declineRecommendation(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.declineRecommendation(arg0);
-            return result;
-        }
-    }
-    async getAdvertisingProfessional(arg0: Principal): Promise<AdvertisingProfessional> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAdvertisingProfessional(arg0);
-                return from_candid_AdvertisingProfessional_n3(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAdvertisingProfessional(arg0);
-            return from_candid_AdvertisingProfessional_n3(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getAllAdvertisingProfessionals(): Promise<Array<AdvertisingProfessional>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllAdvertisingProfessionals();
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllAdvertisingProfessionals();
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getAllCategories(): Promise<Array<string>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllCategories();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllCategories();
-            return result;
-        }
-    }
-    async getAllEquipmentVendors(): Promise<Array<EquipmentVendor>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllEquipmentVendors();
-                return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllEquipmentVendors();
-            return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getAllProductionHouses(): Promise<Array<ProductionHouse>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllProductionHouses();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllProductionHouses();
-            return result;
-        }
-    }
-    async getAllProfessions(): Promise<Array<string>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllProfessions();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllProfessions();
-            return result;
-        }
-    }
-    async getAllShootLocations(): Promise<Array<ShootLocation>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getAllShootLocations();
-                return from_candid_vec_n13(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getAllShootLocations();
-            return from_candid_vec_n13(this._uploadFile, this._downloadFile, result);
-        }
-    }
     async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n20(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n12(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n20(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n12(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getEquipmentVendor(arg0: Principal): Promise<EquipmentVendor> {
+    async getProfessionalRegistration(arg0: Principal): Promise<AdvertisingRegistration | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getEquipmentVendor(arg0);
-                return from_candid_EquipmentVendor_n11(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.getProfessionalRegistration(arg0);
+                return from_candid_opt_n14(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getEquipmentVendor(arg0);
-            return from_candid_EquipmentVendor_n11(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getShootLocation(arg0: Principal): Promise<ShootLocation> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getShootLocation(arg0);
-                return from_candid_ShootLocation_n14(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getShootLocation(arg0);
-            return from_candid_ShootLocation_n14(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getTimeSlotEntries(arg0: Time): Promise<{
-        professionals: Array<AdvertisingProfessional>;
-        vendors: Array<EquipmentVendor>;
-        locations: Array<ShootLocation>;
-    }> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getTimeSlotEntries(arg0);
-                return from_candid_record_n22(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getTimeSlotEntries(arg0);
-            return from_candid_record_n22(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.getProfessionalRegistration(arg0);
+            return from_candid_opt_n14(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n16(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n3(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getVerifiedMembers(): Promise<Array<Principal>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVerifiedMembers();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVerifiedMembers();
+            return result;
         }
     }
     async isCallerAdmin(): Promise<boolean> {
@@ -437,293 +267,139 @@ export class Backend implements backendInterface {
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n23(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n18(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n23(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n18(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
-    async searchAdvertisingProfessionalsBySpecialty(arg0: string): Promise<Array<AdvertisingProfessional>> {
+    async submitProfessionalRegistration(arg0: AdvertisingRegistration): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.searchAdvertisingProfessionalsBySpecialty(arg0);
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.searchAdvertisingProfessionalsBySpecialty(arg0);
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async searchEquipmentVendorsByInventory(arg0: string): Promise<Array<EquipmentVendor>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.searchEquipmentVendorsByInventory(arg0);
-                return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.searchEquipmentVendorsByInventory(arg0);
-            return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async searchShootLocationsByCapacity(arg0: bigint): Promise<Array<ShootLocation>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.searchShootLocationsByCapacity(arg0);
-                return from_candid_vec_n13(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.searchShootLocationsByCapacity(arg0);
-            return from_candid_vec_n13(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async sendRecommendation(arg0: Principal, arg1: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.sendRecommendation(arg0, arg1);
+                const result = await this.actor.submitProfessionalRegistration(to_candid_AdvertisingRegistration_n24(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.sendRecommendation(arg0, arg1);
-            return result;
-        }
-    }
-    async setAdvertisingProfessional(arg0: AdvertisingProfessional): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.setAdvertisingProfessional(to_candid_AdvertisingProfessional_n26(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.setAdvertisingProfessional(to_candid_AdvertisingProfessional_n26(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async setEquipmentVendor(arg0: EquipmentVendor): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.setEquipmentVendor(to_candid_EquipmentVendor_n32(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.setEquipmentVendor(to_candid_EquipmentVendor_n32(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async setProductionHouse(arg0: ProductionHouse): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.setProductionHouse(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.setProductionHouse(arg0);
-            return result;
-        }
-    }
-    async setShootLocation(arg0: ShootLocation): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.setShootLocation(to_candid_ShootLocation_n34(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.setShootLocation(to_candid_ShootLocation_n34(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
-    async updateAvailability(arg0: Principal, arg1: Array<CalendarAvailability>): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.updateAvailability(arg0, to_candid_vec_n28(this._uploadFile, this._downloadFile, arg1));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.updateAvailability(arg0, to_candid_vec_n28(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.submitProfessionalRegistration(to_candid_AdvertisingRegistration_n24(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
 }
-function from_candid_AdvertisingProfessional_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AdvertisingProfessional): AdvertisingProfessional {
-    return from_candid_record_n4(_uploadFile, _downloadFile, value);
+function from_candid_AdvertisingRegistration_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AdvertisingRegistration): AdvertisingRegistration {
+    return from_candid_record_n16(_uploadFile, _downloadFile, value);
 }
-function from_candid_CalendarAvailability_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CalendarAvailability): CalendarAvailability {
-    return from_candid_record_n7(_uploadFile, _downloadFile, value);
+function from_candid_AreaOfExpertise_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AreaOfExpertise): AreaOfExpertise {
+    return from_candid_variant_n8(_uploadFile, _downloadFile, value);
 }
-function from_candid_EquipmentVendor_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _EquipmentVendor): EquipmentVendor {
-    return from_candid_record_n12(_uploadFile, _downloadFile, value);
+function from_candid_ProfessionalDesignation_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ProfessionalDesignation): ProfessionalDesignation {
+    return from_candid_variant_n11(_uploadFile, _downloadFile, value);
 }
-function from_candid_ShootLocation_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ShootLocation): ShootLocation {
-    return from_candid_record_n15(_uploadFile, _downloadFile, value);
+function from_candid_UserProfile_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserProfile): UserProfile {
+    return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserProfile_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserProfile): UserProfile {
-    return from_candid_record_n18(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n21(_uploadFile, _downloadFile, value);
+function from_candid_opt_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AdvertisingRegistration]): AdvertisingRegistration | null {
+    return value.length === 0 ? null : from_candid_AdvertisingRegistration_n15(_uploadFile, _downloadFile, value[0]);
 }
-function from_candid_opt_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
-    return value.length === 0 ? null : from_candid_UserProfile_n17(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
+    return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: Principal;
-    inventory: Array<string>;
+function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+    return value.length === 0 ? null : from_candid_UserProfile_n4(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AreaOfExpertise]): AreaOfExpertise | null {
+    return value.length === 0 ? null : from_candid_AreaOfExpertise_n7(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ProfessionalDesignation]): ProfessionalDesignation | null {
+    return value.length === 0 ? null : from_candid_ProfessionalDesignation_n10(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    yearsOfExperience: bigint;
+    principal: Principal;
+    areaOfExpertise: _AreaOfExpertise;
+    professionalDesignation: _ProfessionalDesignation;
+    workReelURL: string;
     name: string;
-    availability: Array<_CalendarAvailability>;
+    currentCity: string;
+    availability: Array<_Time>;
+    industryReferences: [] | [string];
 }): {
-    id: Principal;
-    inventory: Array<string>;
+    yearsOfExperience: bigint;
+    principal: Principal;
+    areaOfExpertise: AreaOfExpertise;
+    professionalDesignation: ProfessionalDesignation;
+    workReelURL: string;
     name: string;
-    availability: Array<CalendarAvailability>;
+    currentCity: string;
+    availability: Array<Time>;
+    industryReferences?: string;
 } {
     return {
-        id: value.id,
-        inventory: value.inventory,
+        yearsOfExperience: value.yearsOfExperience,
+        principal: value.principal,
+        areaOfExpertise: from_candid_AreaOfExpertise_n7(_uploadFile, _downloadFile, value.areaOfExpertise),
+        professionalDesignation: from_candid_ProfessionalDesignation_n10(_uploadFile, _downloadFile, value.professionalDesignation),
+        workReelURL: value.workReelURL,
         name: value.name,
-        availability: from_candid_vec_n5(_uploadFile, _downloadFile, value.availability)
+        currentCity: value.currentCity,
+        availability: value.availability,
+        industryReferences: record_opt_to_undefined(from_candid_opt_n17(_uploadFile, _downloadFile, value.industryReferences))
     };
 }
-function from_candid_record_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: Principal;
+function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    areaOfExpertise: [] | [_AreaOfExpertise];
+    professionalDesignation: [] | [_ProfessionalDesignation];
     name: string;
-    description: string;
-    pricing: bigint;
-    availability: Array<_CalendarAvailability>;
-    capacity: bigint;
+    currentCity: string;
 }): {
-    id: Principal;
+    areaOfExpertise?: AreaOfExpertise;
+    professionalDesignation?: ProfessionalDesignation;
     name: string;
-    description: string;
-    pricing: bigint;
-    availability: Array<CalendarAvailability>;
-    capacity: bigint;
+    currentCity: string;
 } {
     return {
-        id: value.id,
+        areaOfExpertise: record_opt_to_undefined(from_candid_opt_n6(_uploadFile, _downloadFile, value.areaOfExpertise)),
+        professionalDesignation: record_opt_to_undefined(from_candid_opt_n9(_uploadFile, _downloadFile, value.professionalDesignation)),
         name: value.name,
-        description: value.description,
-        pricing: value.pricing,
-        availability: from_candid_vec_n5(_uploadFile, _downloadFile, value.availability),
-        capacity: value.capacity
+        currentCity: value.currentCity
     };
 }
-function from_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    name: string;
-    profileType: {
-        professional: null;
-    } | {
-        vendor: null;
-    } | {
-        productionHouse: null;
-    } | {
-        location: null;
-    };
-}): {
-    name: string;
-    profileType: Variant_professional_vendor_productionHouse_location;
-} {
-    return {
-        name: value.name,
-        profileType: from_candid_variant_n19(_uploadFile, _downloadFile, value.profileType)
-    };
-}
-function from_candid_record_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    professionals: Array<_AdvertisingProfessional>;
-    vendors: Array<_EquipmentVendor>;
-    locations: Array<_ShootLocation>;
-}): {
-    professionals: Array<AdvertisingProfessional>;
-    vendors: Array<EquipmentVendor>;
-    locations: Array<ShootLocation>;
-} {
-    return {
-        professionals: from_candid_vec_n9(_uploadFile, _downloadFile, value.professionals),
-        vendors: from_candid_vec_n10(_uploadFile, _downloadFile, value.vendors),
-        locations: from_candid_vec_n13(_uploadFile, _downloadFile, value.locations)
-    };
-}
-function from_candid_record_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: Principal;
-    portfolio: Array<string>;
-    name: string;
-    availability: Array<_CalendarAvailability>;
-    specialties: Array<string>;
-}): {
-    id: Principal;
-    portfolio: Array<string>;
-    name: string;
-    availability: Array<CalendarAvailability>;
-    specialties: Array<string>;
-} {
-    return {
-        id: value.id,
-        portfolio: value.portfolio,
-        name: value.name,
-        availability: from_candid_vec_n5(_uploadFile, _downloadFile, value.availability),
-        specialties: value.specialties
-    };
-}
-function from_candid_record_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    status: {
-        booked: null;
-    } | {
-        available: null;
-    } | {
-        unavailable: null;
-    };
-    date: _Time;
-}): {
-    status: Variant_booked_available_unavailable;
-    date: Time;
-} {
-    return {
-        status: from_candid_variant_n8(_uploadFile, _downloadFile, value.status),
-        date: value.date
-    };
-}
-function from_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    professional: null;
+function from_candid_variant_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    other: null;
 } | {
-    vendor: null;
+    editor: null;
 } | {
-    productionHouse: null;
+    artDirector: null;
 } | {
-    location: null;
-}): Variant_professional_vendor_productionHouse_location {
-    return "professional" in value ? Variant_professional_vendor_productionHouse_location.professional : "vendor" in value ? Variant_professional_vendor_productionHouse_location.vendor : "productionHouse" in value ? Variant_professional_vendor_productionHouse_location.productionHouse : "location" in value ? Variant_professional_vendor_productionHouse_location.location : value;
+    director: null;
+} | {
+    designer: null;
+} | {
+    mediaPlanner: null;
+} | {
+    accountExecutive: null;
+} | {
+    producer: null;
+} | {
+    cinematographer: null;
+} | {
+    strategist: null;
+} | {
+    copywriter: null;
+}): ProfessionalDesignation {
+    return "other" in value ? ProfessionalDesignation.other : "editor" in value ? ProfessionalDesignation.editor : "artDirector" in value ? ProfessionalDesignation.artDirector : "director" in value ? ProfessionalDesignation.director : "designer" in value ? ProfessionalDesignation.designer : "mediaPlanner" in value ? ProfessionalDesignation.mediaPlanner : "accountExecutive" in value ? ProfessionalDesignation.accountExecutive : "producer" in value ? ProfessionalDesignation.producer : "cinematographer" in value ? ProfessionalDesignation.cinematographer : "strategist" in value ? ProfessionalDesignation.strategist : "copywriter" in value ? ProfessionalDesignation.copywriter : value;
 }
-function from_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -733,143 +409,92 @@ function from_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Ui
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
 function from_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    booked: null;
+    pr: null;
 } | {
-    available: null;
+    media: null;
 } | {
-    unavailable: null;
-}): Variant_booked_available_unavailable {
-    return "booked" in value ? Variant_booked_available_unavailable.booked : "available" in value ? Variant_booked_available_unavailable.available : "unavailable" in value ? Variant_booked_available_unavailable.unavailable : value;
+    creative: null;
+} | {
+    production: null;
+} | {
+    other: null;
+} | {
+    research: null;
+} | {
+    strategy: null;
+} | {
+    postProduction: null;
+} | {
+    digital: null;
+} | {
+    accountManagement: null;
+}): AreaOfExpertise {
+    return "pr" in value ? AreaOfExpertise.pr : "media" in value ? AreaOfExpertise.media : "creative" in value ? AreaOfExpertise.creative : "production" in value ? AreaOfExpertise.production : "other" in value ? AreaOfExpertise.other : "research" in value ? AreaOfExpertise.research : "strategy" in value ? AreaOfExpertise.strategy : "postProduction" in value ? AreaOfExpertise.postProduction : "digital" in value ? AreaOfExpertise.digital : "accountManagement" in value ? AreaOfExpertise.accountManagement : value;
 }
-function from_candid_vec_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_EquipmentVendor>): Array<EquipmentVendor> {
-    return value.map((x)=>from_candid_EquipmentVendor_n11(_uploadFile, _downloadFile, x));
+function to_candid_AdvertisingRegistration_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AdvertisingRegistration): _AdvertisingRegistration {
+    return to_candid_record_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_vec_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_ShootLocation>): Array<ShootLocation> {
-    return value.map((x)=>from_candid_ShootLocation_n14(_uploadFile, _downloadFile, x));
+function to_candid_AreaOfExpertise_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AreaOfExpertise): _AreaOfExpertise {
+    return to_candid_variant_n21(_uploadFile, _downloadFile, value);
 }
-function from_candid_vec_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_CalendarAvailability>): Array<CalendarAvailability> {
-    return value.map((x)=>from_candid_CalendarAvailability_n6(_uploadFile, _downloadFile, x));
+function to_candid_ProfessionalDesignation_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfessionalDesignation): _ProfessionalDesignation {
+    return to_candid_variant_n23(_uploadFile, _downloadFile, value);
 }
-function from_candid_vec_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_AdvertisingProfessional>): Array<AdvertisingProfessional> {
-    return value.map((x)=>from_candid_AdvertisingProfessional_n3(_uploadFile, _downloadFile, x));
-}
-function to_candid_AdvertisingProfessional_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AdvertisingProfessional): _AdvertisingProfessional {
-    return to_candid_record_n27(_uploadFile, _downloadFile, value);
-}
-function to_candid_CalendarAvailability_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CalendarAvailability): _CalendarAvailability {
-    return to_candid_record_n30(_uploadFile, _downloadFile, value);
-}
-function to_candid_EquipmentVendor_n32(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: EquipmentVendor): _EquipmentVendor {
-    return to_candid_record_n33(_uploadFile, _downloadFile, value);
-}
-function to_candid_ShootLocation_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ShootLocation): _ShootLocation {
-    return to_candid_record_n35(_uploadFile, _downloadFile, value);
-}
-function to_candid_UserProfile_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserProfile): _UserProfile {
-    return to_candid_record_n24(_uploadFile, _downloadFile, value);
+function to_candid_UserProfile_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserProfile): _UserProfile {
+    return to_candid_record_n19(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
-function to_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    areaOfExpertise?: AreaOfExpertise;
+    professionalDesignation?: ProfessionalDesignation;
     name: string;
-    profileType: Variant_professional_vendor_productionHouse_location;
+    currentCity: string;
 }): {
+    areaOfExpertise: [] | [_AreaOfExpertise];
+    professionalDesignation: [] | [_ProfessionalDesignation];
     name: string;
-    profileType: {
-        professional: null;
-    } | {
-        vendor: null;
-    } | {
-        productionHouse: null;
-    } | {
-        location: null;
-    };
+    currentCity: string;
 } {
     return {
+        areaOfExpertise: value.areaOfExpertise ? candid_some(to_candid_AreaOfExpertise_n20(_uploadFile, _downloadFile, value.areaOfExpertise)) : candid_none(),
+        professionalDesignation: value.professionalDesignation ? candid_some(to_candid_ProfessionalDesignation_n22(_uploadFile, _downloadFile, value.professionalDesignation)) : candid_none(),
         name: value.name,
-        profileType: to_candid_variant_n25(_uploadFile, _downloadFile, value.profileType)
+        currentCity: value.currentCity
     };
 }
-function to_candid_record_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: Principal;
-    portfolio: Array<string>;
+function to_candid_record_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    yearsOfExperience: bigint;
+    principal: Principal;
+    areaOfExpertise: AreaOfExpertise;
+    professionalDesignation: ProfessionalDesignation;
+    workReelURL: string;
     name: string;
-    availability: Array<CalendarAvailability>;
-    specialties: Array<string>;
+    currentCity: string;
+    availability: Array<Time>;
+    industryReferences?: string;
 }): {
-    id: Principal;
-    portfolio: Array<string>;
+    yearsOfExperience: bigint;
+    principal: Principal;
+    areaOfExpertise: _AreaOfExpertise;
+    professionalDesignation: _ProfessionalDesignation;
+    workReelURL: string;
     name: string;
-    availability: Array<_CalendarAvailability>;
-    specialties: Array<string>;
+    currentCity: string;
+    availability: Array<_Time>;
+    industryReferences: [] | [string];
 } {
     return {
-        id: value.id,
-        portfolio: value.portfolio,
+        yearsOfExperience: value.yearsOfExperience,
+        principal: value.principal,
+        areaOfExpertise: to_candid_AreaOfExpertise_n20(_uploadFile, _downloadFile, value.areaOfExpertise),
+        professionalDesignation: to_candid_ProfessionalDesignation_n22(_uploadFile, _downloadFile, value.professionalDesignation),
+        workReelURL: value.workReelURL,
         name: value.name,
-        availability: to_candid_vec_n28(_uploadFile, _downloadFile, value.availability),
-        specialties: value.specialties
-    };
-}
-function to_candid_record_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    status: Variant_booked_available_unavailable;
-    date: Time;
-}): {
-    status: {
-        booked: null;
-    } | {
-        available: null;
-    } | {
-        unavailable: null;
-    };
-    date: _Time;
-} {
-    return {
-        status: to_candid_variant_n31(_uploadFile, _downloadFile, value.status),
-        date: value.date
-    };
-}
-function to_candid_record_n33(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: Principal;
-    inventory: Array<string>;
-    name: string;
-    availability: Array<CalendarAvailability>;
-}): {
-    id: Principal;
-    inventory: Array<string>;
-    name: string;
-    availability: Array<_CalendarAvailability>;
-} {
-    return {
-        id: value.id,
-        inventory: value.inventory,
-        name: value.name,
-        availability: to_candid_vec_n28(_uploadFile, _downloadFile, value.availability)
-    };
-}
-function to_candid_record_n35(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: Principal;
-    name: string;
-    description: string;
-    pricing: bigint;
-    availability: Array<CalendarAvailability>;
-    capacity: bigint;
-}): {
-    id: Principal;
-    name: string;
-    description: string;
-    pricing: bigint;
-    availability: Array<_CalendarAvailability>;
-    capacity: bigint;
-} {
-    return {
-        id: value.id,
-        name: value.name,
-        description: value.description,
-        pricing: value.pricing,
-        availability: to_candid_vec_n28(_uploadFile, _downloadFile, value.availability),
-        capacity: value.capacity
+        currentCity: value.currentCity,
+        availability: value.availability,
+        industryReferences: value.industryReferences ? candid_some(value.industryReferences) : candid_none()
     };
 }
 function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
@@ -887,42 +512,95 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         guest: null
     } : value;
 }
-function to_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_professional_vendor_productionHouse_location): {
-    professional: null;
+function to_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AreaOfExpertise): {
+    pr: null;
 } | {
-    vendor: null;
+    media: null;
 } | {
-    productionHouse: null;
+    creative: null;
 } | {
-    location: null;
+    production: null;
+} | {
+    other: null;
+} | {
+    research: null;
+} | {
+    strategy: null;
+} | {
+    postProduction: null;
+} | {
+    digital: null;
+} | {
+    accountManagement: null;
 } {
-    return value == Variant_professional_vendor_productionHouse_location.professional ? {
-        professional: null
-    } : value == Variant_professional_vendor_productionHouse_location.vendor ? {
-        vendor: null
-    } : value == Variant_professional_vendor_productionHouse_location.productionHouse ? {
-        productionHouse: null
-    } : value == Variant_professional_vendor_productionHouse_location.location ? {
-        location: null
+    return value == AreaOfExpertise.pr ? {
+        pr: null
+    } : value == AreaOfExpertise.media ? {
+        media: null
+    } : value == AreaOfExpertise.creative ? {
+        creative: null
+    } : value == AreaOfExpertise.production ? {
+        production: null
+    } : value == AreaOfExpertise.other ? {
+        other: null
+    } : value == AreaOfExpertise.research ? {
+        research: null
+    } : value == AreaOfExpertise.strategy ? {
+        strategy: null
+    } : value == AreaOfExpertise.postProduction ? {
+        postProduction: null
+    } : value == AreaOfExpertise.digital ? {
+        digital: null
+    } : value == AreaOfExpertise.accountManagement ? {
+        accountManagement: null
     } : value;
 }
-function to_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Variant_booked_available_unavailable): {
-    booked: null;
+function to_candid_variant_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfessionalDesignation): {
+    other: null;
 } | {
-    available: null;
+    editor: null;
 } | {
-    unavailable: null;
+    artDirector: null;
+} | {
+    director: null;
+} | {
+    designer: null;
+} | {
+    mediaPlanner: null;
+} | {
+    accountExecutive: null;
+} | {
+    producer: null;
+} | {
+    cinematographer: null;
+} | {
+    strategist: null;
+} | {
+    copywriter: null;
 } {
-    return value == Variant_booked_available_unavailable.booked ? {
-        booked: null
-    } : value == Variant_booked_available_unavailable.available ? {
-        available: null
-    } : value == Variant_booked_available_unavailable.unavailable ? {
-        unavailable: null
+    return value == ProfessionalDesignation.other ? {
+        other: null
+    } : value == ProfessionalDesignation.editor ? {
+        editor: null
+    } : value == ProfessionalDesignation.artDirector ? {
+        artDirector: null
+    } : value == ProfessionalDesignation.director ? {
+        director: null
+    } : value == ProfessionalDesignation.designer ? {
+        designer: null
+    } : value == ProfessionalDesignation.mediaPlanner ? {
+        mediaPlanner: null
+    } : value == ProfessionalDesignation.accountExecutive ? {
+        accountExecutive: null
+    } : value == ProfessionalDesignation.producer ? {
+        producer: null
+    } : value == ProfessionalDesignation.cinematographer ? {
+        cinematographer: null
+    } : value == ProfessionalDesignation.strategist ? {
+        strategist: null
+    } : value == ProfessionalDesignation.copywriter ? {
+        copywriter: null
     } : value;
-}
-function to_candid_vec_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<CalendarAvailability>): Array<_CalendarAvailability> {
-    return value.map((x)=>to_candid_CalendarAvailability_n29(_uploadFile, _downloadFile, x));
 }
 export interface CreateActorOptions {
     agent?: Agent;
