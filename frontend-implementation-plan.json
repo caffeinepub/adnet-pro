@@ -1,71 +1,37 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add Tribe Availability Enquiry Form with Results (Step 1 + Step 2)",
+  "title": "Remove onboarding modal so users land directly on main app",
   "requirements": [
     {
-      "id": "REQ-3",
-      "summary": "Add 'Find Available Crew' CTA button to Tribe Availability card, visible only for authenticated Directors and Production Houses",
+      "id": "REQ-1",
+      "summary": "Remove the 'Welcome to Ad Tribe' onboarding modal entirely so authenticated users land directly on the main app without name-entry interruption",
       "acceptanceCriteria": [
-        "The CTA button 'Find Available Crew' appears inside the Tribe Availability card on the Landing Page",
-        "Button is only active/visible for authenticated users with account type Director or Production House",
-        "Non-qualifying users see a disabled button or tooltip explaining access is restricted to Directors and Production Houses",
-        "Clicking the button opens the enquiry form (inline within the section or as a modal)"
+        "The 'Welcome to Ad Tribe' modal (name entry + Continue button) is no longer rendered anywhere in the app.",
+        "After authenticating via Internet Identity, the user lands directly on the main app (LandingPage or Dashboard) with no modal interruption.",
+        "All code references that trigger or conditionally show the ProfileSetup modal (e.g., in AppLayout or any parent component) are removed or disabled.",
+        "The registration flows (Director, Production House, and Advertising Professional) remain accessible from the main app for users to self-register."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Add 'Find Available Crew' CTA button inside the Tribe Availability feature card (the card with calendar icon). The button must be conditionally rendered: visible and enabled only for authenticated users whose professionalDesignation is 'director' or whose account is a production house. For non-qualifying users, show the button in a disabled state with a tooltip explaining the restriction. On click, toggle inline enquiry form display within the card section. Use the authorization component to verify user permissions before showing the active button."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Build Tribe Availability enquiry form with all required fields and conditional logic for Director/Production House",
-      "acceptanceCriteria": [
-        "All 8 form fields are present and functional",
-        "Director Name field shows only when account type is Director; Production House Name shows only when account type is Production House",
-        "Technicians Needed field is a multi-select dropdown with the full predefined roles list; selected roles appear as removable tags/chips",
-        "Shoot Dates accepts a start and end date",
-        "Available From is a single date picker",
-        "Form has a Submit/Search button",
-        "All required fields are validated before submission"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
-          "operation": "create",
-          "description": "Create the Tribe Availability enquiry form component with the following controlled form fields: (1) Project Name (text input, required), (2) Director Name (text input, shown only when user's professionalDesignation is 'director'), (3) Production House Name (text input, shown only when user's account type is production house), (4) Shoot City (text input, required), (5) Shoot Dates (date range picker with start and end date inputs, required), (6) Available From (single date picker, required), (7) Technicians Needed (multi-select dropdown using predefined roles: Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor; selected roles displayed as removable tags, required), (8) Special Requirements (textarea, optional). Include form validation and a Submit/Search button. On submit, call a custom mutation hook to invoke the backend searchTechnicians function with the form data, then pass results up to the parent component via callback. Use date helper utilities from frontend/src/utils/dateHelpers.ts to convert Date objects to Time (bigint) for the backend."
+          "path": "frontend/src/components/ProfileSetup.tsx",
+          "operation": "delete",
+          "description": "Delete the ProfileSetup modal component entirely as it is no longer needed for the onboarding flow."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Add a new mutation hook useSearchTechnicians that accepts TechnicianSearchInput and calls actor.searchTechnicians(searchInput). Return the TechnicianSearchResult including sameCityMatches and otherCityMatches arrays. Handle loading, error, and success states using React Query mutation."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Display search results inline below enquiry form, split into 'Same City' and 'Other Cities' sections",
-      "acceptanceCriteria": [
-        "After form submission, results appear below the form without navigating away",
-        "Results are split into 'Same City' and 'Other Cities' sections with clear headings",
-        "Each result card displays: name, designation, city, contact number",
-        "Empty state message shown if no matches found in a category",
-        "A loading/spinner state is shown while the query is in progress",
-        "User can modify the form and resubmit to get updated results"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
-          "operation": "create",
-          "description": "Create the results display component that accepts TechnicianSearchResult as a prop. Render two sections: 'Same City' and 'Other Cities', each with a clear heading. For each section, map over the respective array (sameCityMatches or otherCityMatches) and display a card for each technician showing name, role (designation), city, and contactNumber. If a section has zero results, show an appropriate empty state message (e.g., 'No technicians found in your city' or 'No technicians found in other cities'). Include a loading/spinner state when the mutation is pending. Style the cards consistently with the AD TRIBE design system."
+          "description": "Remove all references to ProfileSetup component including its import statement and any conditional rendering logic that displays the modal based on authentication or profile state. Ensure the layout renders children directly without checking for profile setup status."
         },
         {
           "path": "frontend/src/pages/LandingPage.tsx",
           "operation": "modify",
-          "description": "Wire the TribeAvailabilityEnquiryForm and TribeAvailabilityResults components into the Tribe Availability card section. When the 'Find Available Crew' button is clicked, display the enquiry form inline below the button. After form submission, pass the returned search results to the TribeAvailabilityResults component and display it inline below the form within the same card section. Manage form visibility and results state within the LandingPage component. Ensure the user can modify the form and resubmit to get updated results without navigating away."
+          "description": "Remove any references to ProfileSetup component or logic that conditionally shows the modal on the landing page. Ensure authenticated users see the landing page content directly without modal interruption."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Remove any references to ProfileSetup component or logic that conditionally shows the modal on the dashboard. Ensure authenticated users see the dashboard content directly without modal interruption."
         }
       ]
     }

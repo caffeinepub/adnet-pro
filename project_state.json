@@ -1,79 +1,26 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "A platform for film industry professionals (AD TRIBE) where Production Houses and Directors can search for available technicians. Features a Tribe Availability section with an enquiry form (Project Name, Director Name, Production House Name, Shoot City, Shoot Dates, Available From date, multi-select technician roles dropdown, Special Requirements). Results are shown on the same page split into Same City and Other Cities sections. Only logged-in Directors and Production Houses can submit. Mock technician database seeded for demo purposes.",
+  "summary": "Ad Tribe app where users land directly on the main app (skipping onboarding modal) and register themselves to access further information. Supports Director and Production House registration flows.",
   "architectural_notes": [
-    "Tribe Availability enquiry form is access-controlled: only logged-in users registered as Director or Production House can submit",
-    "Mock technician database should be structured for easy replacement with real data later"
+    "Onboarding modal (Welcome/name entry step) has been removed; users land directly on the main app",
+    "Users self-register from the main app to access Director or Production House information"
   ],
-  "known_issues": [
-    "Build has repeatedly failed when attempting to implement the full Tribe Availability feature in one go — being broken into Step 1 (form) and Step 2 (results) to reduce complexity"
-  ],
+  "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-in-the-tribe-availability-card-on-the-landing-page-the-card-with-the-calendar-icon-and-text-sync-your-calendar-with-the-tribe-add-a-cta-button-labeled-find-available-crew-this-button-must-only-be-visible-and-enabled-for-authenticated-users-whose-account-type-is-director-or-production-house-users-who-are-not-logged-in-or-have-a-different-account-type-should-see-the-button-in-a-disabled-or-hidden-state-with-a-tooltip-explaining-the-restriction",
-      "title": "In the Tribe Availability card on the Landing Page (the card with the calendar icon and text 'Sync your calendar with the tribe...'), add a CTA button labeled 'Find Available Crew'. This button must only be visible and enabled for authenticated users whose account type is Director or Production House. Users who are not logged in or have a different account type should see the button in a disabled or hidden state with a tooltip explaining the restriction.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-the-tribe-availability-enquiry-form-with-the-following-fields-1-project-name-text-input-2-director-name-text-input-shown-when-account-type-is-director-3-production-house-name-text-input-shown-when-account-type-is-production-house-4-shoot-city-text-input-5-shoot-dates-date-range-picker-start-date-and-end-date-6-available-from-single-date-picker-7-technicians-needed-multi-select-dropdown-using-a-predefined-roles-list-cinematographer-editor-gaffer-sound-recordist-art-director-colourist-production-designer-costume-designer-makeup-artist-stunt-coordinator-vfx-supervisor-drone-operator-focus-puller-clapper-loader-script-supervisor-users-can-add-multiple-roles-as-an-array-8-special-requirements-textarea-the-form-should-be-shown-inline-in-the-tribe-availability-section-below-the-cta-button-or-in-a-modal",
-      "title": "Build the Tribe Availability enquiry form with the following fields: (1) Project Name (text input), (2) Director Name (text input, shown when account type is Director), (3) Production House Name (text input, shown when account type is Production House), (4) Shoot City (text input), (5) Shoot Dates (date range picker: start date and end date), (6) Available From (single date picker), (7) Technicians Needed (multi-select dropdown using a predefined roles list — Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor — users can add multiple roles as an array), (8) Special Requirements (textarea). The form should be shown inline in the Tribe Availability section below the CTA button or in a modal.",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-after-the-enquiry-form-is-submitted-display-the-search-results-inline-below-the-form-within-the-same-tribe-availability-section-results-must-be-split-into-two-clearly-labelled-sections-same-city-and-other-cities-each-technician-result-card-should-show-name-designation-city-and-contact-number-if-no-technicians-are-found-in-either-category-show-an-appropriate-empty-state-message-for-that-category",
-      "title": "After the enquiry form is submitted, display the search results inline below the form within the same Tribe Availability section. Results must be split into two clearly labelled sections: 'Same City' and 'Other Cities'. Each technician result card should show name, designation, city, and contact number. If no technicians are found in either category, show an appropriate empty state message for that category.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    }
-  ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Tribe Availability enquiry form in the Tribe Availability section with predefined roles dropdown, accessible only to Directors and Production Houses",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "After enquiry submission, show results on same page split into Same City and Other Cities technician lists with name, designation, city, and contact number",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Mock technician database seeded with sample profiles across multiple cities and roles, easily replaceable later",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Seed a mock technician database in the Motoko backend with at least 15 sample technician profiles. Each profile must include: name, designation (from a predefined roles list), city, contact number, and availability date range. Spread profiles across at least 4 different cities and cover all predefined roles. This data should be stored in a stable variable so it can be easily replaced later.",
+      "id": "feature-remove-the-welcome-to-ad-tribe-onboarding-modal-profilesetup-component-in-frontend-src-components-profilesetup-tsx-entirely-users-must-no-longer-be-prompted-to-enter-their-name-upon-authentication-they-should-land-directly-on-the-main-app-without-any-interstitial-modal-or-name-entry-step",
+      "title": "Remove the 'Welcome to Ad Tribe' onboarding modal (ProfileSetup component in frontend/src/components/ProfileSetup.tsx) entirely. Users must no longer be prompted to enter their name upon authentication — they should land directly on the main app without any interstitial modal or name-entry step.",
       "reqIds": [
         "REQ-1"
       ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Add a backend query function `searchTechnicians` that accepts shoot city, shoot date range, available-from date, and a list of required roles, and returns matching technicians split into two groups: same-city matches and other-city matches. Each result record must include name, designation, city, and contact number.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "status": "pending"
+      "version": 1
     }
   ],
+  "new_feature_requests": [],
   "gameProjectType": "none",
-  "projectName": "AD TRIBE",
+  "projectName": "Ad Tribe",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -35,6 +35,17 @@ export interface TechnicianSearchInput {
     requiredRoles: Array<string>;
     availableTo: Time;
 }
+export interface Director {
+    yearsOfExperience: bigint;
+    availabilityStart: Time;
+    workReelUrl: string;
+    fullName: string;
+    currentCity: string;
+    genreSpecialisation?: string;
+    productSpecialisation?: string;
+    availabilityEnd: Time;
+    industryReference: string;
+}
 export interface UserProfile {
     areaOfExpertise?: AreaOfExpertise;
     professionalDesignation?: ProfessionalDesignation;
@@ -75,11 +86,13 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getDirectorRegistration(principal: Principal): Promise<Director | null>;
     getProfessionalRegistration(user: Principal): Promise<AdvertisingRegistration | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchTechnicians(searchInput: TechnicianSearchInput): Promise<TechnicianSearchResult>;
+    submitDirectorRegistration(director: Director): Promise<void>;
     submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
 }

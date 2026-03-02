@@ -10,8 +10,43 @@ import Time "mo:core/Time";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+
+
 actor {
-  // Environment types
+  public type Director = {
+    fullName : Text;
+    currentCity : Text;
+    productSpecialisation : ?Text; // Optional
+    genreSpecialisation : ?Text; // Optional
+    yearsOfExperience : Nat;
+    availabilityStart : Time.Time;
+    availabilityEnd : Time.Time;
+    workReelUrl : Text;
+    industryReference : Text;
+  };
+
+  let accessControlState = AccessControl.initState();
+  include MixinAuthorization(accessControlState);
+
+  let directors = Map.empty<Principal, Director>();
+
+  public shared ({ caller }) func submitDirectorRegistration(director : Director) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can submit registration");
+    };
+    if (directors.containsKey(caller)) {
+      Runtime.trap("Error: Cannot modify existing director registration");
+    };
+    directors.add(caller, director);
+  };
+
+  public query ({ caller }) func getDirectorRegistration(principal : Principal) : async ?Director {
+    if (caller != principal and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own director registration");
+    };
+    directors.get(principal);
+  };
+
   public type AreaOfExpertise = {
     #creative;
     #production;
@@ -57,9 +92,6 @@ actor {
     areaOfExpertise : ?AreaOfExpertise;
     professionalDesignation : ?ProfessionalDesignation;
   };
-
-  let accessControlState = AccessControl.initState();
-  include MixinAuthorization(accessControlState);
 
   let registrations = Map.empty<Principal, AdvertisingRegistration>();
   let verifiedMembers = Set.empty<Principal>();
@@ -273,7 +305,6 @@ actor {
       }
     );
 
-    // Custom partition logic for same city and other city matches
     let sameCity = matches.filter(func(tech) { tech.city == searchInput.city });
     let otherCity = matches.filter(func(tech) { tech.city != searchInput.city });
 

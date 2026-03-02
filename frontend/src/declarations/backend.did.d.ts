@@ -31,6 +31,17 @@ export type AreaOfExpertise = { 'pr' : null } |
   { 'postProduction' : null } |
   { 'digital' : null } |
   { 'accountManagement' : null };
+export interface Director {
+  'yearsOfExperience' : bigint,
+  'availabilityStart' : Time,
+  'workReelUrl' : string,
+  'fullName' : string,
+  'currentCity' : string,
+  'genreSpecialisation' : [] | [string],
+  'productSpecialisation' : [] | [string],
+  'availabilityEnd' : Time,
+  'industryReference' : string,
+}
 export type ProfessionalDesignation = { 'other' : null } |
   { 'editor' : null } |
   { 'artDirector' : null } |
@@ -73,6 +84,7 @@ export interface _SERVICE {
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getDirectorRegistration' : ActorMethod<[Principal], [] | [Director]>,
   'getProfessionalRegistration' : ActorMethod<
     [Principal],
     [] | [AdvertisingRegistration]
@@ -85,6 +97,7 @@ export interface _SERVICE {
     [TechnicianSearchInput],
     TechnicianSearchResult
   >,
+  'submitDirectorRegistration' : ActorMethod<[Director], undefined>,
   'submitProfessionalRegistration' : ActorMethod<
     [AdvertisingRegistration],
     undefined

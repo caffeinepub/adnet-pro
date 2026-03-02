@@ -1,13 +1,10 @@
 # Specification
 
 ## Summary
-**Goal:** Add a Tribe Availability enquiry flow to the Landing Page, allowing Directors and Production Houses to search for available crew technicians using a mock backend database.
+**Goal:** Remove the "Welcome to Ad Tribe" onboarding modal so users land directly on the main app after authenticating.
 
 **Planned changes:**
-- Seed the Motoko backend with at least 15 mock technician profiles (name, designation, city, contact number, availability date range) stored in a stable variable, spread across at least 4 cities and covering all predefined roles
-- Add a `searchTechnicians` backend query function that accepts shoot city, shoot date range, available-from date, and a list of required roles, returning results split into same-city and other-city matches
-- Add a "Find Available Crew" CTA button inside the Tribe Availability card on the Landing Page, visible and enabled only for authenticated users with account type Director or Production House; other users see a disabled state with a tooltip
-- Build an enquiry form (inline in the Tribe Availability section) with fields: Project Name, Director Name (Director only) or Production House Name (Production House only), Shoot City, Shoot Dates (date range), Available From (single date), Technicians Needed (multi-select dropdown with predefined roles as removable chips), and Special Requirements (textarea)
-- After form submission, display results inline below the form split into "Same City" and "Other Cities" sections; each technician card shows name, designation, city, and contact number; empty states shown when no matches found; loading spinner shown during query
+- Remove the `ProfileSetup` component (`frontend/src/components/ProfileSetup.tsx`) entirely
+- Remove all code references that conditionally trigger or render the `ProfileSetup` modal (e.g., in `AppLayout` or any parent component)
 
-**User-visible outcome:** Directors and Production Houses can open an enquiry form directly within the Tribe Availability section on the Landing Page, search for available crew by city, date range, and required roles, and instantly see matching technicians split by same-city and other-city results — all without leaving the page.
+**User-visible outcome:** After logging in via Internet Identity, users are taken directly to the main app without any name-entry modal interrupting their experience. Registration flows (Director, Production House, Advertising Professional) remain accessible from the main app as before.

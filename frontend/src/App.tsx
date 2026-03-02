@@ -1,7 +1,5 @@
 import { createRouter, RouterProvider, createRoute, createRootRoute, Outlet, redirect } from '@tanstack/react-router';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from './hooks/useQueries';
-import ProfileSetup from './components/ProfileSetup';
 import AppLayout from './components/layout/AppLayout';
 import ProfilePage from './pages/ProfilePage';
 import DashboardPage from './pages/DashboardPage';
@@ -9,17 +7,12 @@ import ConnectionsPage from './pages/ConnectionsPage';
 import LandingPage from './pages/LandingPage';
 import RegistrationPage from './pages/RegistrationPage';
 import RegistrationSuccessPage from './pages/RegistrationSuccessPage';
+import DirectorRegistrationPage from './pages/DirectorRegistrationPage';
+import ProductionHouseRegistrationPage from './pages/ProductionHouseRegistrationPage';
 
 function RootComponent() {
-  const { identity, loginStatus } = useInternetIdentity();
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
-  
-  const isAuthenticated = !!identity && loginStatus === 'success';
-  const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
-
   return (
     <AppLayout>
-      {showProfileSetup && <ProfileSetup />}
       <Outlet />
     </AppLayout>
   );
@@ -83,6 +76,18 @@ const registrationSuccessRoute = createRoute({
   component: RegistrationSuccessPage,
 });
 
+const directorRegistrationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/director-registration',
+  component: DirectorRegistrationPage,
+});
+
+const productionHouseRegistrationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/production-house-registration',
+  component: ProductionHouseRegistrationPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   profileRoute,
@@ -90,6 +95,8 @@ const routeTree = rootRoute.addChildren([
   connectionsRoute,
   registrationRoute,
   registrationSuccessRoute,
+  directorRegistrationRoute,
+  productionHouseRegistrationRoute,
 ]);
 
 const router = createRouter({ 

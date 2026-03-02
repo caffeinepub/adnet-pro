@@ -117,6 +117,17 @@ export interface TechnicianSearchInput {
     requiredRoles: Array<string>;
     availableTo: Time;
 }
+export interface Director {
+    yearsOfExperience: bigint;
+    availabilityStart: Time;
+    workReelUrl: string;
+    fullName: string;
+    currentCity: string;
+    genreSpecialisation?: string;
+    productSpecialisation?: string;
+    availabilityEnd: Time;
+    industryReference: string;
+}
 export interface UserProfile {
     areaOfExpertise?: AreaOfExpertise;
     professionalDesignation?: ProfessionalDesignation;
@@ -158,15 +169,17 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getDirectorRegistration(principal: Principal): Promise<Director | null>;
     getProfessionalRegistration(user: Principal): Promise<AdvertisingRegistration | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchTechnicians(searchInput: TechnicianSearchInput): Promise<TechnicianSearchResult>;
+    submitDirectorRegistration(director: Director): Promise<void>;
     submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
 }
-import type { AdvertisingRegistration as _AdvertisingRegistration, AreaOfExpertise as _AreaOfExpertise, ProfessionalDesignation as _ProfessionalDesignation, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { AdvertisingRegistration as _AdvertisingRegistration, AreaOfExpertise as _AreaOfExpertise, Director as _Director, ProfessionalDesignation as _ProfessionalDesignation, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -225,18 +238,32 @@ export class Backend implements backendInterface {
             return from_candid_UserRole_n12(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getProfessionalRegistration(arg0: Principal): Promise<AdvertisingRegistration | null> {
+    async getDirectorRegistration(arg0: Principal): Promise<Director | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getProfessionalRegistration(arg0);
+                const result = await this.actor.getDirectorRegistration(arg0);
                 return from_candid_opt_n14(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getProfessionalRegistration(arg0);
+            const result = await this.actor.getDirectorRegistration(arg0);
             return from_candid_opt_n14(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getProfessionalRegistration(arg0: Principal): Promise<AdvertisingRegistration | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getProfessionalRegistration(arg0);
+                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getProfessionalRegistration(arg0);
+            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
@@ -284,14 +311,14 @@ export class Backend implements backendInterface {
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n18(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n21(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n18(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n21(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -309,26 +336,43 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async submitProfessionalRegistration(arg0: AdvertisingRegistration): Promise<void> {
+    async submitDirectorRegistration(arg0: Director): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.submitProfessionalRegistration(to_candid_AdvertisingRegistration_n24(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.submitDirectorRegistration(to_candid_Director_n27(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.submitProfessionalRegistration(to_candid_AdvertisingRegistration_n24(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.submitDirectorRegistration(to_candid_Director_n27(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async submitProfessionalRegistration(arg0: AdvertisingRegistration): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.submitProfessionalRegistration(to_candid_AdvertisingRegistration_n29(this._uploadFile, this._downloadFile, arg0));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.submitProfessionalRegistration(to_candid_AdvertisingRegistration_n29(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
 }
-function from_candid_AdvertisingRegistration_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AdvertisingRegistration): AdvertisingRegistration {
-    return from_candid_record_n16(_uploadFile, _downloadFile, value);
+function from_candid_AdvertisingRegistration_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AdvertisingRegistration): AdvertisingRegistration {
+    return from_candid_record_n20(_uploadFile, _downloadFile, value);
 }
 function from_candid_AreaOfExpertise_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _AreaOfExpertise): AreaOfExpertise {
     return from_candid_variant_n8(_uploadFile, _downloadFile, value);
+}
+function from_candid_Director_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Director): Director {
+    return from_candid_record_n16(_uploadFile, _downloadFile, value);
 }
 function from_candid_ProfessionalDesignation_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ProfessionalDesignation): ProfessionalDesignation {
     return from_candid_variant_n11(_uploadFile, _downloadFile, value);
@@ -339,11 +383,14 @@ function from_candid_UserProfile_n4(_uploadFile: (file: ExternalBlob) => Promise
 function from_candid_UserRole_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AdvertisingRegistration]): AdvertisingRegistration | null {
-    return value.length === 0 ? null : from_candid_AdvertisingRegistration_n15(_uploadFile, _downloadFile, value[0]);
+function from_candid_opt_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Director]): Director | null {
+    return value.length === 0 ? null : from_candid_Director_n15(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [string]): string | null {
     return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_AdvertisingRegistration]): AdvertisingRegistration | null {
+    return value.length === 0 ? null : from_candid_AdvertisingRegistration_n19(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : from_candid_UserProfile_n4(_uploadFile, _downloadFile, value[0]);
@@ -355,6 +402,39 @@ function from_candid_opt_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
     return value.length === 0 ? null : from_candid_ProfessionalDesignation_n10(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_record_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    yearsOfExperience: bigint;
+    availabilityStart: _Time;
+    workReelUrl: string;
+    fullName: string;
+    currentCity: string;
+    genreSpecialisation: [] | [string];
+    productSpecialisation: [] | [string];
+    availabilityEnd: _Time;
+    industryReference: string;
+}): {
+    yearsOfExperience: bigint;
+    availabilityStart: Time;
+    workReelUrl: string;
+    fullName: string;
+    currentCity: string;
+    genreSpecialisation?: string;
+    productSpecialisation?: string;
+    availabilityEnd: Time;
+    industryReference: string;
+} {
+    return {
+        yearsOfExperience: value.yearsOfExperience,
+        availabilityStart: value.availabilityStart,
+        workReelUrl: value.workReelUrl,
+        fullName: value.fullName,
+        currentCity: value.currentCity,
+        genreSpecialisation: record_opt_to_undefined(from_candid_opt_n17(_uploadFile, _downloadFile, value.genreSpecialisation)),
+        productSpecialisation: record_opt_to_undefined(from_candid_opt_n17(_uploadFile, _downloadFile, value.productSpecialisation)),
+        availabilityEnd: value.availabilityEnd,
+        industryReference: value.industryReference
+    };
+}
+function from_candid_record_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     yearsOfExperience: bigint;
     principal: Principal;
     areaOfExpertise: _AreaOfExpertise;
@@ -462,22 +542,25 @@ function from_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): AreaOfExpertise {
     return "pr" in value ? AreaOfExpertise.pr : "media" in value ? AreaOfExpertise.media : "creative" in value ? AreaOfExpertise.creative : "production" in value ? AreaOfExpertise.production : "other" in value ? AreaOfExpertise.other : "research" in value ? AreaOfExpertise.research : "strategy" in value ? AreaOfExpertise.strategy : "postProduction" in value ? AreaOfExpertise.postProduction : "digital" in value ? AreaOfExpertise.digital : "accountManagement" in value ? AreaOfExpertise.accountManagement : value;
 }
-function to_candid_AdvertisingRegistration_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AdvertisingRegistration): _AdvertisingRegistration {
-    return to_candid_record_n25(_uploadFile, _downloadFile, value);
+function to_candid_AdvertisingRegistration_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AdvertisingRegistration): _AdvertisingRegistration {
+    return to_candid_record_n30(_uploadFile, _downloadFile, value);
 }
-function to_candid_AreaOfExpertise_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AreaOfExpertise): _AreaOfExpertise {
-    return to_candid_variant_n21(_uploadFile, _downloadFile, value);
+function to_candid_AreaOfExpertise_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AreaOfExpertise): _AreaOfExpertise {
+    return to_candid_variant_n24(_uploadFile, _downloadFile, value);
 }
-function to_candid_ProfessionalDesignation_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfessionalDesignation): _ProfessionalDesignation {
-    return to_candid_variant_n23(_uploadFile, _downloadFile, value);
+function to_candid_Director_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Director): _Director {
+    return to_candid_record_n28(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserProfile_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserProfile): _UserProfile {
-    return to_candid_record_n19(_uploadFile, _downloadFile, value);
+function to_candid_ProfessionalDesignation_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfessionalDesignation): _ProfessionalDesignation {
+    return to_candid_variant_n26(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserProfile_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserProfile): _UserProfile {
+    return to_candid_record_n22(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
 }
-function to_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     areaOfExpertise?: AreaOfExpertise;
     professionalDesignation?: ProfessionalDesignation;
     name: string;
@@ -489,13 +572,46 @@ function to_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     currentCity: string;
 } {
     return {
-        areaOfExpertise: value.areaOfExpertise ? candid_some(to_candid_AreaOfExpertise_n20(_uploadFile, _downloadFile, value.areaOfExpertise)) : candid_none(),
-        professionalDesignation: value.professionalDesignation ? candid_some(to_candid_ProfessionalDesignation_n22(_uploadFile, _downloadFile, value.professionalDesignation)) : candid_none(),
+        areaOfExpertise: value.areaOfExpertise ? candid_some(to_candid_AreaOfExpertise_n23(_uploadFile, _downloadFile, value.areaOfExpertise)) : candid_none(),
+        professionalDesignation: value.professionalDesignation ? candid_some(to_candid_ProfessionalDesignation_n25(_uploadFile, _downloadFile, value.professionalDesignation)) : candid_none(),
         name: value.name,
         currentCity: value.currentCity
     };
 }
-function to_candid_record_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    yearsOfExperience: bigint;
+    availabilityStart: Time;
+    workReelUrl: string;
+    fullName: string;
+    currentCity: string;
+    genreSpecialisation?: string;
+    productSpecialisation?: string;
+    availabilityEnd: Time;
+    industryReference: string;
+}): {
+    yearsOfExperience: bigint;
+    availabilityStart: _Time;
+    workReelUrl: string;
+    fullName: string;
+    currentCity: string;
+    genreSpecialisation: [] | [string];
+    productSpecialisation: [] | [string];
+    availabilityEnd: _Time;
+    industryReference: string;
+} {
+    return {
+        yearsOfExperience: value.yearsOfExperience,
+        availabilityStart: value.availabilityStart,
+        workReelUrl: value.workReelUrl,
+        fullName: value.fullName,
+        currentCity: value.currentCity,
+        genreSpecialisation: value.genreSpecialisation ? candid_some(value.genreSpecialisation) : candid_none(),
+        productSpecialisation: value.productSpecialisation ? candid_some(value.productSpecialisation) : candid_none(),
+        availabilityEnd: value.availabilityEnd,
+        industryReference: value.industryReference
+    };
+}
+function to_candid_record_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     yearsOfExperience: bigint;
     principal: Principal;
     areaOfExpertise: AreaOfExpertise;
@@ -519,8 +635,8 @@ function to_candid_record_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     return {
         yearsOfExperience: value.yearsOfExperience,
         principal: value.principal,
-        areaOfExpertise: to_candid_AreaOfExpertise_n20(_uploadFile, _downloadFile, value.areaOfExpertise),
-        professionalDesignation: to_candid_ProfessionalDesignation_n22(_uploadFile, _downloadFile, value.professionalDesignation),
+        areaOfExpertise: to_candid_AreaOfExpertise_n23(_uploadFile, _downloadFile, value.areaOfExpertise),
+        professionalDesignation: to_candid_ProfessionalDesignation_n25(_uploadFile, _downloadFile, value.professionalDesignation),
         workReelURL: value.workReelURL,
         name: value.name,
         currentCity: value.currentCity,
@@ -543,7 +659,7 @@ function to_candid_variant_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         guest: null
     } : value;
 }
-function to_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AreaOfExpertise): {
+function to_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: AreaOfExpertise): {
     pr: null;
 } | {
     media: null;
@@ -586,7 +702,7 @@ function to_candid_variant_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint
         accountManagement: null
     } : value;
 }
-function to_candid_variant_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfessionalDesignation): {
+function to_candid_variant_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ProfessionalDesignation): {
     other: null;
 } | {
     editor: null;

@@ -45,6 +45,17 @@ export const UserProfile = IDL.Record({
   'currentCity' : IDL.Text,
 });
 export const Time = IDL.Int;
+export const Director = IDL.Record({
+  'yearsOfExperience' : IDL.Nat,
+  'availabilityStart' : Time,
+  'workReelUrl' : IDL.Text,
+  'fullName' : IDL.Text,
+  'currentCity' : IDL.Text,
+  'genreSpecialisation' : IDL.Opt(IDL.Text),
+  'productSpecialisation' : IDL.Opt(IDL.Text),
+  'availabilityEnd' : Time,
+  'industryReference' : IDL.Text,
+});
 export const AdvertisingRegistration = IDL.Record({
   'yearsOfExperience' : IDL.Nat,
   'principal' : IDL.Principal,
@@ -78,6 +89,11 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getDirectorRegistration' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(Director)],
+      ['query'],
+    ),
   'getProfessionalRegistration' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(AdvertisingRegistration)],
@@ -96,6 +112,7 @@ export const idlService = IDL.Service({
       [TechnicianSearchResult],
       ['query'],
     ),
+  'submitDirectorRegistration' : IDL.Func([Director], [], []),
   'submitProfessionalRegistration' : IDL.Func(
       [AdvertisingRegistration],
       [],
@@ -143,6 +160,17 @@ export const idlFactory = ({ IDL }) => {
     'currentCity' : IDL.Text,
   });
   const Time = IDL.Int;
+  const Director = IDL.Record({
+    'yearsOfExperience' : IDL.Nat,
+    'availabilityStart' : Time,
+    'workReelUrl' : IDL.Text,
+    'fullName' : IDL.Text,
+    'currentCity' : IDL.Text,
+    'genreSpecialisation' : IDL.Opt(IDL.Text),
+    'productSpecialisation' : IDL.Opt(IDL.Text),
+    'availabilityEnd' : Time,
+    'industryReference' : IDL.Text,
+  });
   const AdvertisingRegistration = IDL.Record({
     'yearsOfExperience' : IDL.Nat,
     'principal' : IDL.Principal,
@@ -176,6 +204,11 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getDirectorRegistration' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(Director)],
+        ['query'],
+      ),
     'getProfessionalRegistration' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(AdvertisingRegistration)],
@@ -194,6 +227,7 @@ export const idlFactory = ({ IDL }) => {
         [TechnicianSearchResult],
         ['query'],
       ),
+    'submitDirectorRegistration' : IDL.Func([Director], [], []),
     'submitProfessionalRegistration' : IDL.Func(
         [AdvertisingRegistration],
         [],

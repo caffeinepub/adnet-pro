@@ -5,6 +5,7 @@ import type {
   AdvertisingRegistration,
   TechnicianSearchInput,
   TechnicianSearchResult,
+  Director,
 } from '../backend';
 import { Principal } from '@dfinity/principal';
 
@@ -97,5 +98,37 @@ export function useSearchTechnicians() {
       if (!actor) throw new Error('Actor not available');
       return actor.searchTechnicians(searchInput);
     },
+  });
+}
+
+export function useSubmitDirectorRegistration() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (director: Director) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.submitDirectorRegistration(director);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['directorRegistration'] });
+    },
+  });
+}
+
+export function useGetDirectorRegistration(user: Principal | null) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<Director | null>({
+    queryKey: ['directorRegistration', user?.toString()],
+    queryFn: async () => {
+      if (!actor || !user) return null;
+      try {
+        return await actor.getDirectorRegistration(user);
+      } catch {
+        return null;
+      }
+    },
+    enabled: !!actor && !actorFetching && !!user,
   });
 }

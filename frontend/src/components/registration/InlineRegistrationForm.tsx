@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { useSubmitProfessionalRegistration } from '../../hooks/useQueries';
 import { Button } from '@/components/ui/button';
@@ -42,6 +42,14 @@ export const DESIGNATIONS: { value: ProfessionalDesignation; label: string }[] =
   { value: ProfessionalDesignation.designer, label: 'Designer' },
   { value: ProfessionalDesignation.other, label: 'Other' },
 ];
+
+/** Map URL role param → ProfessionalDesignation */
+function roleParamToDesignation(role: string | null): ProfessionalDesignation | '' {
+  if (!role) return '';
+  if (role === 'director') return ProfessionalDesignation.director;
+  if (role === 'production_house') return ProfessionalDesignation.producer;
+  return '';
+}
 
 export function AvailabilityPicker({
   selectedDates,
@@ -161,17 +169,29 @@ export default function InlineRegistrationForm({ onSuccess }: InlineRegistration
   const { identity, login, loginStatus } = useInternetIdentity();
   const submitMutation = useSubmitProfessionalRegistration();
 
+  // Read role pre-seed from URL query param (set by TribalLeaderRegistrationModal)
+  const urlRole = new URLSearchParams(window.location.search).get('role');
+  const preseededDesignation = roleParamToDesignation(urlRole);
+
   const [name, setName] = useState('');
   const [currentCity, setCurrentCity] = useState('');
   const [areaOfExpertise, setAreaOfExpertise] = useState<AreaOfExpertise | ''>('');
   const [professionalDesignation, setProfessionalDesignation] = useState<
     ProfessionalDesignation | ''
-  >('');
+  >(preseededDesignation);
   const [yearsOfExperience, setYearsOfExperience] = useState('');
   const [availabilityDates, setAvailabilityDates] = useState<Date[]>([]);
   const [workReelURL, setWorkReelURL] = useState('');
   const [industryReferences, setIndustryReferences] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Sync designation if URL param changes (e.g. navigating with different role)
+  useEffect(() => {
+    if (preseededDesignation) {
+      setProfessionalDesignation(preseededDesignation);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlRole]);
 
   const isAuthenticated = !!identity;
 
@@ -228,6 +248,20 @@ export default function InlineRegistrationForm({ onSuccess }: InlineRegistration
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Pre-seeded role banner */}
+      {preseededDesignation && (
+        <div className="flex items-center gap-2 bg-saffron/10 border border-saffron/30 rounded-xl px-4 py-2.5">
+          <span className="text-saffron text-sm font-medium">
+            Role pre-selected:{' '}
+            <span className="font-semibold">
+              {preseededDesignation === ProfessionalDesignation.director
+                ? 'Director'
+                : 'Producer (Production House)'}
+            </span>
+          </span>
+        </div>
+      )}
+
       {/* Name */}
       <div className="space-y-1.5">
         <Label htmlFor="inline-name">

@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Users, Calendar, Search, Zap, ArrowRight, Star, X, ChevronUp } from 'lucide-react';
+import { Users, Calendar, Search, Zap, ArrowRight, X, ChevronUp, Crown } from 'lucide-react';
 import InlineRegistrationForm from '../components/registration/InlineRegistrationForm';
 import TribeAvailabilityEnquiryForm from '../components/tribe/TribeAvailabilityEnquiryForm';
 import TribeAvailabilityResults from '../components/tribe/TribeAvailabilityResults';
+import TribalLeaderRegistrationModal from '../components/TribalLeaderRegistrationModal';
 import { useGetCallerUserProfile } from '../hooks/useQueries';
 import type { TechnicianSearchResult } from '../backend';
 import { ProfessionalDesignation } from '../backend';
@@ -50,7 +50,7 @@ const stats = [
 ];
 
 export default function LandingPage() {
-  const { identity, login, loginStatus } = useInternetIdentity();
+  const { identity, login } = useInternetIdentity();
   const navigate = useNavigate();
   const formSectionRef = useRef<HTMLDivElement>(null);
   const availabilityFormRef = useRef<HTMLDivElement>(null);
@@ -59,6 +59,7 @@ export default function LandingPage() {
   const [showAvailabilityForm, setShowAvailabilityForm] = useState(false);
   const [availabilityResults, setAvailabilityResults] = useState<TechnicianSearchResult | null>(null);
   const [shootCityForResults, setShootCityForResults] = useState('');
+  const [isTribalLeaderModalOpen, setIsTribalLeaderModalOpen] = useState(false);
 
   const isAuthenticated = !!identity;
 
@@ -91,20 +92,6 @@ export default function LandingPage() {
     navigate({ to: '/registration/success' });
   };
 
-  const handleHeroJoin = async () => {
-    if (!isAuthenticated) {
-      try {
-        await login();
-      } catch {
-        return;
-      }
-    }
-    setShowInlineForm(true);
-    setTimeout(() => {
-      formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
-  };
-
   const handleToggleAvailabilityForm = () => {
     const willOpen = !showAvailabilityForm;
     setShowAvailabilityForm(willOpen);
@@ -126,6 +113,11 @@ export default function LandingPage() {
     }, 100);
   };
 
+  const handleTribalLeaderContinue = (role: 'director' | 'production_house') => {
+    setIsTribalLeaderModalOpen(false);
+    navigate({ to: '/registration', search: { role } });
+  };
+
   return (
     <TooltipProvider>
       <div className="space-y-0 -mt-8">
@@ -142,11 +134,6 @@ export default function LandingPage() {
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
           <div className="relative z-10 max-w-4xl mx-auto text-center px-6 space-y-8">
-            <div className="inline-flex items-center gap-2 bg-saffron/20 border border-saffron/50 rounded-full px-4 py-1.5 text-sm font-medium text-saffron-light backdrop-blur-sm">
-              <Star className="w-3.5 h-3.5 fill-current" />
-              The Advertising Industry&apos;s Network
-            </div>
-
             <div className="space-y-6">
               <h1 className="font-display text-[clamp(4rem,14vw,9rem)] leading-none tracking-widest text-white drop-shadow-lg">
                 AD TRIBE
@@ -159,27 +146,6 @@ export default function LandingPage() {
                 creative teams move faster, stay aligned, and deliver outstanding
                 campaigns.
               </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-              <Button
-                size="lg"
-                onClick={handleHeroJoin}
-                disabled={loginStatus === 'logging-in'}
-                className="text-base px-8 py-6 rounded-full shadow-saffron font-semibold tracking-wide bg-saffron hover:bg-saffron-dark text-forest-deep border-0"
-              >
-                {loginStatus === 'logging-in' ? (
-                  'Logging in...'
-                ) : (
-                  <>
-                    Join the Tribe
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </>
-                )}
-              </Button>
-              <span className="text-white/50 text-sm">
-                Free to join &middot; No credit card required
-              </span>
             </div>
           </div>
         </section>
@@ -215,7 +181,50 @@ export default function LandingPage() {
               </p>
             </div>
 
+            {/* ── START YOUR TRIBE card + JOIN THE TRIBE card side by side (or stacked on mobile) ── */}
+            <div className="grid md:grid-cols-2 gap-6 mb-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-4 lg:mb-0">
+              {/* START YOUR TRIBE card — spans 2 cols on lg, sits before the features grid */}
+              <div className="lg:col-span-2 lg:hidden" />
+            </div>
+
+            {/* Features grid with Start Your Tribe prepended */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+              {/* ── START YOUR TRIBE card ── */}
+              <div
+                className="group bg-card border border-saffron/40 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:border-saffron/70 hover:shadow-saffron cursor-pointer"
+                onClick={() => setIsTribalLeaderModalOpen(true)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setIsTribalLeaderModalOpen(true);
+                  }
+                }}
+              >
+                <div className="w-12 h-12 rounded-xl bg-saffron/15 group-hover:bg-saffron/25 flex items-center justify-center transition-colors">
+                  <Crown className="w-6 h-6 text-saffron" />
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    Start Your Tribe
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Register as a tribal leader and shape the advertising community as a Director or Production House.
+                  </p>
+                </div>
+
+                <div className="pt-1">
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-saffron/70 group-hover:text-saffron transition-colors">
+                    Register as Tribal Leader
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+
+              {/* ── EXISTING FEATURE CARDS ── */}
               {features.map((feature) => {
                 const Icon = feature.icon;
                 const isJoinCard = feature.id === 'join';
@@ -415,7 +424,7 @@ export default function LandingPage() {
                     <>
                       <div className="border-t border-border pt-2" />
                       <div className="space-y-3">
-                        <h4 className="font-display text-xl tracking-widest text-foreground">
+                        <h4 className="font-display text-2xl tracking-widest text-foreground">
                           SEARCH RESULTS
                         </h4>
                         <TribeAvailabilityResults
@@ -431,39 +440,40 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── BOTTOM CTA ── */}
-        <section className="py-24 px-4">
-          <div className="container mx-auto">
-            <div className="relative bg-forest rounded-3xl overflow-hidden px-8 py-16 text-center space-y-6">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-saffron/15 pointer-events-none" />
-              <div className="relative z-10 space-y-6">
-                <h2 className="font-display text-5xl md:text-6xl tracking-widest text-white">
-                  READY TO CREATE?
-                </h2>
-                <p className="text-white/70 text-lg max-w-2xl mx-auto">
-                  Join AD TRIBE today and connect with the best talent, equipment,
-                  and locations in the advertising industry.
-                </p>
-                <Button
-                  size="lg"
-                  onClick={handleHeroJoin}
-                  disabled={loginStatus === 'logging-in'}
-                  className="text-base px-10 py-6 rounded-full shadow-saffron font-semibold tracking-wide mt-2 bg-saffron hover:bg-saffron-dark text-forest-deep border-0"
-                >
-                  {loginStatus === 'logging-in' ? (
-                    'Logging in...'
-                  ) : (
-                    <>
-                      Get Started Free
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </>
-                  )}
-                </Button>
-              </div>
+        {/* ── FOOTER CTA ── */}
+        <section className="bg-primary py-20 px-4 text-center">
+          <div className="container mx-auto max-w-2xl space-y-6">
+            <h2 className="font-display text-5xl tracking-widest text-primary-foreground">
+              READY TO JOIN?
+            </h2>
+            <p className="text-primary-foreground/75 text-lg">
+              The advertising industry&apos;s most connected professionals are already inside.
+            </p>
+            <div
+              className="inline-flex items-center gap-2 bg-saffron/20 border border-saffron/50 rounded-full px-5 py-2 text-sm font-medium text-saffron-light cursor-pointer hover:bg-saffron/30 transition-colors"
+              onClick={handleJoinTribeCard}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleJoinTribeCard();
+                }
+              }}
+            >
+              Register now
+              <ArrowRight className="w-4 h-4" />
             </div>
           </div>
         </section>
       </div>
+
+      {/* ── TRIBAL LEADER REGISTRATION MODAL ── */}
+      <TribalLeaderRegistrationModal
+        isOpen={isTribalLeaderModalOpen}
+        onClose={() => setIsTribalLeaderModalOpen(false)}
+        onContinue={handleTribalLeaderContinue}
+      />
     </TooltipProvider>
   );
 }

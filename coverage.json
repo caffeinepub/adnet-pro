@@ -1,82 +1,38 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T08:11:44.153Z",
+  "generatedAt": "2026-03-02T11:59:24.282Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 3,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Seed a mock technician database in the Motoko backend with at least 15 sample technician profiles. Each profile must include: name, designation (from a predefined roles list), city, contact number, and availability date range. Spread profiles across at least 4 different cities and cover all predefined roles. This data should be stored in a stable variable so it can be easily replaced later.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Add a backend query function `searchTechnicians` that accepts shoot city, shoot date range, available-from date, and a list of required roles, and returns matching technicians split into two groups: same-city matches and other-city matches. Each result record must include name, designation, city, and contact number.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-3",
-        "summary": "In the Tribe Availability card on the Landing Page (the card with the calendar icon and text 'Sync your calendar with the tribe...'), add a CTA button labeled 'Find Available Crew'. This button must only be visible and enabled for authenticated users whose account type is Director or Production House. Users who are not logged in or have a different account type should see the button in a disabled or hidden state with a tooltip explaining the restriction.",
+        "summary": "Remove the 'Welcome to Ad Tribe' onboarding modal (ProfileSetup component in frontend/src/components/ProfileSetup.tsx) entirely. Users must no longer be prompted to enter their name upon authentication — they should land directly on the main app without any interstitial modal or name-entry step.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/src/components/ProfileSetup.tsx",
+          "frontend/src/components/layout/AppLayout.tsx",
+          "frontend/src/pages/LandingPage.tsx",
+          "frontend/src/pages/DashboardPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/LandingPage.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Build the Tribe Availability enquiry form with the following fields: (1) Project Name (text input), (2) Director Name (text input, shown when account type is Director), (3) Production House Name (text input, shown when account type is Production House), (4) Shoot City (text input), (5) Shoot Dates (date range picker: start date and end date), (6) Available From (single date picker), (7) Technicians Needed (multi-select dropdown using a predefined roles list — Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor — users can add multiple roles as an array), (8) Special Requirements (textarea). The form should be shown inline in the Tribe Availability section below the CTA button or in a modal.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
-          "frontend/src/hooks/useQueries.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "After the enquiry form is submitted, display the search results inline below the form within the same Tribe Availability section. Results must be split into two clearly labelled sections: 'Same City' and 'Other Cities'. Each technician result card should show name, designation, city, and contact number. If no technicians are found in either category, show an appropriate empty state message for that category.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
-          "frontend/src/pages/LandingPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
-          "frontend/src/pages/LandingPage.tsx"
+          "frontend/src/components/ProfileSetup.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
-    "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/LandingPage.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/components/ProfileSetup.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
