@@ -1,66 +1,134 @@
 {
   "kind": "build_request",
-  "title": "Use tribal film camera image as full-screen hero background and apply green & saffron palette app-wide",
+  "title": "Add Tribe Availability Enquiry Form with Results (Step 1 + Step 2)",
   "projectName": "AD TRIBE",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-11",
-      "text": "Save the uploaded tribal film camera artwork (unnamed.jpg) as a static asset at frontend/public/assets/generated/hero-bg.jpg and use it as the full-screen background image for the hero section in LandingPage.tsx. The image must cover the entire hero section (object-fit: cover, full width and height). Apply a dark semi-transparent overlay (e.g. rgba(0,0,0,0.45)–0.55) on top of the image so that all hero text and the 'Join the Tribe' CTA button remain clearly legible. The existing hero content structure (headline, intro paragraph, CTA button) must be preserved and rendered on top of the background.",
-      "target": "frontend",
+      "id": "REQ-1",
+      "text": "Seed a mock technician database in the Motoko backend with at least 15 sample technician profiles. Each profile must include: name, designation (from a predefined roles list), city, contact number, and availability date range. Spread profiles across at least 4 different cities and cover all predefined roles. This data should be stored in a stable variable so it can be easily replaced later.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-17",
+          "msg-19"
         ],
         "quotes": [
-          "use it as full screen background for this section",
-          "Use this image as BG image for the landing page"
+          "yes please create a mock database which can be deleted easily later",
+          "Mock technician database seeded with sample profiles across multiple cities and roles"
         ]
       },
       "acceptanceCriteria": [
-        "The tribal film camera image (unnamed.jpg) fills the full width and height of the hero section with no white/solid-color gaps.",
-        "All existing hero text (AD TRIBE headline, intro paragraph, CTA) is visible and readable over the image.",
-        "A dark semi-transparent overlay is present between the image and the text to ensure readability.",
-        "The image does not appear outside the hero section (other sections are unaffected)."
+        "At least 15 technician records exist in a stable backend variable",
+        "Each record has name, designation, city, contact number, and availability dates",
+        "Profiles span at least 4 cities (e.g., Mumbai, Delhi, Bangalore, Chennai)",
+        "All predefined roles (Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, etc.) are represented",
+        "A backend query function exists to search technicians by city and list of roles"
       ]
     },
     {
-      "id": "REQ-12",
-      "text": "Retheme the entire application (all pages and components) with a color palette derived from the tribal film camera image: deep forest green (primary, e.g. ~#1a4a1a or #14421e), warm saffron/golden-amber (accent, e.g. ~#c8820a or #d4900a), and rich bronze/dark-gold for highlights. Replace the current amber/charcoal theme tokens in frontend/src/index.css, frontend/index.css, and frontend/tailwind.config.js with this new green-and-saffron palette. Update all components and pages that use the old theme tokens so buttons, headers, navigation, cards, badges, and interactive elements consistently use the new green and saffron palette. Text on dark backgrounds should use off-white or light cream; text on light backgrounds should use deep charcoal.",
-      "target": "frontend",
+      "id": "REQ-2",
+      "text": "Add a backend query function `searchTechnicians` that accepts shoot city, shoot date range, available-from date, and a list of required roles, and returns matching technicians split into two groups: same-city matches and other-city matches. Each result record must include name, designation, city, and contact number.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-17",
+          "msg-19"
         ],
         "quotes": [
-          "use a color pallette of green and saffron inspired from the image for the entire app overall"
+          "results split into same-city and other-city technicians",
+          "list of technicians needed"
         ]
       },
       "acceptanceCriteria": [
-        "Primary brand color is a deep forest green visually consistent with the image background.",
-        "Accent/CTA color is warm saffron or golden-amber consistent with the glowing film strip in the image.",
-        "No blue or purple appears anywhere in the UI.",
-        "All pages (Landing, Dashboard, Profile, Connections, Registration, Success) use the new palette consistently.",
-        "Buttons, navigation items, and interactive highlights use the saffron/gold accent color.",
-        "CSS custom properties and Tailwind config tokens are updated; no hardcoded old amber/charcoal hex values remain for brand colors."
+        "Function accepts: shootCity (Text), shootStartDate (Time), shootEndDate (Time), availableFrom (Time), roles ([Text])",
+        "Returns a record with two arrays: sameCityResults and otherCityResults",
+        "Each result item contains: name, designation, city, contactNumber",
+        "Technicians are matched if their availability overlaps with the requested dates and their designation matches any of the requested roles",
+        "Same-city results contain only technicians whose city matches shootCity (case-insensitive)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "In the Tribe Availability card on the Landing Page (the card with the calendar icon and text 'Sync your calendar with the tribe...'), add a CTA button labeled 'Find Available Crew'. This button must only be visible and enabled for authenticated users whose account type is Director or Production House. Users who are not logged in or have a different account type should see the button in a disabled or hidden state with a tooltip explaining the restriction.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-17",
+          "msg-19"
+        ],
+        "quotes": [
+          "add a cta link where users registered as Production house or director can look for technicians",
+          "it should be shown in the section shown in the image"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The CTA button 'Find Available Crew' appears inside the Tribe Availability card on the Landing Page",
+        "Button is only active/visible for authenticated users with account type Director or Production House",
+        "Non-qualifying users see a disabled button or tooltip explaining access is restricted to Directors and Production Houses",
+        "Clicking the button opens the enquiry form (inline within the section or as a modal)"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Build the Tribe Availability enquiry form with the following fields: (1) Project Name (text input), (2) Director Name (text input, shown when account type is Director), (3) Production House Name (text input, shown when account type is Production House), (4) Shoot City (text input), (5) Shoot Dates (date range picker: start date and end date), (6) Available From (single date picker), (7) Technicians Needed (multi-select dropdown using a predefined roles list — Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor — users can add multiple roles as an array), (8) Special Requirements (textarea). The form should be shown inline in the Tribe Availability section below the CTA button or in a modal.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-17",
+          "msg-19"
+        ],
+        "quotes": [
+          "Project Name, director name, production house name, Shoot City, Shoot Dates. To available from date, list of technicians needed in a dropbox style, they can keep adding an array of technicians in one go, any special requirements"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All 8 form fields are present and functional",
+        "Director Name field shows only when account type is Director; Production House Name shows only when account type is Production House",
+        "Technicians Needed field is a multi-select dropdown with the full predefined roles list; selected roles appear as removable tags/chips",
+        "Shoot Dates accepts a start and end date",
+        "Available From is a single date picker",
+        "Form has a Submit/Search button",
+        "All required fields are validated before submission"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "After the enquiry form is submitted, display the search results inline below the form within the same Tribe Availability section. Results must be split into two clearly labelled sections: 'Same City' and 'Other Cities'. Each technician result card should show name, designation, city, and contact number. If no technicians are found in either category, show an appropriate empty state message for that category.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-19"
+        ],
+        "quotes": [
+          "Results shown on the same page after submission, split into Same City and Other Cities sections"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After form submission, results appear below the form without navigating away",
+        "Results are split into 'Same City' and 'Other Cities' sections with clear headings",
+        "Each result card displays: name, designation, city, contact number",
+        "Empty state message shown if no matches found in a category",
+        "A loading/spinner state is shown while the query is in progress",
+        "User can modify the form and resubmit to get updated results"
       ]
     }
   ],
   "constraints": [
-    "Do not alter frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or any files under frontend/src/components/ui.",
-    "Do not change the backend schema or Motoko logic.",
-    "The tribal film camera image must be served as a static asset from frontend/public/assets/generated/ — do not route it through the backend."
+    "The mock technician database must be stored in a stable variable in the Motoko backend so it can be cleanly replaced with real data later",
+    "The enquiry form and results must appear within the existing Tribe Availability card/section on the Landing Page — do not create a separate page",
+    "Only authenticated users with account type Director or Production House may submit the enquiry form",
+    "Do not modify any files under frontend/src/hooks/ or frontend/src/components/ui"
   ],
   "nonGoals": [
-    "Changing the layout structure or content of the hero section (headline, paragraph, CTA).",
-    "Modifying the inline registration form functionality.",
-    "Adding new pages or routes.",
-    "Any backend changes."
+    "Real technician data or live integrations — mock data only",
+    "Email or push notifications to technicians",
+    "Booking or payment flows",
+    "Technician self-registration for availability (separate feature)",
+    "Admin panel for managing technician records"
   ],
   "imageRequirements": {
     "required": [],
-    "edits": [
-      "Resize and optimize to full-width hero dimensions (hero-bg.jpg — source: unnamed.jpg > hero-bg.dim_1080x1920.jpg)"
-    ]
+    "edits": []
   }
 }

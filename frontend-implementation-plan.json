@@ -1,146 +1,71 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Use tribal film camera image as full-screen hero background and apply green & saffron palette app-wide",
+  "title": "Add Tribe Availability Enquiry Form with Results (Step 1 + Step 2)",
   "requirements": [
     {
-      "id": "REQ-11",
-      "summary": "Use the tribal film camera artwork (unnamed.jpg) as a full-screen hero background with overlay in LandingPage.tsx",
+      "id": "REQ-3",
+      "summary": "Add 'Find Available Crew' CTA button to Tribe Availability card, visible only for authenticated Directors and Production Houses",
       "acceptanceCriteria": [
-        "The tribal film camera image (unnamed.jpg) fills the full width and height of the hero section with no white/solid-color gaps.",
-        "All existing hero text (AD TRIBE headline, intro paragraph, CTA) is visible and readable over the image.",
-        "A dark semi-transparent overlay is present between the image and the text to ensure readability.",
-        "The image does not appear outside the hero section (other sections are unaffected)."
+        "The CTA button 'Find Available Crew' appears inside the Tribe Availability card on the Landing Page",
+        "Button is only active/visible for authenticated users with account type Director or Production House",
+        "Non-qualifying users see a disabled button or tooltip explaining access is restricted to Directors and Production Houses",
+        "Clicking the button opens the enquiry form (inline within the section or as a modal)"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/hero-bg.dim_1920x1080.jpg",
-          "operation": "create",
-          "description": "Save the resized and optimized tribal film camera artwork (from unnamed.jpg) as hero-bg.dim_1920x1080.jpg to be used as the hero section background image."
-        },
-        {
           "path": "frontend/src/pages/LandingPage.tsx",
           "operation": "modify",
-          "description": "Update the hero section to use frontend/public/assets/generated/hero-bg.dim_1920x1080.jpg as a full-screen background image with object-fit: cover. Add a dark semi-transparent overlay (rgba(0,0,0,0.45) to rgba(0,0,0,0.55)) between the background image and the hero content to ensure text readability. Preserve the existing hero content structure (headline, intro paragraph, CTA button) and render it on top of the background. The background image must fill the entire hero section width and height with no gaps."
+          "description": "Add 'Find Available Crew' CTA button inside the Tribe Availability feature card (the card with calendar icon). The button must be conditionally rendered: visible and enabled only for authenticated users whose professionalDesignation is 'director' or whose account is a production house. For non-qualifying users, show the button in a disabled state with a tooltip explaining the restriction. On click, toggle inline enquiry form display within the card section. Use the authorization component to verify user permissions before showing the active button."
         }
       ]
     },
     {
-      "id": "REQ-12",
-      "summary": "Retheme the entire application with a green and saffron color palette inspired by the tribal film camera image",
+      "id": "REQ-4",
+      "summary": "Build Tribe Availability enquiry form with all required fields and conditional logic for Director/Production House",
       "acceptanceCriteria": [
-        "Primary brand color is a deep forest green visually consistent with the image background.",
-        "Accent/CTA color is warm saffron or golden-amber consistent with the glowing film strip in the image.",
-        "No blue or purple appears anywhere in the UI.",
-        "All pages (Landing, Dashboard, Profile, Connections, Registration, Success) use the new palette consistently.",
-        "Buttons, navigation items, and interactive highlights use the saffron/gold accent color.",
-        "CSS custom properties and Tailwind config tokens are updated; no hardcoded old amber/charcoal hex values remain for brand colors."
+        "All 8 form fields are present and functional",
+        "Director Name field shows only when account type is Director; Production House Name shows only when account type is Production House",
+        "Technicians Needed field is a multi-select dropdown with the full predefined roles list; selected roles appear as removable tags/chips",
+        "Shoot Dates accepts a start and end date",
+        "Available From is a single date picker",
+        "Form has a Submit/Search button",
+        "All required fields are validated before submission"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Replace the current amber/charcoal theme tokens with the new green and saffron palette. Update CSS custom properties for both light and dark modes: set primary to deep forest green (~#1a4a1a or #14421e in OKLCH equivalent), accent to warm saffron/golden-amber (~#c8820a or #d4900a in OKLCH equivalent), and highlights to rich bronze/dark-gold. Update text colors so text on dark backgrounds uses off-white or light cream, and text on light backgrounds uses deep charcoal. Remove any references to the old amber/charcoal color values."
+          "path": "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
+          "operation": "create",
+          "description": "Create the Tribe Availability enquiry form component with the following controlled form fields: (1) Project Name (text input, required), (2) Director Name (text input, shown only when user's professionalDesignation is 'director'), (3) Production House Name (text input, shown only when user's account type is production house), (4) Shoot City (text input, required), (5) Shoot Dates (date range picker with start and end date inputs, required), (6) Available From (single date picker, required), (7) Technicians Needed (multi-select dropdown using predefined roles: Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor; selected roles displayed as removable tags, required), (8) Special Requirements (textarea, optional). Include form validation and a Submit/Search button. On submit, call a custom mutation hook to invoke the backend searchTechnicians function with the form data, then pass results up to the parent component via callback. Use date helper utilities from frontend/src/utils/dateHelpers.ts to convert Date objects to Time (bigint) for the backend."
         },
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update the Tailwind color tokens to match the new green and saffron palette. Replace the current amber, charcoal, and gold OKLCH color definitions with deep forest green (primary), warm saffron/golden-amber (accent), and rich bronze/dark-gold (highlights). Ensure all color variants (50-950) are updated to reflect the new palette. Remove any old amber/charcoal hex values."
+          "description": "Add a new mutation hook useSearchTechnicians that accepts TechnicianSearchInput and calls actor.searchTechnicians(searchInput). Return the TechnicianSearchResult including sameCityMatches and otherCityMatches arrays. Handle loading, error, and success states using React Query mutation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Display search results inline below enquiry form, split into 'Same City' and 'Other Cities' sections",
+      "acceptanceCriteria": [
+        "After form submission, results appear below the form without navigating away",
+        "Results are split into 'Same City' and 'Other Cities' sections with clear headings",
+        "Each result card displays: name, designation, city, contact number",
+        "Empty state message shown if no matches found in a category",
+        "A loading/spinner state is shown while the query is in progress",
+        "User can modify the form and resubmit to get updated results"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
+          "operation": "create",
+          "description": "Create the results display component that accepts TechnicianSearchResult as a prop. Render two sections: 'Same City' and 'Other Cities', each with a clear heading. For each section, map over the respective array (sameCityMatches or otherCityMatches) and display a card for each technician showing name, role (designation), city, and contactNumber. If a section has zero results, show an appropriate empty state message (e.g., 'No technicians found in your city' or 'No technicians found in other cities'). Include a loading/spinner state when the mutation is pending. Style the cards consistently with the AD TRIBE design system."
         },
         {
           "path": "frontend/src/pages/LandingPage.tsx",
           "operation": "modify",
-          "description": "Update all color references to use the new green and saffron theme tokens from Tailwind config. Ensure buttons, headers, feature cards, and stats use the new palette. The 'Join the Tribe' CTA button should use the saffron/gold accent color. Replace any hardcoded color classes or inline styles with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/layout/AppLayout.tsx",
-          "operation": "modify",
-          "description": "Update the header navigation, login/logout buttons, and footer to use the new green and saffron theme tokens. Ensure the navigation items use the saffron/gold accent color for interactive states. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/pages/DashboardPage.tsx",
-          "operation": "modify",
-          "description": "Update the navigation cards to use the new green and saffron theme tokens. Ensure card backgrounds, borders, and interactive elements reflect the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/pages/ProfilePage.tsx",
-          "operation": "modify",
-          "description": "Update all color references to use the new green and saffron theme tokens. Ensure profile cards, buttons, and any interactive elements use the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/pages/ConnectionsPage.tsx",
-          "operation": "modify",
-          "description": "Update the verified members list and cards to use the new green and saffron theme tokens. Ensure loading skeletons and empty state messages use the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/pages/RegistrationPage.tsx",
-          "operation": "modify",
-          "description": "Update the registration page wrapper to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/pages/RegistrationSuccessPage.tsx",
-          "operation": "modify",
-          "description": "Update the success page to use the new green and saffron theme tokens. Ensure the confirmation message and navigation buttons use the saffron/gold accent color. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/registration/InlineRegistrationForm.tsx",
-          "operation": "modify",
-          "description": "Update the multi-step registration form to use the new green and saffron theme tokens. Ensure form inputs, buttons, step indicators, and the availability calendar use the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/profiles/ProfessionalProfileForm.tsx",
-          "operation": "modify",
-          "description": "Update the professional profile card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/profiles/LocationProfileForm.tsx",
-          "operation": "modify",
-          "description": "Update the location profile placeholder card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/profiles/ProductionHouseProfileForm.tsx",
-          "operation": "modify",
-          "description": "Update the production house profile placeholder card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/profiles/VendorProfileForm.tsx",
-          "operation": "modify",
-          "description": "Update the vendor profile placeholder card to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetup.tsx",
-          "operation": "modify",
-          "description": "Update the profile setup modal to use the new green and saffron theme tokens. Ensure dialog background, input fields, and buttons use the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/calendar/AvailabilityCalendar.tsx",
-          "operation": "modify",
-          "description": "Update the calendar component to use the new green and saffron theme tokens. Ensure date cells, selected states, and interactive elements use the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/calendar/AvailabilityLegend.tsx",
-          "operation": "modify",
-          "description": "Update the legend color indicators to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/search/SearchBar.tsx",
-          "operation": "modify",
-          "description": "Update the search input to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/search/SearchFilters.tsx",
-          "operation": "modify",
-          "description": "Update the filter dropdown to use the new green and saffron theme tokens. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/search/ProviderCard.tsx",
-          "operation": "modify",
-          "description": "Update the provider cards to use the new green and saffron theme tokens. Ensure card backgrounds, borders, tags, and badges use the new palette. Replace any hardcoded color classes with the updated theme tokens."
-        },
-        {
-          "path": "frontend/src/components/search/SearchResults.tsx",
-          "operation": "modify",
-          "description": "Update the search results container to use the new green and saffron theme tokens. Ensure loading skeletons and empty state messages use the new palette. Replace any hardcoded color classes with the updated theme tokens."
+          "description": "Wire the TribeAvailabilityEnquiryForm and TribeAvailabilityResults components into the Tribe Availability card section. When the 'Find Available Crew' button is clicked, display the enquiry form inline below the button. After form submission, pass the returned search results to the TribeAvailabilityResults component and display it inline below the form within the same card section. Manage form visibility and results state within the LandingPage component. Ensure the user can modify the form and resubmit to get updated results without navigating away."
         }
       ]
     }

@@ -2,8 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-save-the-uploaded-tribal-film-camera-artwork-unnamed-jpg-as-a-static-asset-at-frontend-public-assets-generated-hero-bg-jpg-and-use-it-as-the-full-screen-background-image-for-the-hero-section-in-landingpage-tsx-the-image-must-cover-the-entire-hero-section-object-fit-cover-full-width-and-height-apply-a-dark-semi-transparent-overlay-e-g-rgba-0-0-0-0-45-0-55-on-top-of-the-image-so-that-all-hero-text-and-the-join-the-tribe-cta-button-remain-clearly-legible-the-existing-hero-content-structure-headline-intro-paragraph-cta-button-must-be-preserved-and-rendered-on-top-of-the-background",
-      "featureTitle": "Save the uploaded tribal film camera artwork (unnamed.jpg) as a static asset at frontend/public/assets/generated/hero-bg.jpg and use it as the full-screen background image for the hero section in LandingPage.tsx. The image must cover the entire hero section (object-fit: cover, full width and height). Apply a dark semi-transparent overlay (e.g. rgba(0,0,0,0.45)–0.55) on top of the image so that all hero text and the 'Join the Tribe' CTA button remain clearly legible. The existing hero content structure (headline, intro paragraph, CTA button) must be preserved and rendered on top of the background.",
+      "featureId": "feature-in-the-tribe-availability-card-on-the-landing-page-the-card-with-the-calendar-icon-and-text-sync-your-calendar-with-the-tribe-add-a-cta-button-labeled-find-available-crew-this-button-must-only-be-visible-and-enabled-for-authenticated-users-whose-account-type-is-director-or-production-house-users-who-are-not-logged-in-or-have-a-different-account-type-should-see-the-button-in-a-disabled-or-hidden-state-with-a-tooltip-explaining-the-restriction",
+      "featureTitle": "In the Tribe Availability card on the Landing Page (the card with the calendar icon and text 'Sync your calendar with the tribe...'), add a CTA button labeled 'Find Available Crew'. This button must only be visible and enabled for authenticated users whose account type is Director or Production House. Users who are not logged in or have a different account type should see the button in a disabled or hidden state with a tooltip explaining the restriction.",
       "files": [
         "frontend/src/pages/LandingPage.tsx"
       ],
@@ -16,25 +16,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-11"
+        "REQ-3"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-retheme-the-entire-application-all-pages-and-components-with-a-color-palette-derived-from-the-tribal-film-camera-image-deep-forest-green-primary-e-g-1a4a1a-or-14421e-warm-saffron-golden-amber-accent-e-g-c8820a-or-d4900a-and-rich-bronze-dark-gold-for-highlights-replace-the-current-amber-charcoal-theme-tokens-in-frontend-src-index-css-frontend-index-css-and-frontend-tailwind-config-js-with-this-new-green-and-saffron-palette-update-all-components-and-pages-that-use-the-old-theme-tokens-so-buttons-headers-navigation-cards-badges-and-interactive-elements-consistently-use-the-new-green-and-saffron-palette-text-on-dark-backgrounds-should-use-off-white-or-light-cream-text-on-light-backgrounds-should-use-deep-charcoal",
-      "featureTitle": "Retheme the entire application (all pages and components) with a color palette derived from the tribal film camera image: deep forest green (primary, e.g. ~#1a4a1a or #14421e), warm saffron/golden-amber (accent, e.g. ~#c8820a or #d4900a), and rich bronze/dark-gold for highlights. Replace the current amber/charcoal theme tokens in frontend/src/index.css, frontend/index.css, and frontend/tailwind.config.js with this new green-and-saffron palette. Update all components and pages that use the old theme tokens so buttons, headers, navigation, cards, badges, and interactive elements consistently use the new green and saffron palette. Text on dark backgrounds should use off-white or light cream; text on light backgrounds should use deep charcoal.",
+      "featureId": "feature-build-the-tribe-availability-enquiry-form-with-the-following-fields-1-project-name-text-input-2-director-name-text-input-shown-when-account-type-is-director-3-production-house-name-text-input-shown-when-account-type-is-production-house-4-shoot-city-text-input-5-shoot-dates-date-range-picker-start-date-and-end-date-6-available-from-single-date-picker-7-technicians-needed-multi-select-dropdown-using-a-predefined-roles-list-cinematographer-editor-gaffer-sound-recordist-art-director-colourist-production-designer-costume-designer-makeup-artist-stunt-coordinator-vfx-supervisor-drone-operator-focus-puller-clapper-loader-script-supervisor-users-can-add-multiple-roles-as-an-array-8-special-requirements-textarea-the-form-should-be-shown-inline-in-the-tribe-availability-section-below-the-cta-button-or-in-a-modal",
+      "featureTitle": "Build the Tribe Availability enquiry form with the following fields: (1) Project Name (text input), (2) Director Name (text input, shown when account type is Director), (3) Production House Name (text input, shown when account type is Production House), (4) Shoot City (text input), (5) Shoot Dates (date range picker: start date and end date), (6) Available From (single date picker), (7) Technicians Needed (multi-select dropdown using a predefined roles list — Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor — users can add multiple roles as an array), (8) Special Requirements (textarea). The form should be shown inline in the Tribe Availability section below the CTA button or in a modal.",
       "files": [
-        "frontend/src/components/ProfileSetup.tsx",
-        "frontend/src/components/layout/AppLayout.tsx",
-        "frontend/src/components/registration/InlineRegistrationForm.tsx",
-        "frontend/src/index.css",
-        "frontend/src/pages/ConnectionsPage.tsx",
-        "frontend/src/pages/DashboardPage.tsx",
-        "frontend/src/pages/LandingPage.tsx",
-        "frontend/src/pages/ProfilePage.tsx",
-        "frontend/src/pages/RegistrationPage.tsx",
-        "frontend/src/pages/RegistrationSuccessPage.tsx",
-        "frontend/tailwind.config.js"
+        "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -45,7 +36,27 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-after-the-enquiry-form-is-submitted-display-the-search-results-inline-below-the-form-within-the-same-tribe-availability-section-results-must-be-split-into-two-clearly-labelled-sections-same-city-and-other-cities-each-technician-result-card-should-show-name-designation-city-and-contact-number-if-no-technicians-are-found-in-either-category-show-an-appropriate-empty-state-message-for-that-category",
+      "featureTitle": "After the enquiry form is submitted, display the search results inline below the form within the same Tribe Availability section. Results must be split into two clearly labelled sections: 'Same City' and 'Other Cities'. Each technician result card should show name, designation, city, and contact number. If no technicians are found in either category, show an appropriate empty state message for that category.",
+      "files": [
+        "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
+        "frontend/src/pages/LandingPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

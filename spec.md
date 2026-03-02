@@ -1,12 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the hero background with the tribal film camera artwork and retheme the entire app with a deep forest green and warm saffron/golden-amber palette inspired by that image.
+**Goal:** Add a Tribe Availability enquiry flow to the Landing Page, allowing Directors and Production Houses to search for available crew technicians using a mock backend database.
 
 **Planned changes:**
-- Save `unnamed.jpg` as a static asset and use it as the full-screen hero background image in `LandingPage.tsx` with `object-fit: cover` and a dark semi-transparent overlay (rgba ~0.45–0.55) to keep hero text and CTA legible
-- Update CSS custom properties in `index.css` and Tailwind config tokens to replace the current amber/charcoal theme with deep forest green (~#14421e) as primary and warm saffron/golden-amber (~#c8820a) as accent
-- Apply the new green-and-saffron palette consistently across all pages and components (buttons, navigation, headers, cards, badges, interactive elements)
-- Text on dark backgrounds uses off-white/light cream; text on light backgrounds uses deep charcoal
+- Seed the Motoko backend with at least 15 mock technician profiles (name, designation, city, contact number, availability date range) stored in a stable variable, spread across at least 4 cities and covering all predefined roles
+- Add a `searchTechnicians` backend query function that accepts shoot city, shoot date range, available-from date, and a list of required roles, returning results split into same-city and other-city matches
+- Add a "Find Available Crew" CTA button inside the Tribe Availability card on the Landing Page, visible and enabled only for authenticated users with account type Director or Production House; other users see a disabled state with a tooltip
+- Build an enquiry form (inline in the Tribe Availability section) with fields: Project Name, Director Name (Director only) or Production House Name (Production House only), Shoot City, Shoot Dates (date range), Available From (single date), Technicians Needed (multi-select dropdown with predefined roles as removable chips), and Special Requirements (textarea)
+- After form submission, display results inline below the form split into "Same City" and "Other Cities" sections; each technician card shows name, designation, city, and contact number; empty states shown when no matches found; loading spinner shown during query
 
-**User-visible outcome:** The hero section displays the tribal film camera artwork as a full-bleed background, and the entire app consistently uses a deep green and saffron color scheme inspired by the image.
+**User-visible outcome:** Directors and Production Houses can open an enquiry form directly within the Tribe Availability section on the Landing Page, search for available crew by city, date range, and required roles, and instantly see matching technicians split by same-city and other-city results — all without leaving the page.

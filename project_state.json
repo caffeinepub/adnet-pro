@@ -1,110 +1,37 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
-  "summary": "Professional networking platform for advertising industry connecting production houses with professionals, equipment vendors, and shoot locations with availability checking for specific shoot dates",
+  "projectStateVersion": 3,
+  "summary": "A platform for film industry professionals (AD TRIBE) where Production Houses and Directors can search for available technicians. Features a Tribe Availability section with an enquiry form (Project Name, Director Name, Production House Name, Shoot City, Shoot Dates, Available From date, multi-select technician roles dropdown, Special Requirements). Results are shown on the same page split into Same City and Other Cities sections. Only logged-in Directors and Production Houses can submit. Mock technician database seeded for demo purposes.",
   "architectural_notes": [
-    "Multi-user type system: professionals, equipment vendors, shoot locations, production houses",
-    "Calendar/availability management core feature",
-    "Search and filtering system for finding service providers",
-    "Color palette: deep forest greens and warm golden-saffron tones (no blue/purple)"
+    "Tribe Availability enquiry form is access-controlled: only logged-in users registered as Director or Production House can submit",
+    "Mock technician database should be structured for easy replacement with real data later"
   ],
-  "known_issues": [],
+  "known_issues": [
+    "Build has repeatedly failed when attempting to implement the full Tribe Availability feature in one go — being broken into Step 1 (form) and Step 2 (results) to reduce complexity"
+  ],
   "isFixRequest": false,
-  "imageRequirements": "## Edit Images\n- Resize and optimize to full-width hero dimensions (hero-bg.jpg — source: unnamed.jpg > hero-bg.dim_1080x1920.jpg)",
   "existing_features": [
     {
-      "id": "feature-create-user-profile-system-supporting-four-distinct-account-types-advertising-professionals-equipment-vendors-shoot-locations-and-production-houses-each-profile-type-must-store-role-specific-information-e-g-professionals-store-specialties-and-portfolio-vendors-store-equipment-inventory-locations-store-venue-details-and-capacity-production-houses-store-company-information",
-      "title": "Create user profile system supporting four distinct account types: advertising professionals, equipment vendors, shoot locations, and production houses. Each profile type must store role-specific information (e.g., professionals store specialties and portfolio, vendors store equipment inventory, locations store venue details and capacity, production houses store company information).",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-availability-calendar-system-where-professionals-vendors-and-locations-can-mark-their-availability-status-for-specific-dates-production-houses-must-be-able-to-query-availability-across-multiple-service-providers-for-given-date-ranges",
-      "title": "Implement availability calendar system where professionals, vendors, and locations can mark their availability status for specific dates. Production houses must be able to query availability across multiple service providers for given date ranges.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-production-house-dashboard-with-search-and-discovery-features-to-find-advertising-professionals-equipment-vendors-and-shoot-locations-search-must-support-filtering-by-category-specialization-location-and-availability-dates",
-      "title": "Build production house dashboard with search and discovery features to find advertising professionals, equipment vendors, and shoot locations. Search must support filtering by category, specialization, location, and availability dates.",
+      "id": "feature-in-the-tribe-availability-card-on-the-landing-page-the-card-with-the-calendar-icon-and-text-sync-your-calendar-with-the-tribe-add-a-cta-button-labeled-find-available-crew-this-button-must-only-be-visible-and-enabled-for-authenticated-users-whose-account-type-is-director-or-production-house-users-who-are-not-logged-in-or-have-a-different-account-type-should-see-the-button-in-a-disabled-or-hidden-state-with-a-tooltip-explaining-the-restriction",
+      "title": "In the Tribe Availability card on the Landing Page (the card with the calendar icon and text 'Sync your calendar with the tribe...'), add a CTA button labeled 'Find Available Crew'. This button must only be visible and enabled for authenticated users whose account type is Director or Production House. Users who are not logged in or have a different account type should see the button in a disabled or hidden state with a tooltip explaining the restriction.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-create-connection-and-networking-system-allowing-production-houses-to-send-connection-requests-to-professionals-vendors-and-locations-service-providers-must-be-able-to-accept-or-decline-requests-creating-a-network-of-verified-connections",
-      "title": "Create connection and networking system allowing production houses to send connection requests to professionals, vendors, and locations. Service providers must be able to accept or decline requests, creating a network of verified connections.",
+      "id": "feature-build-the-tribe-availability-enquiry-form-with-the-following-fields-1-project-name-text-input-2-director-name-text-input-shown-when-account-type-is-director-3-production-house-name-text-input-shown-when-account-type-is-production-house-4-shoot-city-text-input-5-shoot-dates-date-range-picker-start-date-and-end-date-6-available-from-single-date-picker-7-technicians-needed-multi-select-dropdown-using-a-predefined-roles-list-cinematographer-editor-gaffer-sound-recordist-art-director-colourist-production-designer-costume-designer-makeup-artist-stunt-coordinator-vfx-supervisor-drone-operator-focus-puller-clapper-loader-script-supervisor-users-can-add-multiple-roles-as-an-array-8-special-requirements-textarea-the-form-should-be-shown-inline-in-the-tribe-availability-section-below-the-cta-button-or-in-a-modal",
+      "title": "Build the Tribe Availability enquiry form with the following fields: (1) Project Name (text input), (2) Director Name (text input, shown when account type is Director), (3) Production House Name (text input, shown when account type is Production House), (4) Shoot City (text input), (5) Shoot Dates (date range picker: start date and end date), (6) Available From (single date picker), (7) Technicians Needed (multi-select dropdown using a predefined roles list — Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor — users can add multiple roles as an array), (8) Special Requirements (textarea). The form should be shown inline in the Tribe Availability section below the CTA button or in a modal.",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-design-a-professional-industry-appropriate-visual-theme-with-a-sophisticated-color-palette-avoid-blue-and-purple-clean-typography-suitable-for-business-users-and-a-modern-layout-that-emphasizes-clarity-and-efficient-navigation-the-design-should-feel-trustworthy-and-premium-appropriate-for-professional-networking-in-the-advertising-industry",
-      "title": "Design a professional, industry-appropriate visual theme with a sophisticated color palette (avoid blue and purple), clean typography suitable for business users, and a modern layout that emphasizes clarity and efficient navigation. The design should feel trustworthy and premium, appropriate for professional networking in the advertising industry.",
+      "id": "feature-after-the-enquiry-form-is-submitted-display-the-search-results-inline-below-the-form-within-the-same-tribe-availability-section-results-must-be-split-into-two-clearly-labelled-sections-same-city-and-other-cities-each-technician-result-card-should-show-name-designation-city-and-contact-number-if-no-technicians-are-found-in-either-category-show-an-appropriate-empty-state-message-for-that-category",
+      "title": "After the enquiry form is submitted, display the search results inline below the form within the same Tribe Availability section. Results must be split into two clearly labelled sections: 'Same City' and 'Other Cities'. Each technician result card should show name, designation, city, and contact number. If no technicians are found in either category, show an appropriate empty state message for that category.",
       "reqIds": [
         "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-rename-the-application-from-adnet-pro-to-ad-tribe-across-all-user-facing-text-including-the-html-title-in-index-html-the-app-name-in-the-header-navigation-the-landing-page-hero-section-and-any-other-visible-references-to-the-old-name",
-      "title": "Rename the application from 'AdNet Pro' to 'AD TRIBE' across all user-facing text, including the HTML title in index.html, the app name in the header/navigation, the landing page hero section, and any other visible references to the old name.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-redesign-the-opening-landing-page-to-reflect-the-ad-tribe-brand-identity-the-hero-section-should-feature-a-bold-full-width-headline-incorporating-ad-tribe-a-compelling-subheadline-communicating-the-platform-s-value-proposition-for-advertising-industry-professionals-and-a-strong-call-to-action-button-the-overall-aesthetic-should-feel-energetic-yet-professional-using-warm-rich-tones-e-g-deep-amber-charcoal-off-white-consistent-with-the-existing-sophisticated-color-palette-avoiding-blue-and-purple-include-a-visually-striking-hero-background-treatment-and-reorganize-the-feature-highlights-section-with-updated-iconography-and-copy-that-reinforces-the-tribe-community-concept",
-      "title": "Redesign the opening (landing) page to reflect the 'AD TRIBE' brand identity. The hero section should feature a bold, full-width headline incorporating 'AD TRIBE', a compelling subheadline communicating the platform's value proposition for advertising industry professionals, and a strong call-to-action button. The overall aesthetic should feel energetic yet professional — using warm, rich tones (e.g., deep amber, charcoal, off-white) consistent with the existing sophisticated color palette (avoiding blue and purple). Include a visually striking hero background treatment and reorganize the feature highlights section with updated iconography and copy that reinforces the 'tribe' community concept.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-opening-landing-page-landingpage-tsx-to-display-the-full-ad-tribe-intro-paragraph-ad-tribe-is-a-smart-networking-and-project-coordination-app-built-exclusively-for-advertising-professionals-designed-for-the-fast-paced-world-of-advertising-ad-tribe-transforms-scattered-coordination-into-a-unified-efficient-workflow-helping-creative-teams-move-faster-stay-aligned-and-deliver-outstanding-campaigns-this-text-should-appear-prominently-beneath-the-ad-tribe-logo-headline-in-the-hero-section-replacing-or-supplementing-any-existing-subheadline-copy",
-      "title": "Update the opening landing page (LandingPage.tsx) to display the full AD TRIBE intro paragraph: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.' This text should appear prominently beneath the AD TRIBE logo/headline in the hero section, replacing or supplementing any existing subheadline copy.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-build-a-registration-page-triggered-by-the-join-the-tribe-cta-on-the-landing-page-containing-the-following-fields-name-text-current-city-text-advertising-department-dropdown-with-predefined-options-creative-production-account-management-strategy-media-post-production-digital-pr-communications-research-planning-other-professional-designation-dropdown-with-predefined-options-director-producer-art-director-copywriter-strategist-account-executive-media-planner-editor-cinematographer-designer-other-years-of-experience-in-present-designation-numeric-input-availability-for-next-two-months-interactive-calendar-allowing-the-user-to-mark-available-unavailable-dates-work-reel-url-url-text-input-and-industry-references-optional-free-text-field-on-successful-submission-the-user-is-taken-to-a-confirmation-success-screen",
-      "title": "Build a registration page triggered by the 'Join the Tribe' CTA on the landing page, containing the following fields: Name (text), Current City (text), Advertising Department (dropdown with predefined options: Creative, Production, Account Management, Strategy, Media, Post-Production, Digital, PR & Communications, Research & Planning, Other), Professional Designation (dropdown with predefined options: Director, Producer, Art Director, Copywriter, Strategist, Account Executive, Media Planner, Editor, Cinematographer, Designer, Other), Years of Experience in Present Designation (numeric input), Availability for next two months (interactive calendar allowing the user to mark available/unavailable dates), Work Reel URL (URL text input), and Industry References (optional free-text field). On successful submission, the user is taken to a confirmation/success screen.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-in-landingpage-tsx-update-the-join-the-tribe-feature-card-the-card-with-the-people-community-icon-heading-join-the-tribe-and-description-become-part-of-an-exclusive-community-of-advertising-professionals-vendors-and-production-houses-so-that-clicking-its-cta-button-or-the-card-itself-expands-or-reveals-the-full-registration-form-inline-within-that-same-card-section-on-the-landing-page-rather-than-navigating-to-a-separate-registration-route-the-registration-form-should-appear-directly-below-or-replace-the-card-s-description-text-within-the-landing-page-keeping-the-user-on-the-same-page-with-no-route-change",
-      "title": "In LandingPage.tsx, update the 'Join the Tribe' feature card (the card with the people/community icon, heading 'Join the Tribe', and description 'Become part of an exclusive community of advertising professionals, vendors, and production houses') so that clicking its CTA button or the card itself expands or reveals the full registration form inline within that same card/section on the landing page, rather than navigating to a separate /registration route. The registration form should appear directly below or replace the card's description text within the landing page, keeping the user on the same page with no route change.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-save-the-uploaded-tribal-film-camera-artwork-unnamed-jpg-as-a-static-asset-at-frontend-public-assets-generated-hero-bg-jpg-and-use-it-as-the-full-screen-background-image-for-the-hero-section-in-landingpage-tsx-the-image-must-cover-the-entire-hero-section-object-fit-cover-full-width-and-height-apply-a-dark-semi-transparent-overlay-e-g-rgba-0-0-0-0-45-0-55-on-top-of-the-image-so-that-all-hero-text-and-the-join-the-tribe-cta-button-remain-clearly-legible-the-existing-hero-content-structure-headline-intro-paragraph-cta-button-must-be-preserved-and-rendered-on-top-of-the-background",
-      "title": "Save the uploaded tribal film camera artwork (unnamed.jpg) as a static asset at frontend/public/assets/generated/hero-bg.jpg and use it as the full-screen background image for the hero section in LandingPage.tsx. The image must cover the entire hero section (object-fit: cover, full width and height). Apply a dark semi-transparent overlay (e.g. rgba(0,0,0,0.45)–0.55) on top of the image so that all hero text and the 'Join the Tribe' CTA button remain clearly legible. The existing hero content structure (headline, intro paragraph, CTA button) must be preserved and rendered on top of the background.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-retheme-the-entire-application-all-pages-and-components-with-a-color-palette-derived-from-the-tribal-film-camera-image-deep-forest-green-primary-e-g-1a4a1a-or-14421e-warm-saffron-golden-amber-accent-e-g-c8820a-or-d4900a-and-rich-bronze-dark-gold-for-highlights-replace-the-current-amber-charcoal-theme-tokens-in-frontend-src-index-css-frontend-index-css-and-frontend-tailwind-config-js-with-this-new-green-and-saffron-palette-update-all-components-and-pages-that-use-the-old-theme-tokens-so-buttons-headers-navigation-cards-badges-and-interactive-elements-consistently-use-the-new-green-and-saffron-palette-text-on-dark-backgrounds-should-use-off-white-or-light-cream-text-on-light-backgrounds-should-use-deep-charcoal",
-      "title": "Retheme the entire application (all pages and components) with a color palette derived from the tribal film camera image: deep forest green (primary, e.g. ~#1a4a1a or #14421e), warm saffron/golden-amber (accent, e.g. ~#c8820a or #d4900a), and rich bronze/dark-gold for highlights. Replace the current amber/charcoal theme tokens in frontend/src/index.css, frontend/index.css, and frontend/tailwind.config.js with this new green-and-saffron palette. Update all components and pages that use the old theme tokens so buttons, headers, navigation, cards, badges, and interactive elements consistently use the new green and saffron palette. Text on dark backgrounds should use off-white or light cream; text on light backgrounds should use deep charcoal.",
-      "reqIds": [
-        "REQ-12"
       ],
       "version": 1
     }
@@ -112,50 +39,36 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "User profiles for advertising professionals, equipment vendors, and shoot locations",
+      "summary": "Tribe Availability enquiry form in the Tribe Availability section with predefined roles dropdown, accessible only to Directors and Production Houses",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Production house dashboard to search and connect with service providers",
+      "summary": "After enquiry submission, show results on same page split into Same City and Other Cities technician lists with name, designation, city, and contact number",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Availability calendar system for checking and booking specific shoot dates",
+      "summary": "Mock technician database seeded with sample profiles across multiple cities and roles, easily replaceable later",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Networking and connection features between production houses and vendors/professionals",
-      "reqIds": [],
+      "summary": "Seed a mock technician database in the Motoko backend with at least 15 sample technician profiles. Each profile must include: name, designation (from a predefined roles list), city, contact number, and availability date range. Spread profiles across at least 4 different cities and cover all predefined roles. This data should be stored in a stable variable so it can be easily replaced later.",
+      "reqIds": [
+        "REQ-1"
+      ],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Update opening page intro text to: 'AD Tribe is a smart networking and project coordination app built exclusively for advertising professionals. Designed for the fast-paced world of advertising, AD Tribe transforms scattered coordination into a unified, efficient workflow—helping creative teams move faster, stay aligned, and deliver outstanding campaigns.'",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Registration page from 'Join the tribe' CTA with fields: Name, Current City, Advertising Department (dropdown), Professional Designation (dropdown), Years of Experience, 2-month availability calendar, Work Reel URL, Industry References (optional); lands on confirmation screen after submission",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "The 'Join the Tribe' CTA in the landing page feature card section should open the registration form inline on the same page, not navigate to a separate registration page",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-8",
-      "summary": "Use uploaded tribal film camera image as full-screen background for the landing page hero section, and apply a green and saffron color palette inspired by the image across the entire app",
-      "reqIds": [],
+      "summary": "Add a backend query function `searchTechnicians` that accepts shoot city, shoot date range, available-from date, and a list of required roles, and returns matching technicians split into two groups: same-city matches and other-city matches. Each result record must include name, designation, city, and contact number.",
+      "reqIds": [
+        "REQ-2"
+      ],
       "status": "pending"
     }
   ],

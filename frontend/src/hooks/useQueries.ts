@@ -3,6 +3,8 @@ import { useActor } from './useActor';
 import type { 
   UserProfile, 
   AdvertisingRegistration,
+  TechnicianSearchInput,
+  TechnicianSearchResult,
 } from '../backend';
 import { Principal } from '@dfinity/principal';
 
@@ -84,5 +86,16 @@ export function useGetVerifiedMembers() {
       return actor.getVerifiedMembers();
     },
     enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useSearchTechnicians() {
+  const { actor } = useActor();
+
+  return useMutation<TechnicianSearchResult, Error, TechnicianSearchInput>({
+    mutationFn: async (searchInput: TechnicianSearchInput) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.searchTechnicians(searchInput);
+    },
   });
 }

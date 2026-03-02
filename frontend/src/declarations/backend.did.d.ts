@@ -42,6 +42,22 @@ export type ProfessionalDesignation = { 'other' : null } |
   { 'cinematographer' : null } |
   { 'strategist' : null } |
   { 'copywriter' : null };
+export interface TechnicianResult {
+  'city' : string,
+  'name' : string,
+  'role' : string,
+  'contactNumber' : string,
+}
+export interface TechnicianSearchInput {
+  'city' : string,
+  'availableFrom' : Time,
+  'requiredRoles' : Array<string>,
+  'availableTo' : Time,
+}
+export interface TechnicianSearchResult {
+  'otherCityMatches' : Array<TechnicianResult>,
+  'sameCityMatches' : Array<TechnicianResult>,
+}
 export type Time = bigint;
 export interface UserProfile {
   'areaOfExpertise' : [] | [AreaOfExpertise],
@@ -65,6 +81,10 @@ export interface _SERVICE {
   'getVerifiedMembers' : ActorMethod<[], Array<Principal>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'searchTechnicians' : ActorMethod<
+    [TechnicianSearchInput],
+    TechnicianSearchResult
+  >,
   'submitProfessionalRegistration' : ActorMethod<
     [AdvertisingRegistration],
     undefined

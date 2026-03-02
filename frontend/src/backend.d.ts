@@ -18,7 +18,23 @@ export interface AdvertisingRegistration {
     availability: Array<Time>;
     industryReferences?: string;
 }
+export interface TechnicianResult {
+    city: string;
+    name: string;
+    role: string;
+    contactNumber: string;
+}
 export type Time = bigint;
+export interface TechnicianSearchResult {
+    otherCityMatches: Array<TechnicianResult>;
+    sameCityMatches: Array<TechnicianResult>;
+}
+export interface TechnicianSearchInput {
+    city: string;
+    availableFrom: Time;
+    requiredRoles: Array<string>;
+    availableTo: Time;
+}
 export interface UserProfile {
     areaOfExpertise?: AreaOfExpertise;
     professionalDesignation?: ProfessionalDesignation;
@@ -64,5 +80,6 @@ export interface backendInterface {
     getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    searchTechnicians(searchInput: TechnicianSearchInput): Promise<TechnicianSearchResult>;
     submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
 }

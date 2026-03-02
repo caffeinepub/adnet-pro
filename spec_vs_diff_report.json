@@ -1,13 +1,37 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T07:00:02.737Z",
-  "summary": "The diff implements REQ-12 (green and saffron palette retheme) thoroughly across CSS, Tailwind config, and all major pages/components. REQ-11 is partially implemented: the hero background image is wired up in LandingPage.tsx with an overlay and preserved content, but the image is served from /assets/unnamed.jpg rather than the required path /assets/generated/hero-bg.jpg, and there is no evidence that the file was saved/copied to frontend/public/assets/generated/hero-bg.jpg.",
+  "generatedAt": "2026-03-02T08:11:44.148Z",
+  "summary": "The diff implements most of the requested requirements. The frontend components (enquiry form, results display, CTA button) and backend types are present. However, there are several notable gaps: the backend technician data uses non-Indian cities (Barcelona, Madrid, etc.) instead of the required Indian cities; the technician variable is declared with 'var' instead of 'stable var'; the mock data does not cover all required predefined roles; the searchTechnicians function signature differs from the spec; and a constraint about not modifying hooks/ files was violated.",
   "missing_requirements": [
     {
-      "id": "REQ-11",
-      "requirement": "Save the uploaded tribal film camera artwork as a static asset at frontend/public/assets/generated/hero-bg.jpg and serve it from that path.",
-      "reason": "LandingPage.tsx references src='/assets/unnamed.jpg' instead of '/assets/generated/hero-bg.jpg'. There is no evidence in the diff of the file being added or copied to frontend/public/assets/generated/hero-bg.jpg.",
+      "id": "REQ-1",
+      "requirement": "Profiles must span at least 4 cities such as Mumbai, Delhi, Bangalore, Chennai (Indian cities for a film industry platform). The spec also requires a stable variable.",
+      "reason": "The backend mock data uses Spanish cities (Barcelona, Madrid, Valencia, Sevilla) rather than Indian cities. Additionally, the variable is declared as 'var technicians' not 'stable var technicians', violating the constraint that it must be stored in a stable variable for easy replacement.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-1",
+      "requirement": "All predefined roles must be represented: Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor.",
+      "reason": "The visible mock data includes roles like 'Production Assistant', 'Sound Technician', 'Grip' which are not in the predefined roles list. Roles such as Colourist, Production Designer, Costume Designer, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor are not confirmed to be present in the truncated data.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Function must accept shootCity (Text), shootStartDate (Time), shootEndDate (Time), availableFrom (Time), roles ([Text]) as separate parameters, and result field for designation should be named 'designation' not 'role'.",
+      "reason": "The backend uses a record input type TechnicianSearchInput with fields city, availableFrom, availableTo, requiredRoles instead of the individual parameters specified. The result type uses 'role' instead of 'designation' as the field name.",
+      "evidence": [
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Button must be visible and enabled only for authenticated users with account type Director or Production House.",
+      "reason": "The implementation grants access to users with professionalDesignation 'producer' instead of specifically 'Production House' account type. The mapping between backend ProfessionalDesignation.producer and 'Production House' account type may not align with the spec's intent.",
       "evidence": [
         "frontend/src/pages/LandingPage.tsx"
       ]
@@ -15,27 +39,35 @@
   ],
   "hallucinated_features": [
     {
-      "description": "A backward-compatibility 'amber' box-shadow alias was added in tailwind.config.js to preserve existing shadow-amber classes.",
-      "reason": "The build request did not ask for backward compatibility aliases; it asked for the old amber/charcoal tokens to be replaced, not aliased.",
+      "description": "The hooks/useQueries.ts file was modified to add useSearchTechnicians, violating the constraint that no files under frontend/src/hooks/ should be modified.",
+      "reason": "The build constraints explicitly state 'Do not modify any files under frontend/src/hooks/ or frontend/src/components/ui', but useSearchTechnicians was added to frontend/src/hooks/useQueries.ts.",
       "evidence": [
-        "frontend/tailwind.config.js"
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "description": "The PREDEFINED_ROLES list in the enquiry form includes extra roles beyond the spec: Director, Producer, Assistant Director, Camera Operator, Lighting Technician.",
+      "reason": "REQ-4 specifies an exact list of 15 roles. The implementation adds 5 additional roles not in the spec.",
+      "evidence": [
+        "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx"
+      ]
+    },
+    {
+      "description": "A summary banner showing total technician count is displayed in the results component, which was not requested.",
+      "reason": "REQ-5 only specifies same-city and other-cities sections with result cards and empty states. The summary banner with total count is an unrequested extra feature.",
+      "evidence": [
+        "frontend/src/components/tribe/TribeAvailabilityResults.tsx"
       ]
     }
   ],
-  "confidence": 0.82,
+  "confidence": 0.72,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/ProfileSetup.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/components/registration/InlineRegistrationForm.tsx",
-    "frontend/src/index.css",
-    "frontend/src/pages/ConnectionsPage.tsx",
-    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
+    "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/LandingPage.tsx",
-    "frontend/src/pages/ProfilePage.tsx",
-    "frontend/src/pages/RegistrationPage.tsx",
-    "frontend/src/pages/RegistrationSuccessPage.tsx",
-    "frontend/tailwind.config.js",
     "project_state.json"
   ]
 }

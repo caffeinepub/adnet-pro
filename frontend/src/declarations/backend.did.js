@@ -56,6 +56,22 @@ export const AdvertisingRegistration = IDL.Record({
   'availability' : IDL.Vec(Time),
   'industryReferences' : IDL.Opt(IDL.Text),
 });
+export const TechnicianSearchInput = IDL.Record({
+  'city' : IDL.Text,
+  'availableFrom' : Time,
+  'requiredRoles' : IDL.Vec(IDL.Text),
+  'availableTo' : Time,
+});
+export const TechnicianResult = IDL.Record({
+  'city' : IDL.Text,
+  'name' : IDL.Text,
+  'role' : IDL.Text,
+  'contactNumber' : IDL.Text,
+});
+export const TechnicianSearchResult = IDL.Record({
+  'otherCityMatches' : IDL.Vec(TechnicianResult),
+  'sameCityMatches' : IDL.Vec(TechnicianResult),
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -75,6 +91,11 @@ export const idlService = IDL.Service({
   'getVerifiedMembers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'searchTechnicians' : IDL.Func(
+      [TechnicianSearchInput],
+      [TechnicianSearchResult],
+      ['query'],
+    ),
   'submitProfessionalRegistration' : IDL.Func(
       [AdvertisingRegistration],
       [],
@@ -133,6 +154,22 @@ export const idlFactory = ({ IDL }) => {
     'availability' : IDL.Vec(Time),
     'industryReferences' : IDL.Opt(IDL.Text),
   });
+  const TechnicianSearchInput = IDL.Record({
+    'city' : IDL.Text,
+    'availableFrom' : Time,
+    'requiredRoles' : IDL.Vec(IDL.Text),
+    'availableTo' : Time,
+  });
+  const TechnicianResult = IDL.Record({
+    'city' : IDL.Text,
+    'name' : IDL.Text,
+    'role' : IDL.Text,
+    'contactNumber' : IDL.Text,
+  });
+  const TechnicianSearchResult = IDL.Record({
+    'otherCityMatches' : IDL.Vec(TechnicianResult),
+    'sameCityMatches' : IDL.Vec(TechnicianResult),
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -152,6 +189,11 @@ export const idlFactory = ({ IDL }) => {
     'getVerifiedMembers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'searchTechnicians' : IDL.Func(
+        [TechnicianSearchInput],
+        [TechnicianSearchResult],
+        ['query'],
+      ),
     'submitProfessionalRegistration' : IDL.Func(
         [AdvertisingRegistration],
         [],

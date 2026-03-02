@@ -1,21 +1,34 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-01T07:00:02.740Z",
+  "generatedAt": "2026-03-02T08:11:44.153Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 5,
+    "implemented": 3,
     "items": [
       {
-        "id": "REQ-11",
-        "summary": "Save the uploaded tribal film camera artwork (unnamed.jpg) as a static asset at frontend/public/assets/generated/hero-bg.jpg and use it as the full-screen background image for the hero section in LandingPage.tsx. The image must cover the entire hero section (object-fit: cover, full width and height). Apply a dark semi-transparent overlay (e.g. rgba(0,0,0,0.45)–0.55) on top of the image so that all hero text and the 'Join the Tribe' CTA button remain clearly legible. The existing hero content structure (headline, intro paragraph, CTA button) must be preserved and rendered on top of the background.",
+        "id": "REQ-1",
+        "summary": "Seed a mock technician database in the Motoko backend with at least 15 sample technician profiles. Each profile must include: name, designation (from a predefined roles list), city, contact number, and availability date range. Spread profiles across at least 4 different cities and cover all predefined roles. This data should be stored in a stable variable so it can be easily replaced later.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add a backend query function `searchTechnicians` that accepts shoot city, shoot date range, available-from date, and a list of required roles, and returns matching technicians split into two groups: same-city matches and other-city matches. Each result record must include name, designation, city, and contact number.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "In the Tribe Availability card on the Landing Page (the card with the calendar icon and text 'Sync your calendar with the tribe...'), add a CTA button labeled 'Find Available Crew'. This button must only be visible and enabled for authenticated users whose account type is Director or Production House. Users who are not logged in or have a different account type should see the button in a disabled or hidden state with a tooltip explaining the restriction.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/hero-bg.dim_1920x1080.jpg",
           "frontend/src/pages/LandingPage.tsx"
         ],
         "matchedFiles": [
@@ -23,65 +36,47 @@
         ]
       },
       {
-        "id": "REQ-12",
-        "summary": "Retheme the entire application (all pages and components) with a color palette derived from the tribal film camera image: deep forest green (primary, e.g. ~#1a4a1a or #14421e), warm saffron/golden-amber (accent, e.g. ~#c8820a or #d4900a), and rich bronze/dark-gold for highlights. Replace the current amber/charcoal theme tokens in frontend/src/index.css, frontend/index.css, and frontend/tailwind.config.js with this new green-and-saffron palette. Update all components and pages that use the old theme tokens so buttons, headers, navigation, cards, badges, and interactive elements consistently use the new green and saffron palette. Text on dark backgrounds should use off-white or light cream; text on light backgrounds should use deep charcoal.",
+        "id": "REQ-4",
+        "summary": "Build the Tribe Availability enquiry form with the following fields: (1) Project Name (text input), (2) Director Name (text input, shown when account type is Director), (3) Production House Name (text input, shown when account type is Production House), (4) Shoot City (text input), (5) Shoot Dates (date range picker: start date and end date), (6) Available From (single date picker), (7) Technicians Needed (multi-select dropdown using a predefined roles list — Cinematographer, Editor, Gaffer, Sound Recordist, Art Director, Colourist, Production Designer, Costume Designer, Makeup Artist, Stunt Coordinator, VFX Supervisor, Drone Operator, Focus Puller, Clapper Loader, Script Supervisor — users can add multiple roles as an array), (8) Special Requirements (textarea). The form should be shown inline in the Tribe Availability section below the CTA button or in a modal.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/pages/DashboardPage.tsx",
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/pages/ConnectionsPage.tsx",
-          "frontend/src/pages/RegistrationPage.tsx",
-          "frontend/src/pages/RegistrationSuccessPage.tsx",
-          "frontend/src/components/registration/InlineRegistrationForm.tsx",
-          "frontend/src/components/profiles/ProfessionalProfileForm.tsx",
-          "frontend/src/components/profiles/LocationProfileForm.tsx",
-          "frontend/src/components/profiles/ProductionHouseProfileForm.tsx",
-          "frontend/src/components/profiles/VendorProfileForm.tsx",
-          "frontend/src/components/ProfileSetup.tsx",
-          "frontend/src/components/calendar/AvailabilityCalendar.tsx",
-          "frontend/src/components/calendar/AvailabilityLegend.tsx",
-          "frontend/src/components/search/SearchBar.tsx",
-          "frontend/src/components/search/SearchFilters.tsx",
-          "frontend/src/components/search/ProviderCard.tsx",
-          "frontend/src/components/search/SearchResults.tsx"
+          "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/index.css",
-          "frontend/tailwind.config.js",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/pages/DashboardPage.tsx",
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/pages/ConnectionsPage.tsx",
-          "frontend/src/pages/RegistrationPage.tsx",
-          "frontend/src/pages/RegistrationSuccessPage.tsx",
-          "frontend/src/components/registration/InlineRegistrationForm.tsx",
-          "frontend/src/components/ProfileSetup.tsx"
+          "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "After the enquiry form is submitted, display the search results inline below the form within the same Tribe Availability section. Results must be split into two clearly labelled sections: 'Same City' and 'Other Cities'. Each technician result card should show name, designation, city, and contact number. If no technicians are found in either category, show an appropriate empty state message for that category.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
+          "frontend/src/pages/LandingPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
+          "frontend/src/pages/LandingPage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/hero-bg.dim_1080x1920.jpg",
-    "frontend/src/components/ProfileSetup.tsx",
-    "frontend/src/components/layout/AppLayout.tsx",
-    "frontend/src/components/registration/InlineRegistrationForm.tsx",
-    "frontend/src/index.css",
-    "frontend/src/pages/ConnectionsPage.tsx",
-    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/tribe/TribeAvailabilityEnquiryForm.tsx",
+    "frontend/src/components/tribe/TribeAvailabilityResults.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/LandingPage.tsx",
-    "frontend/src/pages/ProfilePage.tsx",
-    "frontend/src/pages/RegistrationPage.tsx",
-    "frontend/src/pages/RegistrationSuccessPage.tsx",
-    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

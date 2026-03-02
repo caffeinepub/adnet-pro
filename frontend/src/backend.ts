@@ -100,7 +100,23 @@ export interface AdvertisingRegistration {
     availability: Array<Time>;
     industryReferences?: string;
 }
+export interface TechnicianResult {
+    city: string;
+    name: string;
+    role: string;
+    contactNumber: string;
+}
 export type Time = bigint;
+export interface TechnicianSearchResult {
+    otherCityMatches: Array<TechnicianResult>;
+    sameCityMatches: Array<TechnicianResult>;
+}
+export interface TechnicianSearchInput {
+    city: string;
+    availableFrom: Time;
+    requiredRoles: Array<string>;
+    availableTo: Time;
+}
 export interface UserProfile {
     areaOfExpertise?: AreaOfExpertise;
     professionalDesignation?: ProfessionalDesignation;
@@ -147,6 +163,7 @@ export interface backendInterface {
     getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    searchTechnicians(searchInput: TechnicianSearchInput): Promise<TechnicianSearchResult>;
     submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
 }
 import type { AdvertisingRegistration as _AdvertisingRegistration, AreaOfExpertise as _AreaOfExpertise, ProfessionalDesignation as _ProfessionalDesignation, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
@@ -275,6 +292,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveCallerUserProfile(to_candid_UserProfile_n18(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async searchTechnicians(arg0: TechnicianSearchInput): Promise<TechnicianSearchResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.searchTechnicians(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.searchTechnicians(arg0);
             return result;
         }
     }
