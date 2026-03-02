@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useSubmitDirectorRegistration } from '../../hooks/useQueries';
+import { useSubmitDirectorRegistrationV2 } from '../../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { dateToTime, isSameDay } from '../../utils/dateHelpers';
+import { isSameDay } from '../../utils/dateHelpers';
 
 // ── Date Range Picker ──────────────────────────────────────────────────────────
 
@@ -142,7 +141,11 @@ function DateRangePicker({ startDate, endDate, onChange }: DateRangePickerProps)
 
 interface FormErrors {
   fullName?: string;
+  email?: string;
+  contactNumber?: string;
   currentCity?: string;
+  department?: string;
+  designation?: string;
   yearsOfExperience?: string;
   availabilityRange?: string;
   workReelUrl?: string;
@@ -155,13 +158,16 @@ interface DirectorRegistrationFormProps {
 
 export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistrationFormProps) {
   const { identity, login, loginStatus } = useInternetIdentity();
-  const submitMutation = useSubmitDirectorRegistration();
+  const submitMutation = useSubmitDirectorRegistrationV2();
 
   const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
   const [currentCity, setCurrentCity] = useState('');
-  const [productSpecialisation, setProductSpecialisation] = useState('');
-  const [genreSpecialisation, setGenreSpecialisation] = useState('');
+  const [department, setDepartment] = useState('');
+  const [designation, setDesignation] = useState('');
   const [yearsOfExperience, setYearsOfExperience] = useState('');
+  const [tribeCompanyName, setTribeCompanyName] = useState('');
   const [availabilityStart, setAvailabilityStart] = useState<Date | null>(null);
   const [availabilityEnd, setAvailabilityEnd] = useState<Date | null>(null);
   const [workReelUrl, setWorkReelUrl] = useState('');
@@ -173,7 +179,15 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
     if (!fullName.trim()) newErrors.fullName = 'Full name is required.';
+    if (!email.trim()) {
+      newErrors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'Please enter a valid email address.';
+    }
+    if (!contactNumber.trim()) newErrors.contactNumber = 'Contact number is required.';
     if (!currentCity.trim()) newErrors.currentCity = 'Current city is required.';
+    if (!department.trim()) newErrors.department = 'Department is required.';
+    if (!designation.trim()) newErrors.designation = 'Designation is required.';
     const years = parseInt(yearsOfExperience, 10);
     if (!yearsOfExperience || isNaN(years) || years < 0) {
       newErrors.yearsOfExperience = 'Please enter a valid number of years.';
@@ -191,10 +205,21 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
       }
     }
     if (!industryReference.trim()) {
-      newErrors.industryReference = 'Industry reference is required.';
+      newErrors.industryReference = 'Industry reference email is required.';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // Generate availability date strings from range
+  const buildAvailabilityDates = (start: Date, end: Date): string[] => {
+    const dates: string[] = [];
+    const current = new Date(start);
+    while (current <= end) {
+      dates.push(current.toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 1);
+    }
+    return dates;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,16 +231,22 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
     if (!validate()) return;
     if (!availabilityStart || !availabilityEnd) return;
 
+    const availability = buildAvailabilityDates(availabilityStart, availabilityEnd);
+
     await submitMutation.mutateAsync({
       fullName: fullName.trim(),
-      currentCity: currentCity.trim(),
-      productSpecialisation: productSpecialisation.trim() || undefined,
-      genreSpecialisation: genreSpecialisation.trim() || undefined,
+      email: email.trim(),
+      contactNumber: contactNumber.trim(),
+      city: currentCity.trim(),
+      department: department.trim(),
+      designation: designation.trim(),
       yearsOfExperience: BigInt(parseInt(yearsOfExperience, 10)),
-      availabilityStart: dateToTime(availabilityStart),
-      availabilityEnd: dateToTime(availabilityEnd),
+      tribeCompanyName: tribeCompanyName.trim(),
+      role: 'Director',
+      executiveProducers: [],
       workReelUrl: workReelUrl.trim(),
-      industryReference: industryReference.trim(),
+      industryReferenceEmail: industryReference.trim(),
+      availability,
     });
 
     onSuccess();
@@ -228,14 +259,47 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
         <Label htmlFor="dir-fullname">
           Full Name <span className="text-destructive">*</span>
         </Label>
-        <Input
+        <input
           id="dir-fullname"
+          type="text"
           placeholder="e.g. Arjun Mehta"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          className={errors.fullName ? 'border-destructive' : ''}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.fullName ? 'border-destructive' : 'border-input'}`}
         />
         {errors.fullName && <p className="text-xs text-destructive">{errors.fullName}</p>}
+      </div>
+
+      {/* Email */}
+      <div className="space-y-1.5">
+        <Label htmlFor="dir-email">
+          Email Address <span className="text-destructive">*</span>
+        </Label>
+        <input
+          id="dir-email"
+          type="email"
+          placeholder="e.g. arjun@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.email ? 'border-destructive' : 'border-input'}`}
+        />
+        {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+      </div>
+
+      {/* Contact Number */}
+      <div className="space-y-1.5">
+        <Label htmlFor="dir-contact">
+          Contact Number <span className="text-destructive">*</span>
+        </Label>
+        <input
+          id="dir-contact"
+          type="tel"
+          placeholder="e.g. +91 98765 43210"
+          value={contactNumber}
+          onChange={(e) => setContactNumber(e.target.value)}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.contactNumber ? 'border-destructive' : 'border-input'}`}
+        />
+        {errors.contactNumber && <p className="text-xs text-destructive">{errors.contactNumber}</p>}
       </div>
 
       {/* Current City */}
@@ -243,44 +307,47 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
         <Label htmlFor="dir-city">
           Current City <span className="text-destructive">*</span>
         </Label>
-        <Input
+        <input
           id="dir-city"
+          type="text"
           placeholder="e.g. Mumbai"
           value={currentCity}
           onChange={(e) => setCurrentCity(e.target.value)}
-          className={errors.currentCity ? 'border-destructive' : ''}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.currentCity ? 'border-destructive' : 'border-input'}`}
         />
-        {errors.currentCity && (
-          <p className="text-xs text-destructive">{errors.currentCity}</p>
-        )}
+        {errors.currentCity && <p className="text-xs text-destructive">{errors.currentCity}</p>}
       </div>
 
-      {/* Product Specialisation (optional) */}
+      {/* Department */}
       <div className="space-y-1.5">
-        <Label htmlFor="dir-product-spec">
-          Product Specialisation{' '}
-          <span className="text-muted-foreground text-xs font-normal">(optional)</span>
+        <Label htmlFor="dir-department">
+          Department <span className="text-destructive">*</span>
         </Label>
-        <Input
-          id="dir-product-spec"
-          placeholder="e.g. FMCG, Automotive, Luxury Goods"
-          value={productSpecialisation}
-          onChange={(e) => setProductSpecialisation(e.target.value)}
+        <input
+          id="dir-department"
+          type="text"
+          placeholder="e.g. Creative, Production"
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.department ? 'border-destructive' : 'border-input'}`}
         />
+        {errors.department && <p className="text-xs text-destructive">{errors.department}</p>}
       </div>
 
-      {/* Genre Specialisation (optional) */}
+      {/* Designation */}
       <div className="space-y-1.5">
-        <Label htmlFor="dir-genre-spec">
-          Genre Specialisation{' '}
-          <span className="text-muted-foreground text-xs font-normal">(optional)</span>
+        <Label htmlFor="dir-designation">
+          Designation <span className="text-destructive">*</span>
         </Label>
-        <Input
-          id="dir-genre-spec"
-          placeholder="e.g. Narrative, Documentary, Comedy"
-          value={genreSpecialisation}
-          onChange={(e) => setGenreSpecialisation(e.target.value)}
+        <input
+          id="dir-designation"
+          type="text"
+          placeholder="e.g. Director, Cinematographer"
+          value={designation}
+          onChange={(e) => setDesignation(e.target.value)}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.designation ? 'border-destructive' : 'border-input'}`}
         />
+        {errors.designation && <p className="text-xs text-destructive">{errors.designation}</p>}
       </div>
 
       {/* Years of Experience */}
@@ -288,40 +355,46 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
         <Label htmlFor="dir-years">
           Years of Experience <span className="text-destructive">*</span>
         </Label>
-        <Input
+        <input
           id="dir-years"
           type="number"
-          min={0}
+          min="0"
+          max="60"
           placeholder="e.g. 8"
           value={yearsOfExperience}
           onChange={(e) => setYearsOfExperience(e.target.value)}
-          className={errors.yearsOfExperience ? 'border-destructive' : ''}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.yearsOfExperience ? 'border-destructive' : 'border-input'}`}
         />
         {errors.yearsOfExperience && (
           <p className="text-xs text-destructive">{errors.yearsOfExperience}</p>
         )}
       </div>
 
-      {/* Availability for Next Two Months — Date Range Picker */}
+      {/* Tribe / Company Name */}
+      <div className="space-y-1.5">
+        <Label htmlFor="dir-tribe">Tribe / Company Name</Label>
+        <input
+          id="dir-tribe"
+          type="text"
+          placeholder="e.g. Tribal Films"
+          value={tribeCompanyName}
+          onChange={(e) => setTribeCompanyName(e.target.value)}
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        />
+      </div>
+
+      {/* Availability Range */}
       <div className="space-y-2">
         <Label>
-          Availability for Next Two Months{' '}
-          <span className="text-destructive">*</span>
-          <span className="text-muted-foreground text-xs font-normal ml-1">
-            (select start then end date)
-          </span>
+          Availability Range <span className="text-destructive">*</span>
         </Label>
-        <div
-          className={`border rounded-xl p-4 bg-background ${
-            errors.availabilityRange ? 'border-destructive' : 'border-border'
-          }`}
-        >
+        <div className="border border-border rounded-xl p-4 bg-background">
           <DateRangePicker
             startDate={availabilityStart}
             endDate={availabilityEnd}
-            onChange={(start, end) => {
-              setAvailabilityStart(start);
-              setAvailabilityEnd(end);
+            onChange={(s, e) => {
+              setAvailabilityStart(s);
+              setAvailabilityEnd(e);
             }}
           />
         </div>
@@ -335,62 +408,58 @@ export default function DirectorRegistrationForm({ onSuccess }: DirectorRegistra
         <Label htmlFor="dir-reel">
           Work Reel URL <span className="text-destructive">*</span>
         </Label>
-        <Input
+        <input
           id="dir-reel"
           type="url"
           placeholder="https://vimeo.com/your-reel"
           value={workReelUrl}
           onChange={(e) => setWorkReelUrl(e.target.value)}
-          className={errors.workReelUrl ? 'border-destructive' : ''}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.workReelUrl ? 'border-destructive' : 'border-input'}`}
         />
-        {errors.workReelUrl && (
-          <p className="text-xs text-destructive">{errors.workReelUrl}</p>
-        )}
+        {errors.workReelUrl && <p className="text-xs text-destructive">{errors.workReelUrl}</p>}
       </div>
 
-      {/* Industry Reference */}
+      {/* Industry Reference Email */}
       <div className="space-y-1.5">
-        <Label htmlFor="dir-reference">
-          Industry Reference <span className="text-destructive">*</span>
+        <Label htmlFor="dir-ref">
+          Industry Reference Official Email ID <span className="text-destructive">*</span>
         </Label>
-        <Textarea
-          id="dir-reference"
-          placeholder="Names, companies, or contact details of professional references..."
+        <input
+          id="dir-ref"
+          type="email"
+          placeholder="reference@agency.com"
           value={industryReference}
           onChange={(e) => setIndustryReference(e.target.value)}
-          rows={3}
-          className={errors.industryReference ? 'border-destructive' : ''}
+          className={`flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${errors.industryReference ? 'border-destructive' : 'border-input'}`}
         />
         {errors.industryReference && (
           <p className="text-xs text-destructive">{errors.industryReference}</p>
         )}
       </div>
 
-      {/* Submission error */}
-      {submitMutation.isError && (
-        <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-2">
-          Something went wrong. Please try again.
-        </p>
-      )}
-
       {/* Submit */}
       <Button
         type="submit"
-        size="lg"
-        className="w-full rounded-full font-semibold tracking-wide bg-saffron hover:bg-saffron-dark text-forest-deep border-0 shadow-saffron"
         disabled={submitMutation.isPending || loginStatus === 'logging-in'}
+        className="w-full bg-saffron hover:bg-saffron-dark text-forest-deep border-0 shadow-saffron font-semibold text-base py-3 h-auto"
       >
         {submitMutation.isPending ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Submitting...
-          </>
+          <span className="flex items-center gap-2">
+            <Loader2 className="animate-spin w-4 h-4" />
+            Submitting…
+          </span>
         ) : !isAuthenticated ? (
           'Login to Register'
         ) : (
-          'Join the Tribe as Director'
+          'Submit Registration'
         )}
       </Button>
+
+      {submitMutation.isError && (
+        <p className="text-xs text-destructive text-center">
+          {submitMutation.error?.message ?? 'Submission failed. Please try again.'}
+        </p>
+      )}
     </form>
   );
 }

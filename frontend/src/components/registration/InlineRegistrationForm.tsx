@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useSubmitProfessionalRegistration } from '../../hooks/useQueries';
+import {
+  useSubmitProfessionalRegistration,
+  AreaOfExpertise,
+  ProfessionalDesignation,
+} from '../../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +17,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { AreaOfExpertise, ProfessionalDesignation } from '../../backend';
 import { dateToTime, isSameDay } from '../../utils/dateHelpers';
 
 export const DEPARTMENTS: { value: AreaOfExpertise; label: string }[] = [
@@ -340,9 +343,9 @@ export default function InlineRegistrationForm({ onSuccess }: InlineRegistration
             <SelectValue placeholder="Select your designation" />
           </SelectTrigger>
           <SelectContent>
-            {DESIGNATIONS.map((des) => (
-              <SelectItem key={des.value} value={des.value}>
-                {des.label}
+            {DESIGNATIONS.map((desig) => (
+              <SelectItem key={desig.value} value={desig.value}>
+                {desig.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -355,13 +358,13 @@ export default function InlineRegistrationForm({ onSuccess }: InlineRegistration
       {/* Years of Experience */}
       <div className="space-y-1.5">
         <Label htmlFor="inline-years">
-          Years of Experience in Present Designation{' '}
-          <span className="text-destructive">*</span>
+          Years of Experience <span className="text-destructive">*</span>
         </Label>
         <Input
           id="inline-years"
           type="number"
-          min={0}
+          min="0"
+          max="60"
           placeholder="e.g. 5"
           value={yearsOfExperience}
           onChange={(e) => setYearsOfExperience(e.target.value)}
@@ -372,14 +375,9 @@ export default function InlineRegistrationForm({ onSuccess }: InlineRegistration
         )}
       </div>
 
-      {/* Availability Calendar */}
+      {/* Availability */}
       <div className="space-y-2">
-        <Label>
-          Availability for Next Two Months{' '}
-          <span className="text-muted-foreground text-xs font-normal">
-            (tap dates to mark available)
-          </span>
-        </Label>
+        <Label>Availability</Label>
         <div className="border border-border rounded-xl p-4 bg-background">
           <AvailabilityPicker
             selectedDates={availabilityDates}
@@ -406,46 +404,33 @@ export default function InlineRegistrationForm({ onSuccess }: InlineRegistration
         )}
       </div>
 
-      {/* Industry References (optional) */}
+      {/* Industry References */}
       <div className="space-y-1.5">
-        <Label htmlFor="inline-references">
-          Industry References{' '}
-          <span className="text-muted-foreground text-xs font-normal">(optional)</span>
-        </Label>
+        <Label htmlFor="inline-refs">Industry References</Label>
         <Textarea
-          id="inline-references"
-          placeholder="Names, companies, or contact details of professional references..."
+          id="inline-refs"
+          placeholder="Names and contact details of industry references"
           value={industryReferences}
           onChange={(e) => setIndustryReferences(e.target.value)}
           rows={3}
         />
       </div>
 
-      {/* Error */}
-      {submitMutation.isError && (
-        <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-2">
-          Something went wrong. Please try again.
-        </p>
-      )}
-
       {/* Submit */}
       <Button
         type="submit"
-        size="lg"
-        className="w-full rounded-full font-semibold tracking-wide bg-saffron hover:bg-saffron-dark text-forest-deep border-0 shadow-saffron"
         disabled={submitMutation.isPending || loginStatus === 'logging-in'}
+        className="w-full bg-saffron hover:bg-saffron-dark text-forest-deep border-0 shadow-saffron font-semibold text-base py-3 h-auto"
       >
         {submitMutation.isPending ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Submitting...
-          </>
+          <span className="flex items-center gap-2">
+            <Loader2 className="animate-spin w-4 h-4" />
+            Submitting…
+          </span>
         ) : !isAuthenticated ? (
           'Login to Register'
         ) : (
-          <>
-            Join the Tribe
-          </>
+          'Submit Registration'
         )}
       </Button>
     </form>

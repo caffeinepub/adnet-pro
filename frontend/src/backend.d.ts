@@ -7,17 +7,6 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface AdvertisingRegistration {
-    yearsOfExperience: bigint;
-    principal: Principal;
-    areaOfExpertise: AreaOfExpertise;
-    professionalDesignation: ProfessionalDesignation;
-    workReelURL: string;
-    name: string;
-    currentCity: string;
-    availability: Array<Time>;
-    industryReferences?: string;
-}
 export interface TechnicianResult {
     city: string;
     name: string;
@@ -47,35 +36,23 @@ export interface Director {
     industryReference: string;
 }
 export interface UserProfile {
-    areaOfExpertise?: AreaOfExpertise;
-    professionalDesignation?: ProfessionalDesignation;
-    name: string;
-    currentCity: string;
+    yearsOfExperience: bigint;
+    industryReferenceEmail: string;
+    city: string;
+    workReelUrl: string;
+    designation: string;
+    role: string;
+    fullName: string;
+    email: string;
+    availability: Array<string>;
+    tribeCompanyName: string;
+    executiveProducers: Array<string>;
+    contactNumber: string;
+    department: string;
 }
-export enum AreaOfExpertise {
-    pr = "pr",
-    media = "media",
-    creative = "creative",
-    production = "production",
-    other = "other",
-    research = "research",
-    strategy = "strategy",
-    postProduction = "postProduction",
-    digital = "digital",
-    accountManagement = "accountManagement"
-}
-export enum ProfessionalDesignation {
-    other = "other",
-    editor = "editor",
-    artDirector = "artDirector",
+export enum TribalLeaderRole {
     director = "director",
-    designer = "designer",
-    mediaPlanner = "mediaPlanner",
-    accountExecutive = "accountExecutive",
-    producer = "producer",
-    cinematographer = "cinematographer",
-    strategist = "strategist",
-    copywriter = "copywriter"
+    productionHouse = "productionHouse"
 }
 export enum UserRole {
     admin = "admin",
@@ -84,15 +61,45 @@ export enum UserRole {
 }
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    /**
+     * / Create or update the caller's profile. Requires authenticated user.
+     */
+    createOrUpdateProfile(profile: UserProfile): Promise<void>;
+    /**
+     * / Get the caller's own profile (alias required by frontend). Requires authenticated user.
+     */
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getDirectorRegistration(principal: Principal): Promise<Director | null>;
-    getProfessionalRegistration(user: Principal): Promise<AdvertisingRegistration | null>;
+    /**
+     * / Get the caller's own profile. Requires authenticated user.
+     */
+    getMyProfile(): Promise<UserProfile | null>;
+    getTribalLeaderRole(principal: Principal): Promise<TribalLeaderRole | null>;
+    /**
+     * / Get a specific user's profile. Caller must be the owner or an admin.
+     */
     getUserProfile(user: Principal): Promise<UserProfile | null>;
-    getVerifiedMembers(): Promise<Array<Principal>>;
     isCallerAdmin(): Promise<boolean>;
+    /**
+     * / Save the caller's own profile (alias required by frontend). Requires authenticated user.
+     */
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
+    /**
+     * / Search for available technicians. No authentication required (public search).
+     */
     searchTechnicians(searchInput: TechnicianSearchInput): Promise<TechnicianSearchResult>;
     submitDirectorRegistration(director: Director): Promise<void>;
-    submitProfessionalRegistration(registration: AdvertisingRegistration): Promise<void>;
+    /**
+     * / Submit a director registration using the full UserProfile model. Requires authenticated user.
+     */
+    submitDirectorRegistrationV2(director: UserProfile): Promise<void>;
+    /**
+     * / Submit a production house registration. Requires authenticated user.
+     */
+    submitProductionHouseRegistration(productionHouse: UserProfile): Promise<void>;
+    /**
+     * / Update only the availability field of the caller's profile. Requires authenticated user.
+     */
+    updateAvailability(availability: Array<string>): Promise<void>;
 }

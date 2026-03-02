@@ -1,11 +1,14 @@
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useGetProfessionalRegistration } from '../../hooks/useQueries';
+import {
+  useGetProfessionalRegistration,
+  AreaOfExpertise,
+  ProfessionalDesignation,
+} from '../../hooks/useQueries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from '@tanstack/react-router';
-import { AreaOfExpertise, ProfessionalDesignation } from '../../backend';
-import { timeToDate, formatDate } from '../../utils/dateHelpers';
+import { formatDate, timeToDate } from '../../utils/dateHelpers';
 
 const DEPARTMENT_LABELS: Record<AreaOfExpertise, string> = {
   [AreaOfExpertise.creative]: 'Creative',

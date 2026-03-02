@@ -1,38 +1,96 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T11:59:24.282Z",
+  "generatedAt": "2026-03-02T12:35:50.410Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 5,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Remove the 'Welcome to Ad Tribe' onboarding modal (ProfileSetup component in frontend/src/components/ProfileSetup.tsx) entirely. Users must no longer be prompted to enter their name upon authentication — they should land directly on the main app without any interstitial modal or name-entry step.",
+        "summary": "Extend the Motoko backend actor to store and manage full user profiles. The profile data model must include all fields collected across the existing registration forms: full name, email, phone/contact number, city, department, designation, years of experience, tribe/company name, role (Director or Production House), executive producers (for Production House), work reel URL, industry reference email, and availability dates. Expose CRUD endpoints: createOrUpdateProfile, getMyProfile, and updateAvailability. Profiles must be keyed by the caller's Internet Identity principal.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "After a user completes registration, display their profile avatar icon (initials-based circular avatar using their full name) and their full name in the AppLayout header, positioned immediately next to the Ad Tribe logo. This should only appear when the user is authenticated and has a saved profile.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/ProfileSetup.tsx",
-          "frontend/src/components/layout/AppLayout.tsx",
-          "frontend/src/pages/LandingPage.tsx",
-          "frontend/src/pages/DashboardPage.tsx"
+          "frontend/src/components/layout/AppLayout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/ProfileSetup.tsx"
+          "frontend/src/components/layout/AppLayout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Build a slide-over or modal profile panel that opens when the user clicks their avatar/name in the header. The panel must display all stored profile fields (full name, email, phone, city, department, designation, experience, tribe/company name, role, executive producers, work reel URL, industry reference email). Provide an Edit Profile mode that renders an editable form pre-populated with current values, with a Save button that calls the backend updateProfile endpoint and reflects the updated values on success.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/profile/UserProfilePanel.tsx",
+          "frontend/src/components/layout/AppLayout.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/profile/UserProfilePanel.tsx",
+          "frontend/src/components/layout/AppLayout.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Embed the existing AvailabilityCalendar component inside the user's profile panel as a dedicated 'My Availability' section. The calendar must load the user's currently saved availability dates from the backend and allow toggling dates to update them. Changes must be persisted to the backend via the updateAvailability endpoint when the user saves.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/profile/UserProfilePanel.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/profile/UserProfilePanel.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Wire the existing DirectorRegistrationForm and ProductionHouseRegistrationForm submission handlers to the new createOrUpdateProfile backend endpoint so that on successful form submission the user's profile is saved to the canister. After saving, navigate the user to the success page as currently implemented.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/registration/DirectorRegistrationForm.tsx",
+          "frontend/src/components/registration/ProductionHouseRegistrationForm.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/registration/DirectorRegistrationForm.tsx",
+          "frontend/src/components/registration/ProductionHouseRegistrationForm.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/profile/UserProfilePanel.tsx",
+    "frontend/src/components/profiles/ProfessionalProfileForm.tsx",
+    "frontend/src/components/registration/DirectorRegistrationForm.tsx",
+    "frontend/src/components/registration/InlineRegistrationForm.tsx",
+    "frontend/src/components/registration/ProductionHouseRegistrationForm.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/ConnectionsPage.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/ProductionHouseRegistrationPage.tsx",
+    "frontend/src/pages/ProfilePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,15 +1,22 @@
 import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useSubmitProductionHouseRegistration } from '../../hooks/useQueries';
+import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 
 interface FormErrors {
   productionHouseName?: string;
-  address?: string;
-  executiveProducers?: string;
+  fullName?: string;
+  email?: string;
   contactNumber?: string;
+  city?: string;
+  department?: string;
+  designation?: string;
+  yearsOfExperience?: string;
+  executiveProducers?: string;
   workReelUrl?: string;
   industryReferenceEmail?: string;
 }
@@ -21,14 +28,21 @@ interface ProductionHouseRegistrationFormProps {
 export default function ProductionHouseRegistrationForm({
   onSuccess,
 }: ProductionHouseRegistrationFormProps) {
+  const { identity } = useInternetIdentity();
+  const submitMutation = useSubmitProductionHouseRegistration();
+
   const [productionHouseName, setProductionHouseName] = useState('');
-  const [address, setAddress] = useState('');
-  const [executiveProducers, setExecutiveProducers] = useState<string[]>(['']);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
+  const [city, setCity] = useState('');
+  const [department, setDepartment] = useState('');
+  const [designation, setDesignation] = useState('');
+  const [yearsOfExperience, setYearsOfExperience] = useState('');
+  const [executiveProducers, setExecutiveProducers] = useState<string[]>(['']);
   const [workReelUrl, setWorkReelUrl] = useState('');
   const [industryReferenceEmail, setIndustryReferenceEmail] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const MAX_PRODUCERS = 3;
 
@@ -55,15 +69,33 @@ export default function ProductionHouseRegistrationForm({
     if (!productionHouseName.trim()) {
       newErrors.productionHouseName = 'Production House name is required.';
     }
-    if (!address.trim()) {
-      newErrors.address = 'Address is required.';
+    if (!fullName.trim()) {
+      newErrors.fullName = 'Full name is required.';
+    }
+    if (!email.trim()) {
+      newErrors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'Please enter a valid email address.';
+    }
+    if (!contactNumber.trim()) {
+      newErrors.contactNumber = 'Official contact number is required.';
+    }
+    if (!city.trim()) {
+      newErrors.city = 'City is required.';
+    }
+    if (!department.trim()) {
+      newErrors.department = 'Department is required.';
+    }
+    if (!designation.trim()) {
+      newErrors.designation = 'Designation is required.';
+    }
+    const years = parseInt(yearsOfExperience, 10);
+    if (!yearsOfExperience || isNaN(years) || years < 0) {
+      newErrors.yearsOfExperience = 'Please enter a valid number of years.';
     }
     const filledProducers = executiveProducers.filter((p) => p.trim());
     if (filledProducers.length === 0) {
       newErrors.executiveProducers = 'At least one Executive Producer name is required.';
-    }
-    if (!contactNumber.trim()) {
-      newErrors.contactNumber = 'Official contact number is required.';
     }
     if (!workReelUrl.trim()) {
       newErrors.workReelUrl = 'Work reel URL is required.';
@@ -86,12 +118,28 @@ export default function ProductionHouseRegistrationForm({
     e.preventDefault();
     if (!validate()) return;
 
-    setIsSubmitting(true);
-    // Simulate brief processing before navigating
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsSubmitting(false);
+    const filledProducers = executiveProducers.filter((p) => p.trim());
+
+    await submitMutation.mutateAsync({
+      fullName: fullName.trim(),
+      email: email.trim(),
+      contactNumber: contactNumber.trim(),
+      city: city.trim(),
+      department: department.trim(),
+      designation: designation.trim(),
+      yearsOfExperience: BigInt(parseInt(yearsOfExperience, 10)),
+      tribeCompanyName: productionHouseName.trim(),
+      role: 'Production House',
+      executiveProducers: filledProducers,
+      workReelUrl: workReelUrl.trim(),
+      industryReferenceEmail: industryReferenceEmail.trim(),
+      availability: [],
+    });
+
     onSuccess();
   };
+
+  const isAuthenticated = !!identity;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -113,20 +161,122 @@ export default function ProductionHouseRegistrationForm({
         )}
       </div>
 
-      {/* Address */}
+      {/* Full Name */}
       <div className="space-y-1.5">
-        <Label htmlFor="ph-address">
-          Address <span className="text-destructive">*</span>
+        <Label htmlFor="ph-fullname">
+          Your Full Name <span className="text-destructive">*</span>
         </Label>
-        <Textarea
-          id="ph-address"
-          placeholder="Full office address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          rows={3}
-          className={errors.address ? 'border-destructive' : ''}
+        <Input
+          id="ph-fullname"
+          type="text"
+          placeholder="e.g. Priya Sharma"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className={errors.fullName ? 'border-destructive' : ''}
         />
-        {errors.address && <p className="text-xs text-destructive">{errors.address}</p>}
+        {errors.fullName && <p className="text-xs text-destructive">{errors.fullName}</p>}
+      </div>
+
+      {/* Email */}
+      <div className="space-y-1.5">
+        <Label htmlFor="ph-email-addr">
+          Email Address <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="ph-email-addr"
+          type="email"
+          placeholder="e.g. priya@tribalfilms.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className={errors.email ? 'border-destructive' : ''}
+        />
+        {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+      </div>
+
+      {/* Contact Number */}
+      <div className="space-y-1.5">
+        <Label htmlFor="ph-contact">
+          Official Contact Number <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="ph-contact"
+          type="tel"
+          placeholder="e.g. +91 98765 43210"
+          value={contactNumber}
+          onChange={(e) => setContactNumber(e.target.value)}
+          className={errors.contactNumber ? 'border-destructive' : ''}
+        />
+        {errors.contactNumber && (
+          <p className="text-xs text-destructive">{errors.contactNumber}</p>
+        )}
+      </div>
+
+      {/* City */}
+      <div className="space-y-1.5">
+        <Label htmlFor="ph-city">
+          City <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="ph-city"
+          type="text"
+          placeholder="e.g. Mumbai"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          className={errors.city ? 'border-destructive' : ''}
+        />
+        {errors.city && <p className="text-xs text-destructive">{errors.city}</p>}
+      </div>
+
+      {/* Department */}
+      <div className="space-y-1.5">
+        <Label htmlFor="ph-department">
+          Department <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="ph-department"
+          type="text"
+          placeholder="e.g. Production, Creative"
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          className={errors.department ? 'border-destructive' : ''}
+        />
+        {errors.department && <p className="text-xs text-destructive">{errors.department}</p>}
+      </div>
+
+      {/* Designation */}
+      <div className="space-y-1.5">
+        <Label htmlFor="ph-designation">
+          Designation <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="ph-designation"
+          type="text"
+          placeholder="e.g. Producer, Executive Producer"
+          value={designation}
+          onChange={(e) => setDesignation(e.target.value)}
+          className={errors.designation ? 'border-destructive' : ''}
+        />
+        {errors.designation && <p className="text-xs text-destructive">{errors.designation}</p>}
+      </div>
+
+      {/* Years of Experience */}
+      <div className="space-y-1.5">
+        <Label htmlFor="ph-years">
+          Years of Experience <span className="text-destructive">*</span>
+        </Label>
+        <Input
+          id="ph-years"
+          type="number"
+          min="0"
+          max="60"
+          placeholder="e.g. 10"
+          value={yearsOfExperience}
+          onChange={(e) => setYearsOfExperience(e.target.value)}
+          className={errors.yearsOfExperience ? 'border-destructive' : ''}
+        />
+        {errors.yearsOfExperience && (
+          <p className="text-xs text-destructive">{errors.yearsOfExperience}</p>
+        )}
       </div>
 
       {/* Executive Producers */}
@@ -179,24 +329,6 @@ export default function ProductionHouseRegistrationForm({
         )}
       </div>
 
-      {/* Official Contact Number */}
-      <div className="space-y-1.5">
-        <Label htmlFor="ph-contact">
-          Official Contact Number <span className="text-destructive">*</span>
-        </Label>
-        <Input
-          id="ph-contact"
-          type="tel"
-          placeholder="e.g. +91 98765 43210"
-          value={contactNumber}
-          onChange={(e) => setContactNumber(e.target.value)}
-          className={errors.contactNumber ? 'border-destructive' : ''}
-        />
-        {errors.contactNumber && (
-          <p className="text-xs text-destructive">{errors.contactNumber}</p>
-        )}
-      </div>
-
       {/* Work Reel URL */}
       <div className="space-y-1.5">
         <Label htmlFor="ph-reel">
@@ -236,37 +368,24 @@ export default function ProductionHouseRegistrationForm({
       {/* Submit */}
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={submitMutation.isPending || !isAuthenticated}
         className="w-full bg-saffron hover:bg-saffron-dark text-forest-deep border-0 shadow-saffron font-semibold text-base py-3 h-auto"
       >
-        {isSubmitting ? (
+        {submitMutation.isPending ? (
           <span className="flex items-center gap-2">
-            <svg
-              className="animate-spin w-4 h-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z"
-              />
-            </svg>
+            <Loader2 className="animate-spin w-4 h-4" />
             Submitting…
           </span>
         ) : (
           'Submit Registration'
         )}
       </Button>
+
+      {submitMutation.isError && (
+        <p className="text-xs text-destructive text-center">
+          {submitMutation.error?.message ?? 'Submission failed. Please try again.'}
+        </p>
+      )}
     </form>
   );
 }

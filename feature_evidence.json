@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-the-welcome-to-ad-tribe-onboarding-modal-profilesetup-component-in-frontend-src-components-profilesetup-tsx-entirely-users-must-no-longer-be-prompted-to-enter-their-name-upon-authentication-they-should-land-directly-on-the-main-app-without-any-interstitial-modal-or-name-entry-step",
-      "featureTitle": "Remove the 'Welcome to Ad Tribe' onboarding modal (ProfileSetup component in frontend/src/components/ProfileSetup.tsx) entirely. Users must no longer be prompted to enter their name upon authentication — they should land directly on the main app without any interstitial modal or name-entry step.",
+      "featureId": "feature-after-a-user-completes-registration-display-their-profile-avatar-icon-initials-based-circular-avatar-using-their-full-name-and-their-full-name-in-the-applayout-header-positioned-immediately-next-to-the-ad-tribe-logo-this-should-only-appear-when-the-user-is-authenticated-and-has-a-saved-profile",
+      "featureTitle": "After a user completes registration, display their profile avatar icon (initials-based circular avatar using their full name) and their full name in the AppLayout header, positioned immediately next to the Ad Tribe logo. This should only appear when the user is authenticated and has a saved profile.",
       "files": [
-        "frontend/src/components/ProfileSetup.tsx"
+        "frontend/src/components/layout/AppLayout.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -16,7 +16,67 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-a-slide-over-or-modal-profile-panel-that-opens-when-the-user-clicks-their-avatar-name-in-the-header-the-panel-must-display-all-stored-profile-fields-full-name-email-phone-city-department-designation-experience-tribe-company-name-role-executive-producers-work-reel-url-industry-reference-email-provide-an-edit-profile-mode-that-renders-an-editable-form-pre-populated-with-current-values-with-a-save-button-that-calls-the-backend-updateprofile-endpoint-and-reflects-the-updated-values-on-success",
+      "featureTitle": "Build a slide-over or modal profile panel that opens when the user clicks their avatar/name in the header. The panel must display all stored profile fields (full name, email, phone, city, department, designation, experience, tribe/company name, role, executive producers, work reel URL, industry reference email). Provide an Edit Profile mode that renders an editable form pre-populated with current values, with a Save button that calls the backend updateProfile endpoint and reflects the updated values on success.",
+      "files": [
+        "frontend/src/components/layout/AppLayout.tsx",
+        "frontend/src/components/profile/UserProfilePanel.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-embed-the-existing-availabilitycalendar-component-inside-the-user-s-profile-panel-as-a-dedicated-my-availability-section-the-calendar-must-load-the-user-s-currently-saved-availability-dates-from-the-backend-and-allow-toggling-dates-to-update-them-changes-must-be-persisted-to-the-backend-via-the-updateavailability-endpoint-when-the-user-saves",
+      "featureTitle": "Embed the existing AvailabilityCalendar component inside the user's profile panel as a dedicated 'My Availability' section. The calendar must load the user's currently saved availability dates from the backend and allow toggling dates to update them. Changes must be persisted to the backend via the updateAvailability endpoint when the user saves.",
+      "files": [
+        "frontend/src/components/profile/UserProfilePanel.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-wire-the-existing-directorregistrationform-and-productionhouseregistrationform-submission-handlers-to-the-new-createorupdateprofile-backend-endpoint-so-that-on-successful-form-submission-the-user-s-profile-is-saved-to-the-canister-after-saving-navigate-the-user-to-the-success-page-as-currently-implemented",
+      "featureTitle": "Wire the existing DirectorRegistrationForm and ProductionHouseRegistrationForm submission handlers to the new createOrUpdateProfile backend endpoint so that on successful form submission the user's profile is saved to the canister. After saving, navigate the user to the success page as currently implemented.",
+      "files": [
+        "frontend/src/components/registration/DirectorRegistrationForm.tsx",
+        "frontend/src/components/registration/ProductionHouseRegistrationForm.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

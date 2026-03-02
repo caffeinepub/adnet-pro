@@ -6,18 +6,17 @@ import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
-
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
-
-
+(with migration = Migration.run)
 actor {
   public type Director = {
     fullName : Text;
     currentCity : Text;
-    productSpecialisation : ?Text; // Optional
-    genreSpecialisation : ?Text; // Optional
+    productSpecialisation : ?Text;
+    genreSpecialisation : ?Text;
     yearsOfExperience : Nat;
     availabilityStart : Time.Time;
     availabilityEnd : Time.Time;
@@ -25,10 +24,16 @@ actor {
     industryReference : Text;
   };
 
+  public type TribalLeaderRole = {
+    #director;
+    #productionHouse;
+  };
+
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
   let directors = Map.empty<Principal, Director>();
+  let tribalLeaders = Map.empty<Principal, TribalLeaderRole>();
 
   public shared ({ caller }) func submitDirectorRegistration(director : Director) : async () {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
@@ -38,6 +43,7 @@ actor {
       Runtime.trap("Error: Cannot modify existing director registration");
     };
     directors.add(caller, director);
+    tribalLeaders.add(caller, #director);
   };
 
   public query ({ caller }) func getDirectorRegistration(principal : Principal) : async ?Director {
@@ -45,6 +51,10 @@ actor {
       Runtime.trap("Unauthorized: Can only view your own director registration");
     };
     directors.get(principal);
+  };
+
+  public query ({ caller }) func getTribalLeaderRole(principal : Principal) : async ?TribalLeaderRole {
+    tribalLeaders.get(principal);
   };
 
   public type AreaOfExpertise = {
@@ -74,27 +84,22 @@ actor {
     #other;
   };
 
-  public type AdvertisingRegistration = {
-    name : Text;
-    currentCity : Text;
-    areaOfExpertise : AreaOfExpertise;
-    professionalDesignation : ProfessionalDesignation;
-    yearsOfExperience : Nat;
-    availability : [Time.Time];
-    workReelURL : Text;
-    industryReferences : ?Text;
-    principal : Principal;
-  };
-
   public type UserProfile = {
-    name : Text;
-    currentCity : Text;
-    areaOfExpertise : ?AreaOfExpertise;
-    professionalDesignation : ?ProfessionalDesignation;
+    fullName : Text;
+    email : Text;
+    contactNumber : Text;
+    city : Text;
+    department : Text;
+    designation : Text;
+    yearsOfExperience : Nat;
+    tribeCompanyName : Text;
+    role : Text;
+    executiveProducers : [Text];
+    workReelUrl : Text;
+    industryReferenceEmail : Text;
+    availability : [Text];
   };
 
-  let registrations = Map.empty<Principal, AdvertisingRegistration>();
-  let verifiedMembers = Set.empty<Principal>();
   let userProfiles = Map.empty<Principal, UserProfile>();
 
   // Backend persistent record for Technicians
@@ -126,7 +131,6 @@ actor {
     otherCityMatches : [TechnicianResult];
   };
 
-  // Persistent state for technician data
   var technicians : [Technician] = [
     {
       name = "Carlos Gomez";
@@ -251,6 +255,24 @@ actor {
   ];
 
   // Profile management functions
+
+  /// Create or update the caller's profile. Requires authenticated user.
+  public shared ({ caller }) func createOrUpdateProfile(profile : UserProfile) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only users can create/update profiles");
+    };
+    userProfiles.add(caller, profile);
+  };
+
+  /// Get the caller's own profile. Requires authenticated user.
+  public query ({ caller }) func getMyProfile() : async ?UserProfile {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only users can get profiles");
+    };
+    userProfiles.get(caller);
+  };
+
+  /// Get the caller's own profile (alias required by frontend). Requires authenticated user.
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can get profiles");
@@ -258,13 +280,7 @@ actor {
     userProfiles.get(caller);
   };
 
-  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own profile");
-    };
-    userProfiles.get(user);
-  };
-
+  /// Save the caller's own profile (alias required by frontend). Requires authenticated user.
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can save profiles");
@@ -272,33 +288,35 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Registration functions
-  public shared ({ caller }) func submitProfessionalRegistration(registration : AdvertisingRegistration) : async () {
-    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
-      Runtime.trap("Unauthorized: Only registered users can submit registration");
-    };
-    if (caller != registration.principal) {
-      Runtime.trap("Unauthorized: Can only submit registration for yourself");
-    };
-    registrations.add(caller, registration);
-  };
-
-  public query ({ caller }) func getProfessionalRegistration(user : Principal) : async ?AdvertisingRegistration {
+  /// Get a specific user's profile. Caller must be the owner or an admin.
+  public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own registration");
+      Runtime.trap("Unauthorized: Can only view your own profile");
     };
-    registrations.get(user);
+    userProfiles.get(user);
   };
 
-  public query ({ caller }) func getVerifiedMembers() : async [Principal] {
+  /// Update only the availability field of the caller's profile. Requires authenticated user.
+  public shared ({ caller }) func updateAvailability(availability : [Text]) : async () {
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
-      Runtime.trap("Unauthorized: Only registered users can view verified members");
+      Runtime.trap("Unauthorized: Only users can update availability");
     };
-    verifiedMembers.values().toArray();
+    switch (userProfiles.get(caller)) {
+      case (null) {
+        Runtime.trap("Profile not found: Please create a profile first");
+      };
+      case (?profile) {
+        let updatedProfile : UserProfile = {
+          profile with
+          availability
+        };
+        userProfiles.add(caller, updatedProfile);
+      };
+    };
   };
 
-  // Technician Search Feature — publicly accessible to all callers including guests
-  public query func searchTechnicians(searchInput : TechnicianSearchInput) : async TechnicianSearchResult {
+  /// Search for available technicians. No authentication required (public search).
+  public query ({ caller }) func searchTechnicians(searchInput : TechnicianSearchInput) : async TechnicianSearchResult {
     let matches = technicians.filter(
       func(tech) {
         tech.availableFrom <= searchInput.availableFrom and tech.availableUntil >= searchInput.availableTo and searchInput.requiredRoles.find(func(role) { role == tech.role }) != null;
@@ -334,5 +352,23 @@ actor {
       sameCityMatches = sameCityResults;
       otherCityMatches = otherCityResults;
     };
+  };
+
+  /// Submit a production house registration. Requires authenticated user.
+  public shared ({ caller }) func submitProductionHouseRegistration(productionHouse : UserProfile) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can submit registration");
+    };
+    userProfiles.add(caller, productionHouse);
+    tribalLeaders.add(caller, #productionHouse);
+  };
+
+  /// Submit a director registration using the full UserProfile model. Requires authenticated user.
+  public shared ({ caller }) func submitDirectorRegistrationV2(director : UserProfile) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only registered users can submit registration");
+    };
+    userProfiles.add(caller, director);
+    tribalLeaders.add(caller, #director);
   };
 };

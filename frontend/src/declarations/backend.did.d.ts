@@ -10,27 +10,6 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export interface AdvertisingRegistration {
-  'yearsOfExperience' : bigint,
-  'principal' : Principal,
-  'areaOfExpertise' : AreaOfExpertise,
-  'professionalDesignation' : ProfessionalDesignation,
-  'workReelURL' : string,
-  'name' : string,
-  'currentCity' : string,
-  'availability' : Array<Time>,
-  'industryReferences' : [] | [string],
-}
-export type AreaOfExpertise = { 'pr' : null } |
-  { 'media' : null } |
-  { 'creative' : null } |
-  { 'production' : null } |
-  { 'other' : null } |
-  { 'research' : null } |
-  { 'strategy' : null } |
-  { 'postProduction' : null } |
-  { 'digital' : null } |
-  { 'accountManagement' : null };
 export interface Director {
   'yearsOfExperience' : bigint,
   'availabilityStart' : Time,
@@ -42,17 +21,6 @@ export interface Director {
   'availabilityEnd' : Time,
   'industryReference' : string,
 }
-export type ProfessionalDesignation = { 'other' : null } |
-  { 'editor' : null } |
-  { 'artDirector' : null } |
-  { 'director' : null } |
-  { 'designer' : null } |
-  { 'mediaPlanner' : null } |
-  { 'accountExecutive' : null } |
-  { 'producer' : null } |
-  { 'cinematographer' : null } |
-  { 'strategist' : null } |
-  { 'copywriter' : null };
 export interface TechnicianResult {
   'city' : string,
   'name' : string,
@@ -70,11 +38,22 @@ export interface TechnicianSearchResult {
   'sameCityMatches' : Array<TechnicianResult>,
 }
 export type Time = bigint;
+export type TribalLeaderRole = { 'director' : null } |
+  { 'productionHouse' : null };
 export interface UserProfile {
-  'areaOfExpertise' : [] | [AreaOfExpertise],
-  'professionalDesignation' : [] | [ProfessionalDesignation],
-  'name' : string,
-  'currentCity' : string,
+  'yearsOfExperience' : bigint,
+  'industryReferenceEmail' : string,
+  'city' : string,
+  'workReelUrl' : string,
+  'designation' : string,
+  'role' : string,
+  'fullName' : string,
+  'email' : string,
+  'availability' : Array<string>,
+  'tribeCompanyName' : string,
+  'executiveProducers' : Array<string>,
+  'contactNumber' : string,
+  'department' : string,
 }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -82,26 +61,50 @@ export type UserRole = { 'admin' : null } |
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  /**
+   * / Create or update the caller's profile. Requires authenticated user.
+   */
+  'createOrUpdateProfile' : ActorMethod<[UserProfile], undefined>,
+  /**
+   * / Get the caller's own profile (alias required by frontend). Requires authenticated user.
+   */
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getDirectorRegistration' : ActorMethod<[Principal], [] | [Director]>,
-  'getProfessionalRegistration' : ActorMethod<
-    [Principal],
-    [] | [AdvertisingRegistration]
-  >,
+  /**
+   * / Get the caller's own profile. Requires authenticated user.
+   */
+  'getMyProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getTribalLeaderRole' : ActorMethod<[Principal], [] | [TribalLeaderRole]>,
+  /**
+   * / Get a specific user's profile. Caller must be the owner or an admin.
+   */
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'getVerifiedMembers' : ActorMethod<[], Array<Principal>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  /**
+   * / Save the caller's own profile (alias required by frontend). Requires authenticated user.
+   */
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  /**
+   * / Search for available technicians. No authentication required (public search).
+   */
   'searchTechnicians' : ActorMethod<
     [TechnicianSearchInput],
     TechnicianSearchResult
   >,
   'submitDirectorRegistration' : ActorMethod<[Director], undefined>,
-  'submitProfessionalRegistration' : ActorMethod<
-    [AdvertisingRegistration],
-    undefined
-  >,
+  /**
+   * / Submit a director registration using the full UserProfile model. Requires authenticated user.
+   */
+  'submitDirectorRegistrationV2' : ActorMethod<[UserProfile], undefined>,
+  /**
+   * / Submit a production house registration. Requires authenticated user.
+   */
+  'submitProductionHouseRegistration' : ActorMethod<[UserProfile], undefined>,
+  /**
+   * / Update only the availability field of the caller's profile. Requires authenticated user.
+   */
+  'updateAvailability' : ActorMethod<[Array<string>], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

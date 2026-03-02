@@ -1,11 +1,15 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetCallerUserProfile, useGetProfessionalRegistration } from '../hooks/useQueries';
+import {
+  useGetCallerUserProfile,
+  useGetProfessionalRegistration,
+  AreaOfExpertise,
+  ProfessionalDesignation,
+} from '../hooks/useQueries';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from '@tanstack/react-router';
-import { AreaOfExpertise, ProfessionalDesignation } from '../backend';
 import { timeToDate, formatDate } from '../utils/dateHelpers';
 
 const DEPARTMENT_LABELS: Record<AreaOfExpertise, string> = {
@@ -80,7 +84,7 @@ export default function ProfilePage() {
         <CardContent className="space-y-2">
           <p className="text-sm">
             <span className="font-medium text-foreground">Name: </span>
-            <span className="text-muted-foreground">{userProfile?.name || '—'}</span>
+            <span className="text-muted-foreground">{userProfile?.fullName || '—'}</span>
           </p>
         </CardContent>
       </Card>

@@ -1,46 +1,60 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-03-02T11:59:24.279Z",
-  "summary": "The diff removes the ProfileSetup modal logic from App.tsx (RootComponent now renders AppLayout with Outlet directly, no ProfileSetup modal or profile-check logic), and the ProfileSetup.tsx file appears to have been modified (not removed, but the modal is no longer triggered). The registration routes remain accessible. Most REQ-1 acceptance criteria appear to be met, though ProfileSetup.tsx itself was not deleted — only de-referenced.",
-  "missing_requirements": [],
-  "hallucinated_features": [
+  "generatedAt": "2026-03-02T12:35:50.406Z",
+  "summary": "The diff implements most of the five requirements. REQ-1 (backend profile storage), REQ-2 (header avatar/name), REQ-3 (profile panel with edit mode), REQ-4 (AvailabilityCalendar embedded in panel), and REQ-5 (registration form wiring) are all substantially addressed. However, several specific acceptance criteria have gaps: the backend getMyProfile endpoint name differs from the spec, stable storage persistence is not verifiable from the diff, and a migration module was added without being requested.",
+  "missing_requirements": [
     {
-      "description": "ProfileSetup.tsx was modified (submit button styled with saffron background and forest-deep text color) rather than being fully removed, even though the requirement was to remove it entirely.",
-      "reason": "REQ-1 states the ProfileSetup component should be removed entirely. The diff shows it was modified rather than deleted, though it is no longer rendered.",
+      "id": "REQ-1",
+      "requirement": "Expose a getMyProfile endpoint (named exactly getMyProfile per spec). The diff exposes getCallerUserProfile instead.",
+      "reason": "The spec requires the endpoint to be named getMyProfile, but backend/main.mo and useQueries.ts reference getCallerUserProfile consistently.",
       "evidence": [
-        "frontend/src/components/ProfileSetup.tsx",
-        "frontend-file-summaries.txt"
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts"
       ]
     },
     {
-      "description": "A 'Start Your Tribe' card with a TribalLeaderRegistrationModal and Crown icon was added to the LandingPage, which was not requested.",
-      "reason": "The build request only asked to remove the onboarding modal and ensure users land on the main app. Adding a new card and modal is beyond scope.",
+      "id": "REQ-1",
+      "requirement": "Data persists across canister upgrades via stable storage.",
+      "reason": "The diff does not show stable variable declarations for the userProfiles map in backend/main.mo. The truncated diff does not confirm stable storage is used.",
       "evidence": [
-        "frontend-file-summaries.txt"
+        "backend/main.mo"
       ]
     },
     {
-      "description": "Color theme changes were applied across multiple components (saffron/forest-green tokens applied to AppLayout, LandingPage, ProfilePage, DashboardPage, ConnectionsPage, and index.css).",
-      "reason": "No color or theming changes were requested in the build request.",
+      "id": "REQ-3",
+      "requirement": "Validation errors are shown inline if required fields are empty.",
+      "reason": "The UserProfilePanel defines an EditFormErrors interface but the truncated diff does not show complete inline error rendering for all required fields in the edit form.",
       "evidence": [
-        "frontend-file-summaries.txt",
-        "frontend/src/components/layout/AppLayout.tsx"
-      ]
-    },
-    {
-      "description": "useSubmitDirectorRegistration and useGetDirectorRegistration query hooks were added to useQueries.ts.",
-      "reason": "No backend query hook additions were requested; the build request explicitly states no backend logic changes.",
-      "evidence": [
-        "frontend-file-summaries.txt"
+        "frontend/src/components/profile/UserProfilePanel.tsx"
       ]
     }
   ],
-  "confidence": 0.75,
+  "hallucinated_features": [
+    {
+      "description": "A backend/migration.mo module was added that attempts to migrate old UserProfile shapes to the new schema.",
+      "reason": "The build request does not mention creating a migration module or migrating legacy profile data. This is an unrequested addition.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.72,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/ProfileSetup.tsx",
+    "frontend/src/components/layout/AppLayout.tsx",
+    "frontend/src/components/profile/UserProfilePanel.tsx",
+    "frontend/src/components/profiles/ProfessionalProfileForm.tsx",
+    "frontend/src/components/registration/DirectorRegistrationForm.tsx",
+    "frontend/src/components/registration/InlineRegistrationForm.tsx",
+    "frontend/src/components/registration/ProductionHouseRegistrationForm.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/ConnectionsPage.tsx",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/ProductionHouseRegistrationPage.tsx",
+    "frontend/src/pages/ProfilePage.tsx",
     "project_state.json"
   ]
 }

@@ -13,36 +13,20 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const AreaOfExpertise = IDL.Variant({
-  'pr' : IDL.Null,
-  'media' : IDL.Null,
-  'creative' : IDL.Null,
-  'production' : IDL.Null,
-  'other' : IDL.Null,
-  'research' : IDL.Null,
-  'strategy' : IDL.Null,
-  'postProduction' : IDL.Null,
-  'digital' : IDL.Null,
-  'accountManagement' : IDL.Null,
-});
-export const ProfessionalDesignation = IDL.Variant({
-  'other' : IDL.Null,
-  'editor' : IDL.Null,
-  'artDirector' : IDL.Null,
-  'director' : IDL.Null,
-  'designer' : IDL.Null,
-  'mediaPlanner' : IDL.Null,
-  'accountExecutive' : IDL.Null,
-  'producer' : IDL.Null,
-  'cinematographer' : IDL.Null,
-  'strategist' : IDL.Null,
-  'copywriter' : IDL.Null,
-});
 export const UserProfile = IDL.Record({
-  'areaOfExpertise' : IDL.Opt(AreaOfExpertise),
-  'professionalDesignation' : IDL.Opt(ProfessionalDesignation),
-  'name' : IDL.Text,
-  'currentCity' : IDL.Text,
+  'yearsOfExperience' : IDL.Nat,
+  'industryReferenceEmail' : IDL.Text,
+  'city' : IDL.Text,
+  'workReelUrl' : IDL.Text,
+  'designation' : IDL.Text,
+  'role' : IDL.Text,
+  'fullName' : IDL.Text,
+  'email' : IDL.Text,
+  'availability' : IDL.Vec(IDL.Text),
+  'tribeCompanyName' : IDL.Text,
+  'executiveProducers' : IDL.Vec(IDL.Text),
+  'contactNumber' : IDL.Text,
+  'department' : IDL.Text,
 });
 export const Time = IDL.Int;
 export const Director = IDL.Record({
@@ -56,16 +40,9 @@ export const Director = IDL.Record({
   'availabilityEnd' : Time,
   'industryReference' : IDL.Text,
 });
-export const AdvertisingRegistration = IDL.Record({
-  'yearsOfExperience' : IDL.Nat,
-  'principal' : IDL.Principal,
-  'areaOfExpertise' : AreaOfExpertise,
-  'professionalDesignation' : ProfessionalDesignation,
-  'workReelURL' : IDL.Text,
-  'name' : IDL.Text,
-  'currentCity' : IDL.Text,
-  'availability' : IDL.Vec(Time),
-  'industryReferences' : IDL.Opt(IDL.Text),
+export const TribalLeaderRole = IDL.Variant({
+  'director' : IDL.Null,
+  'productionHouse' : IDL.Null,
 });
 export const TechnicianSearchInput = IDL.Record({
   'city' : IDL.Text,
@@ -87,6 +64,7 @@ export const TechnicianSearchResult = IDL.Record({
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createOrUpdateProfile' : IDL.Func([UserProfile], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getDirectorRegistration' : IDL.Func(
@@ -94,9 +72,10 @@ export const idlService = IDL.Service({
       [IDL.Opt(Director)],
       ['query'],
     ),
-  'getProfessionalRegistration' : IDL.Func(
+  'getMyProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getTribalLeaderRole' : IDL.Func(
       [IDL.Principal],
-      [IDL.Opt(AdvertisingRegistration)],
+      [IDL.Opt(TribalLeaderRole)],
       ['query'],
     ),
   'getUserProfile' : IDL.Func(
@@ -104,7 +83,6 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'getVerifiedMembers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'searchTechnicians' : IDL.Func(
@@ -113,11 +91,9 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'submitDirectorRegistration' : IDL.Func([Director], [], []),
-  'submitProfessionalRegistration' : IDL.Func(
-      [AdvertisingRegistration],
-      [],
-      [],
-    ),
+  'submitDirectorRegistrationV2' : IDL.Func([UserProfile], [], []),
+  'submitProductionHouseRegistration' : IDL.Func([UserProfile], [], []),
+  'updateAvailability' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
 });
 
 export const idlInitArgs = [];
@@ -128,36 +104,20 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const AreaOfExpertise = IDL.Variant({
-    'pr' : IDL.Null,
-    'media' : IDL.Null,
-    'creative' : IDL.Null,
-    'production' : IDL.Null,
-    'other' : IDL.Null,
-    'research' : IDL.Null,
-    'strategy' : IDL.Null,
-    'postProduction' : IDL.Null,
-    'digital' : IDL.Null,
-    'accountManagement' : IDL.Null,
-  });
-  const ProfessionalDesignation = IDL.Variant({
-    'other' : IDL.Null,
-    'editor' : IDL.Null,
-    'artDirector' : IDL.Null,
-    'director' : IDL.Null,
-    'designer' : IDL.Null,
-    'mediaPlanner' : IDL.Null,
-    'accountExecutive' : IDL.Null,
-    'producer' : IDL.Null,
-    'cinematographer' : IDL.Null,
-    'strategist' : IDL.Null,
-    'copywriter' : IDL.Null,
-  });
   const UserProfile = IDL.Record({
-    'areaOfExpertise' : IDL.Opt(AreaOfExpertise),
-    'professionalDesignation' : IDL.Opt(ProfessionalDesignation),
-    'name' : IDL.Text,
-    'currentCity' : IDL.Text,
+    'yearsOfExperience' : IDL.Nat,
+    'industryReferenceEmail' : IDL.Text,
+    'city' : IDL.Text,
+    'workReelUrl' : IDL.Text,
+    'designation' : IDL.Text,
+    'role' : IDL.Text,
+    'fullName' : IDL.Text,
+    'email' : IDL.Text,
+    'availability' : IDL.Vec(IDL.Text),
+    'tribeCompanyName' : IDL.Text,
+    'executiveProducers' : IDL.Vec(IDL.Text),
+    'contactNumber' : IDL.Text,
+    'department' : IDL.Text,
   });
   const Time = IDL.Int;
   const Director = IDL.Record({
@@ -171,16 +131,9 @@ export const idlFactory = ({ IDL }) => {
     'availabilityEnd' : Time,
     'industryReference' : IDL.Text,
   });
-  const AdvertisingRegistration = IDL.Record({
-    'yearsOfExperience' : IDL.Nat,
-    'principal' : IDL.Principal,
-    'areaOfExpertise' : AreaOfExpertise,
-    'professionalDesignation' : ProfessionalDesignation,
-    'workReelURL' : IDL.Text,
-    'name' : IDL.Text,
-    'currentCity' : IDL.Text,
-    'availability' : IDL.Vec(Time),
-    'industryReferences' : IDL.Opt(IDL.Text),
+  const TribalLeaderRole = IDL.Variant({
+    'director' : IDL.Null,
+    'productionHouse' : IDL.Null,
   });
   const TechnicianSearchInput = IDL.Record({
     'city' : IDL.Text,
@@ -202,6 +155,7 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createOrUpdateProfile' : IDL.Func([UserProfile], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getDirectorRegistration' : IDL.Func(
@@ -209,9 +163,10 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(Director)],
         ['query'],
       ),
-    'getProfessionalRegistration' : IDL.Func(
+    'getMyProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getTribalLeaderRole' : IDL.Func(
         [IDL.Principal],
-        [IDL.Opt(AdvertisingRegistration)],
+        [IDL.Opt(TribalLeaderRole)],
         ['query'],
       ),
     'getUserProfile' : IDL.Func(
@@ -219,7 +174,6 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'getVerifiedMembers' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'searchTechnicians' : IDL.Func(
@@ -228,11 +182,9 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'submitDirectorRegistration' : IDL.Func([Director], [], []),
-    'submitProfessionalRegistration' : IDL.Func(
-        [AdvertisingRegistration],
-        [],
-        [],
-      ),
+    'submitDirectorRegistrationV2' : IDL.Func([UserProfile], [], []),
+    'submitProductionHouseRegistration' : IDL.Func([UserProfile], [], []),
+    'updateAvailability' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
   });
 };
 

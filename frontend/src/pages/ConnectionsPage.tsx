@@ -13,7 +13,7 @@ export default function ConnectionsPage() {
       <div>
         <h1 className="font-display text-4xl tracking-widest text-foreground">CONNECTIONS</h1>
         <p className="text-muted-foreground mt-2">
-          Welcome{userProfile?.name ? `, ${userProfile.name}` : ''}. Explore your professional network.
+          Welcome{userProfile?.fullName ? `, ${userProfile.fullName}` : ''}. Explore your professional network.
         </p>
       </div>
 

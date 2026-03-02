@@ -1,39 +1,125 @@
 {
   "kind": "build_request",
-  "title": "Remove onboarding modal so users land directly on main app",
+  "title": "User Profile Display, Edit Panel & Availability Calendar Integration",
+  "projectName": "Ad Tribe",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the 'Welcome to Ad Tribe' onboarding modal (ProfileSetup component in frontend/src/components/ProfileSetup.tsx) entirely. Users must no longer be prompted to enter their name upon authentication — they should land directly on the main app without any interstitial modal or name-entry step.",
-      "target": "frontend",
+      "text": "Extend the Motoko backend actor to store and manage full user profiles. The profile data model must include all fields collected across the existing registration forms: full name, email, phone/contact number, city, department, designation, years of experience, tribe/company name, role (Director or Production House), executive producers (for Production House), work reel URL, industry reference email, and availability dates. Expose CRUD endpoints: createOrUpdateProfile, getMyProfile, and updateAvailability. Profiles must be keyed by the caller's Internet Identity principal.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-8",
-          "msg-9"
+          "msg-4",
+          "msg-5"
         ],
         "quotes": [
-          "remove this from the app",
-          "1. Just this step. 2. The users directly go to the main app and register themselves to get access to other information"
+          "all information we have taken in the registration form from him",
+          "make it part of this feature"
         ]
       },
       "acceptanceCriteria": [
-        "The 'Welcome to Ad Tribe' modal (name entry + Continue button) is no longer rendered anywhere in the app.",
-        "After authenticating via Internet Identity, the user lands directly on the main app (LandingPage or Dashboard) with no modal interruption.",
-        "All code references that trigger or conditionally show the ProfileSetup modal (e.g., in AppLayout or any parent component) are removed or disabled.",
-        "The registration flows (Director, Production House, and Advertising Professional) remain accessible from the main app for users to self-register."
+        "Backend stores all registration form fields per principal",
+        "createOrUpdateProfile persists data and returns the saved profile",
+        "getMyProfile returns the authenticated caller's profile or a null/error if not registered",
+        "updateAvailability replaces the user's availability dates array",
+        "Data persists across canister upgrades via stable storage"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "After a user completes registration, display their profile avatar icon (initials-based circular avatar using their full name) and their full name in the AppLayout header, positioned immediately next to the Ad Tribe logo. This should only appear when the user is authenticated and has a saved profile.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Show an your profile icon with the users full name next to Ad tribe logo"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile avatar and full name are visible in the header next to the Ad Tribe logo when user is registered",
+        "Avatar uses the user's initials rendered in a circular element with brand colors (saffron/forest)",
+        "Avatar and name are not shown for unauthenticated or unregistered users",
+        "Clicking the avatar or name opens the profile panel"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Build a slide-over or modal profile panel that opens when the user clicks their avatar/name in the header. The panel must display all stored profile fields (full name, email, phone, city, department, designation, experience, tribe/company name, role, executive producers, work reel URL, industry reference email). Provide an Edit Profile mode that renders an editable form pre-populated with current values, with a Save button that calls the backend updateProfile endpoint and reflects the updated values on success.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-5"
+        ],
+        "quotes": [
+          "on clicking the logo it should show all the registered details of the user with an option to edit his profile",
+          "all information we have taken in the registration form from him"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile panel opens on avatar/name click and displays all registration fields in read-only view",
+        "An Edit button switches the panel to an editable form pre-filled with current values",
+        "Saving the edit form calls the backend and updates the displayed profile",
+        "Validation errors are shown inline if required fields are empty",
+        "Panel can be closed via a close/back button"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Embed the existing AvailabilityCalendar component inside the user's profile panel as a dedicated 'My Availability' section. The calendar must load the user's currently saved availability dates from the backend and allow toggling dates to update them. Changes must be persisted to the backend via the updateAvailability endpoint when the user saves.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-5"
+        ],
+        "quotes": [
+          "update his availability calendar",
+          "yes"
+        ]
+      },
+      "acceptanceCriteria": [
+        "AvailabilityCalendar is rendered inside the profile panel below the profile fields",
+        "Calendar initialises with the user's saved availability dates fetched from the backend",
+        "User can toggle dates and save changes; updated dates persist to the backend",
+        "A Save Availability button (or auto-save) confirms the update and shows a success indicator",
+        "The calendar reflects the same data used by the Tribe Availability Enquiry feature"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Wire the existing DirectorRegistrationForm and ProductionHouseRegistrationForm submission handlers to the new createOrUpdateProfile backend endpoint so that on successful form submission the user's profile is saved to the canister. After saving, navigate the user to the success page as currently implemented.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "make it part of this feature"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Submitting the Director registration form saves all form data to the backend profile store",
+        "Submitting the Production House registration form saves all form data to the backend profile store",
+        "On successful save the user is navigated to the registration success page",
+        "After registration, the header immediately shows the user's avatar and full name"
       ]
     }
   ],
   "constraints": [
-    "Do not remove or modify any registration forms or flows — only the onboarding modal is to be removed.",
-    "Do not alter backend logic or data models.",
-    "Do not touch any immutable frontend paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui."
+    "All backend logic must remain in the single backend/main.mo actor file",
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "Reuse the existing AvailabilityCalendar component; do not create a duplicate calendar",
+    "Profile data must be keyed by Internet Identity principal"
   ],
   "nonGoals": [
-    "Replacing the onboarding modal with a different authentication or entry method.",
-    "Changes to the registration forms or their submission logic.",
-    "Any backend changes."
+    "Building a separate authentication system — Internet Identity remains the sole auth mechanism",
+    "Public profile pages visible to other users",
+    "Admin management of user profiles",
+    "Changing the existing Tribe Availability Enquiry form or its search logic"
   ],
   "imageRequirements": {
     "required": [],

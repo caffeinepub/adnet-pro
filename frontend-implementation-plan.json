@@ -1,37 +1,90 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove onboarding modal so users land directly on main app",
+  "title": "User Profile Display, Edit Panel & Availability Calendar Integration",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Remove the 'Welcome to Ad Tribe' onboarding modal entirely so authenticated users land directly on the main app without name-entry interruption",
+      "id": "REQ-2",
+      "summary": "Display user profile avatar and full name in header next to Ad Tribe logo when authenticated and registered",
       "acceptanceCriteria": [
-        "The 'Welcome to Ad Tribe' modal (name entry + Continue button) is no longer rendered anywhere in the app.",
-        "After authenticating via Internet Identity, the user lands directly on the main app (LandingPage or Dashboard) with no modal interruption.",
-        "All code references that trigger or conditionally show the ProfileSetup modal (e.g., in AppLayout or any parent component) are removed or disabled.",
-        "The registration flows (Director, Production House, and Advertising Professional) remain accessible from the main app for users to self-register."
+        "Profile avatar and full name are visible in the header next to the Ad Tribe logo when user is registered",
+        "Avatar uses the user's initials rendered in a circular element with brand colors (saffron/forest)",
+        "Avatar and name are not shown for unauthenticated or unregistered users",
+        "Clicking the avatar or name opens the profile panel"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/ProfileSetup.tsx",
-          "operation": "delete",
-          "description": "Delete the ProfileSetup modal component entirely as it is no longer needed for the onboarding flow."
+          "path": "frontend/src/components/layout/AppLayout.tsx",
+          "operation": "modify",
+          "description": "Add profile avatar and full name display next to the Ad Tribe logo in the header. Fetch the user's profile using the authorization component's getCallerUserProfile method. Render a circular avatar with initials derived from the full name using saffron (#FF9933) or forest (#2C5530) background. Display the full name next to the avatar. Only show when user is authenticated and has a saved profile. Make the avatar and name clickable to open the profile panel (REQ-3). Verify the authorization component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Build a slide-over profile panel displaying all profile fields with edit mode and save functionality",
+      "acceptanceCriteria": [
+        "Profile panel opens on avatar/name click and displays all registration fields in read-only view",
+        "An Edit button switches the panel to an editable form pre-filled with current values",
+        "Saving the edit form calls the backend and updates the displayed profile",
+        "Validation errors are shown inline if required fields are empty",
+        "Panel can be closed via a close/back button"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/profile/UserProfilePanel.tsx",
+          "operation": "create",
+          "description": "Create a slide-over panel component that displays the user's complete profile in read-only view: full name, email, contact number, city, department, designation, years of experience, tribe/company name, role, executive producers (if Production House), work reel URL, and industry reference email. Include an Edit button that switches to edit mode with a pre-populated form. In edit mode, render form inputs for all fields with validation. Add a Save button that calls the backend createOrUpdateProfile method from the authorization component to persist changes. Show inline validation errors for required fields. Include a close/back button to dismiss the panel. Use Tailwind classes with saffron and forest accent colors. Embed the AvailabilityCalendar component (REQ-4) below the profile fields. Verify the authorization component's usage instructions before implementing."
         },
         {
           "path": "frontend/src/components/layout/AppLayout.tsx",
           "operation": "modify",
-          "description": "Remove all references to ProfileSetup component including its import statement and any conditional rendering logic that displays the modal based on authentication or profile state. Ensure the layout renders children directly without checking for profile setup status."
+          "description": "Wire the UserProfilePanel component into AppLayout. Add state to control panel visibility. Pass the open/close handlers to the avatar/name clickable element added in REQ-2. Render the UserProfilePanel component conditionally when the panel is open."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Embed AvailabilityCalendar in profile panel to display and update user's availability dates",
+      "acceptanceCriteria": [
+        "AvailabilityCalendar is rendered inside the profile panel below the profile fields",
+        "Calendar initialises with the user's saved availability dates fetched from the backend",
+        "User can toggle dates and save changes; updated dates persist to the backend",
+        "A Save Availability button (or auto-save) confirms the update and shows a success indicator",
+        "The calendar reflects the same data used by the Tribe Availability Enquiry feature"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/profile/UserProfilePanel.tsx",
+          "operation": "modify",
+          "description": "Embed the existing AvailabilityCalendar component inside the UserProfilePanel below the profile fields section. Initialize the calendar with the user's availability dates from the profile (UserProfile.availability array). When the user toggles dates in the calendar, collect the updated availability array and provide a Save Availability button that calls the backend updateAvailability method to persist the changes. Display a success indicator after saving. Ensure the calendar data format matches the availability field used by the Tribe Availability Enquiry feature."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Wire registration form submissions to save user profile to backend and navigate to success page",
+      "acceptanceCriteria": [
+        "Submitting the Director registration form saves all form data to the backend profile store",
+        "Submitting the Production House registration form saves all form data to the backend profile store",
+        "On successful save the user is navigated to the registration success page",
+        "After registration, the header immediately shows the user's avatar and full name"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/registration/DirectorRegistrationForm.tsx",
+          "operation": "modify",
+          "description": "Update the form submission handler to call the backend createOrUpdateProfile method (from the authorization component) with a UserProfile object constructed from the form data. Map all Director form fields to the UserProfile structure: fullName, email, contactNumber, city, department, designation, yearsOfExperience, tribeCompanyName, role (set to 'Director'), executiveProducers (empty array for directors), workReelUrl, industryReferenceEmail, and availability. On successful save, navigate to the registration success page. Invalidate the 'currentUserProfile' query key to trigger a refetch so the header avatar appears immediately. Verify the authorization component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/pages/LandingPage.tsx",
+          "path": "frontend/src/components/registration/ProductionHouseRegistrationForm.tsx",
           "operation": "modify",
-          "description": "Remove any references to ProfileSetup component or logic that conditionally shows the modal on the landing page. Ensure authenticated users see the landing page content directly without modal interruption."
+          "description": "Update the form submission handler to call the backend createOrUpdateProfile method (from the authorization component) with a UserProfile object constructed from the form data. Map all Production House form fields to the UserProfile structure: fullName, email, contactNumber, city, department, designation, yearsOfExperience, tribeCompanyName, role (set to 'Production House'), executiveProducers (array of producers), workReelUrl, industryReferenceEmail, and availability. On successful save, navigate to the registration success page. Invalidate the 'currentUserProfile' query key to trigger a refetch so the header avatar appears immediately. Verify the authorization component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/pages/DashboardPage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Remove any references to ProfileSetup component or logic that conditionally shows the modal on the dashboard. Ensure authenticated users see the dashboard content directly without modal interruption."
+          "description": "Update or add React Query hooks for profile operations: useGetCallerUserProfile (to fetch the authenticated user's profile), useSaveCallerUserProfile (mutation to save/update profile), and useUpdateAvailability (mutation to update availability dates). Ensure these hooks call the corresponding backend methods: getCallerUserProfile, createOrUpdateProfile (or saveCallerUserProfile alias), and updateAvailability. Follow the authorization component's frontend usage pattern for handling user profiles and ensure the query key 'currentUserProfile' is used consistently. Verify the authorization component's usage instructions before implementing."
         }
       ]
     }

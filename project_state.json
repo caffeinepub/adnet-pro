@@ -1,24 +1,81 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Ad Tribe app where users land directly on the main app (skipping onboarding modal) and register themselves to access further information. Supports Director and Production House registration flows.",
+  "summary": "A web app (Ad Tribe platform) where users can register as Tribal Leaders. Once registered, a profile icon and full name are shown next to the Ad Tribe logo. Clicking the profile opens a panel showing all registration form details with edit functionality and integrated Tribe Availability calendar management. Registration and profile storage will be built in a Motoko backend canister.",
   "architectural_notes": [
-    "Onboarding modal (Welcome/name entry step) has been removed; users land directly on the main app",
-    "Users self-register from the main app to access Director or Production House information"
+    "User profile and registration data stored in a Motoko backend canister",
+    "Profile panel reuses the existing Tribe Availability calendar component"
   ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-remove-the-welcome-to-ad-tribe-onboarding-modal-profilesetup-component-in-frontend-src-components-profilesetup-tsx-entirely-users-must-no-longer-be-prompted-to-enter-their-name-upon-authentication-they-should-land-directly-on-the-main-app-without-any-interstitial-modal-or-name-entry-step",
-      "title": "Remove the 'Welcome to Ad Tribe' onboarding modal (ProfileSetup component in frontend/src/components/ProfileSetup.tsx) entirely. Users must no longer be prompted to enter their name upon authentication — they should land directly on the main app without any interstitial modal or name-entry step.",
+      "id": "feature-after-a-user-completes-registration-display-their-profile-avatar-icon-initials-based-circular-avatar-using-their-full-name-and-their-full-name-in-the-applayout-header-positioned-immediately-next-to-the-ad-tribe-logo-this-should-only-appear-when-the-user-is-authenticated-and-has-a-saved-profile",
+      "title": "After a user completes registration, display their profile avatar icon (initials-based circular avatar using their full name) and their full name in the AppLayout header, positioned immediately next to the Ad Tribe logo. This should only appear when the user is authenticated and has a saved profile.",
       "reqIds": [
-        "REQ-1"
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-slide-over-or-modal-profile-panel-that-opens-when-the-user-clicks-their-avatar-name-in-the-header-the-panel-must-display-all-stored-profile-fields-full-name-email-phone-city-department-designation-experience-tribe-company-name-role-executive-producers-work-reel-url-industry-reference-email-provide-an-edit-profile-mode-that-renders-an-editable-form-pre-populated-with-current-values-with-a-save-button-that-calls-the-backend-updateprofile-endpoint-and-reflects-the-updated-values-on-success",
+      "title": "Build a slide-over or modal profile panel that opens when the user clicks their avatar/name in the header. The panel must display all stored profile fields (full name, email, phone, city, department, designation, experience, tribe/company name, role, executive producers, work reel URL, industry reference email). Provide an Edit Profile mode that renders an editable form pre-populated with current values, with a Save button that calls the backend updateProfile endpoint and reflects the updated values on success.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-embed-the-existing-availabilitycalendar-component-inside-the-user-s-profile-panel-as-a-dedicated-my-availability-section-the-calendar-must-load-the-user-s-currently-saved-availability-dates-from-the-backend-and-allow-toggling-dates-to-update-them-changes-must-be-persisted-to-the-backend-via-the-updateavailability-endpoint-when-the-user-saves",
+      "title": "Embed the existing AvailabilityCalendar component inside the user's profile panel as a dedicated 'My Availability' section. The calendar must load the user's currently saved availability dates from the backend and allow toggling dates to update them. Changes must be persisted to the backend via the updateAvailability endpoint when the user saves.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-wire-the-existing-directorregistrationform-and-productionhouseregistrationform-submission-handlers-to-the-new-createorupdateprofile-backend-endpoint-so-that-on-successful-form-submission-the-user-s-profile-is-saved-to-the-canister-after-saving-navigate-the-user-to-the-success-page-as-currently-implemented",
+      "title": "Wire the existing DirectorRegistrationForm and ProductionHouseRegistrationForm submission handlers to the new createOrUpdateProfile backend endpoint so that on successful form submission the user's profile is saved to the canister. After saving, navigate the user to the success page as currently implemented.",
+      "reqIds": [
+        "REQ-5"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Display profile icon and full name next to Ad Tribe logo for registered users",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Clickable profile panel showing all registration form fields with edit functionality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Integrate Tribe Availability calendar management into the user profile panel",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Build full user registration and profile storage system in a Motoko backend canister",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Extend the Motoko backend actor to store and manage full user profiles. The profile data model must include all fields collected across the existing registration forms: full name, email, phone/contact number, city, department, designation, years of experience, tribe/company name, role (Director or Production House), executive producers (for Production House), work reel URL, industry reference email, and availability dates. Expose CRUD endpoints: createOrUpdateProfile, getMyProfile, and updateAvailability. Profiles must be keyed by the caller's Internet Identity principal.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    }
+  ],
   "gameProjectType": "none",
   "projectName": "Ad Tribe",
   "clarification_mode": "instant",

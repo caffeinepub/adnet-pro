@@ -5,7 +5,7 @@ export default function ProductionHouseRegistrationPage() {
   const navigate = useNavigate();
 
   const handleSuccess = () => {
-    navigate({ to: '/' });
+    navigate({ to: '/registration/success' });
   };
 
   return (
